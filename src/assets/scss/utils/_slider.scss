@@ -1,0 +1,116 @@
+.slider__content__wrapper {
+  position: relative;
+
+  .slider__content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    width: 100%;
+  }
+}
+
+.explore-community-card {
+  padding: 13px 63px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(143, 143, 143, 0.2));
+  border-radius: 8px;
+  width: 100%;
+}
+
+.camp--card {
+  background: rgb(255 255 255 / 12%);
+  border-radius: 40px;
+  padding: 25px;
+  position: relative;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+
+  .orange-number {
+    background: linear-gradient(90deg, #b72346, #c5882d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .purple-number {
+    background: linear-gradient(90deg, #4431ba, #979dd8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .green-number {
+    background: linear-gradient(90deg, #30ae35, #236d49);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .yellow-number {
+    background: linear-gradient(90deg, #edb628, #705612);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .title__text {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .description__text {
+    font-size: 23px;
+    font-weight: bold;
+  }
+
+  .camp--icon {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 100%;
+    backdrop-filter: blur(49px);
+    right: -6px;
+    top: -18px;
+    width: 50px;
+    height: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    z-index: 1;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    img {
+      height: 30px;
+      width: 30px;
+    }
+  }
+}
+
+.scroll-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.scroll-row {
+  white-space: nowrap;
+  animation: scroll 40s linear infinite;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}

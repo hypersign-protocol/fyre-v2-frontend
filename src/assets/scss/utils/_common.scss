@@ -1,0 +1,35 @@
+.background-left {
+  background-color: #02050e;
+  background-image: url('@/assets/images/bg-left.png');
+  background-position: left;
+  background-repeat: no-repeat;
+  padding-left: 50px;
+}
+
+.background-right {
+  background-color: #02050e;
+  background-image: url('@/assets/images/bg-right.png');
+  background-position: right;
+  background-repeat: no-repeat;
+  padding-right: 50px;
+}
+.background-center {
+  background-image: url('@/assets/images/bg-center.png');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+}
+
+.purple-linear-gradient-text {
+  background: linear-gradient(90deg, #f8eaff, #711df9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.support-chain {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(143, 143, 143, 0.3));
+}
+
+.footer_wrapper {
+  border-top: 1px solid rgb(255 255 255 / 50%) !important;
+}

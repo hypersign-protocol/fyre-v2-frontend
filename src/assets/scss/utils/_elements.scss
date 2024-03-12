@@ -1,0 +1,16 @@
+.v-input {
+  .v-field {
+    background: rgba(246, 246, 247, 0.08) !important;
+  }
+  &.is-border-radius {
+    .v-field {
+      border-radius: 100px !important;
+    }
+  }
+}
+
+.v-select {
+  .v-field {
+    background: rgba(246, 246, 247, 0.08) !important;
+  }
+}

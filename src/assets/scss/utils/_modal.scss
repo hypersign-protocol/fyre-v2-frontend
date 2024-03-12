@@ -1,0 +1,47 @@
+.modal__card {
+  background-color: #070f24 !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 24px !important;
+  padding: 50px !important;
+  width: 680px !important;
+  position: relative;
+
+  .modal__close {
+    position: absolute;
+    right: 40px;
+  }
+
+  .modal__header {
+    display: flex;
+    align-items: center;
+    .modal__title {
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .modal__title__img {
+    }
+  }
+
+  .border__dotted {
+    border: 1px dashed #fff;
+    border-radius: 10px;
+  }
+
+  .modal__body {
+    .modal__content {
+      font-size: 16px;
+      padding: 30px;
+    }
+  }
+}
+
+.v-overlay__scrim {
+  background: #000 !important;
+}
+
+.claim--button {
+  background: rgb(249 249 249 / 10%) !important;
+  border-radius: 7px !important;
+  color: #adb9c7 !important;
+  padding: 22px 12px !important;
+}

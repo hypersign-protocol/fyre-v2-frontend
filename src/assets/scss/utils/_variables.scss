@@ -1,0 +1,243 @@
+@for $i from 1 through 75 {
+  .font-#{$i} {
+    font-size: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 75 {
+  .line-h-#{$i} {
+    line-height: #{$i}px !important;
+  }
+}
+
+@for $i from 0 through 75 {
+  .letter-s-#{$i} {
+    letter-spacing: #{$i}px !important;
+  }
+}
+
+.letter-spacing-20 {
+  letter-spacing: 0.2px !important;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+@for $i from 50 through 1000 {
+  @if ($i % 50==0) {
+    .max-width-#{$i} {
+      max-width: #{$i}px !important;
+    }
+  }
+}
+
+@for $i from 25 through 1000 {
+  @if ($i % 25==0) {
+    .min-height-#{$i} {
+      min-height: #{$i}px !important;
+    }
+  }
+}
+
+@for $i from 1 through 1000 {
+  .width-#{$i} {
+    width: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 1000 {
+  .height-#{$i} {
+    height: #{$i}px !important;
+  }
+}
+
+.font-weight- {
+  &-extra-bold {
+    font-weight: 800 !important;
+  }
+
+  &-bold {
+    font-weight: 700 !important;
+  }
+
+  &-semibold {
+    font-weight: 600 !important;
+  }
+
+  &-medium {
+    font-weight: 500 !important;
+  }
+
+  &-regular {
+    font-weight: 400 !important;
+  }
+}
+
+.position- {
+  &relative {
+    position: relative !important;
+  }
+
+  &absolute {
+    position: absolute !important;
+  }
+}
+
+.object- {
+  &contain {
+    object-fit: contain;
+  }
+
+  &cover {
+    object-fit: cover;
+  }
+}
+
+// colors
+
+$colors: (
+  'black': (
+    #020610
+  ),
+  'white': (
+    #fff
+  ),
+  'light': (
+    rgb(255 253 253 / 8%)
+  ),
+  'blue': (
+    #2656d6
+  ),
+  'gray': (
+    #adb9c7
+  ),
+  'orange': (
+    #ffa425,
+    #eb7d13
+  ),
+  'green': (
+    #3ef9b9
+  ),
+  'yellow': (
+    #e8bf3d
+  ),
+  'surface': (
+    rgb(255 253 253 /8%)
+  )
+);
+
+@each $map in $colors {
+  $name: nth($map, 1);
+  $list: map-get($colors, $name);
+
+  @for $i from 1 through length($list) {
+    .text-#{$name}-#{$i}00 {
+      color: nth($list, $i) !important;
+    }
+  }
+}
+
+@each $map in $colors {
+  $name: nth($map, 1);
+  $list: map-get($colors, $name);
+
+  @for $i from 1 through length($list) {
+    .bg-#{$name}-#{$i}00 {
+      background-color: nth($list, $i) !important;
+    }
+  }
+}
+
+.border {
+  border: 1px solid #e4e6ef !important;
+}
+
+@for $i from 1 through 100 {
+  .rounded-#{$i} {
+    border-radius: #{$i}px !important;
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+}
+
+/* PULSE BUBBLES */
+
+.pulse-container {
+  width: 120px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pulse-bubble {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f8eaff, #711df9);
+}
+
+.pulse-bubble-1 {
+  animation: pulse 0.4s ease 0s infinite alternate;
+}
+.pulse-bubble-2 {
+  animation: pulse 0.4s ease 0.2s infinite alternate;
+}
+.pulse-bubble-3 {
+  animation: pulse 0.4s ease 0.4s infinite alternate;
+}
+
+.padding-global-x {
+  padding-left: 140px !important;
+  padding-right: 140px !important;
+}
+
+.padding-global-y {
+  padding-top: 100px !important;
+  padding-bottom: 100px !important;
+}
+
+.container-large {
+  width: 100% !important;
+  max-width: 90rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+//gradients
+
+@mixin text-gradient($start-color, $end-color) {
+  background: linear-gradient(90deg, $start-color, $end-color);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+$color-combinations: (
+  'purple': (
+    #ffffff,
+    #814bf5
+  ),
+  'blue': (
+    #ffffff,
+    #0882db
+  ),
+  'green': (
+    rgba(42, 215, 152, 0),
+    #2ad798
+  )
+);
+
+@each $set, $colors in $color-combinations {
+  .text-gradient-#{$set} {
+    @include text-gradient(nth($colors, 1), nth($colors, 2));
+  }
+}

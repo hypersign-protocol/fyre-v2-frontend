@@ -1,0 +1,48 @@
+.banner__wrapper {
+  position: relative;
+  overflow: hidden;
+
+  background: #02050e;
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: url('@/assets/images/banner.png') left bottom / contain no-repeat;
+    z-index: 0;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -12%;
+    width: 40%;
+    height: 100%;
+    background: url('@/assets/images/start.gif') right bottom / contain no-repeat;
+    z-index: 0;
+  }
+
+  .text__wrapper {
+    z-index: 1;
+    padding: 103px 60px;
+    text-align: center;
+    .banner__title {
+      font-size: 110px;
+      color: white;
+      font-family: 'quarion', sans-serif !important;
+      font-weight: bold;
+      letter-spacing: -4px;
+    }
+    .banner__subtitle {
+      font-size: 30px;
+      color: #adb9c7;
+      margin-bottom: 40px;
+    }
+  }
+}
+
+.home--slider {
+}
