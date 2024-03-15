@@ -130,6 +130,7 @@
   </v-container>
 </template>
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -170,12 +171,12 @@ onMounted(async () => {
 
 watch(
   () => activeTab.value,
-  (value) => {}
+  (value: any)  => {}
 )
 
 watch(
   () => communityById.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -184,7 +185,7 @@ watch(
 
 watch(
   () => communityEvents.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -198,6 +199,6 @@ const viewEvent = (event) => {
 const fetchCommunity = async () => {
   loading.value = true
   await store.GET_COMMUNITY_ID(route.params.id)
-  await store.GET_EVENT_BY_COMMUNITY(`${route.params.id}?page=1&limit=10`)
+  await store.GET_EVENT_BY_COMMUNITY(`${route.params.id}`)
 }
 </script>

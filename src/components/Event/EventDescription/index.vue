@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts" setup>
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const props = defineProps<{
   description: string
 }>()

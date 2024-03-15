@@ -3,8 +3,8 @@
 import { defineStore } from 'pinia'
 import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 
-import type { CommunityType } from '@/data/types/community/CommunityType'
-import type { EventType } from '@/data/types/event/eventType'
+import type { CommunityType } from '@/data/types/community/CommunityType.ts'
+import type { EventType } from '@/data/types/event/eventType.ts'
 
 interface communityType {
   popularCommunities: CommunityType[]
@@ -51,9 +51,9 @@ export const useCommunityStore = defineStore('community', {
         return null
       }
     },
-    async GET_EVENT_BY_COMMUNITY(filter: string): Promise<EventType[]> {
+    async GET_EVENT_BY_COMMUNITY(communityId: string): Promise<EventType[]> {
       try {
-        const response: AxiosResponse<EventType[]> = await axios.get(`/event/${filter}`)
+        const response: AxiosResponse<EventType[]> = await axios.get(`/community/${communityId}/event`)
 
         if (response.success) {
           this.communityEvents = response.data

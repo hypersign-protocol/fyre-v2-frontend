@@ -105,6 +105,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const loading = ref(false)
 const activeTab = ref('coming_soon')
 const tabs = ref([
@@ -118,7 +119,6 @@ const tabs = ref([
   }
 ])
 import { useEventStore } from '@/store/event.ts'
-import { ref, onMounted } from 'vue'
 
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
@@ -132,14 +132,14 @@ onMounted(async () => {
 
 watch(
   () => activeTab.value,
-  (value) => {
+  (value: any) => {
     loadEvents()
   }
 )
 
 watch(
   () => events.value,
-  (value) => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

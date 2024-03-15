@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from '@/utils/axios'
+import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 
 interface Proof {
   userTextInput: string

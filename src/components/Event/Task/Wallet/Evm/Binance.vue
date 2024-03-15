@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
-
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 interface Task {
   _id: string
   type: string
@@ -55,7 +55,7 @@ const { performResult } = storeToRefs(useEventParticipantStore())
 
 watch(
   () => performResult.value,
-  (value) => {
+  (value: any) => {
     console.log(performResult.value.tasks)
     if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
       isTaskVerified.value = true
@@ -76,7 +76,7 @@ const getWalletAddress = async () => {
 
 watch(
   () => walletAddress.value,
-  (value) => {
+  (value: any) => {
     performAction()
     props.task.options.proofConfig.proof.walletAddress = value
   },
@@ -137,7 +137,7 @@ const performAction = async () => {
 
 watch(
   () => signature.value,
-  (value) => {
+  (value: any) => {
     submit()
   },
   { deep: true }

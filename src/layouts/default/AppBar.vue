@@ -41,6 +41,8 @@
 </template>
 
 <script lang="ts" setup>
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify'
 const { mobile } = useDisplay()
 const router = useRouter()

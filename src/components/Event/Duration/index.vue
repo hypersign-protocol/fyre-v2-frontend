@@ -3,7 +3,8 @@
     {{ liveTimeUntilEvent }}
   </span>
 </template>
-<script setup>
+<script lang="ts" setup>
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import { getTimeUntilEvent } from '@/composables/duration.ts'
 
 const { eventDate } = defineProps(['eventDate'])

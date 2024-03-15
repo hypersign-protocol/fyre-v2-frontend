@@ -208,6 +208,7 @@
   </v-container>
 </template>
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const activeTab = ref('events')
 
 const slides = ref(['First', 'Second'])
@@ -237,7 +238,7 @@ const tabs = ref([
 ])
 import { useEventStore } from '@/store/event.ts'
 import { useCommunityStore } from '@/store/community.ts'
-import { ref, onMounted } from 'vue'
+
 
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
@@ -251,7 +252,7 @@ const communities = computed(() => communityStore.getPopularCommunities)
 
 watch(
   () => popular.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -260,7 +261,7 @@ watch(
 
 watch(
   () => communities.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

@@ -288,6 +288,7 @@
   </template>
 </template>
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -337,12 +338,12 @@ onMounted(async () => {
 
 watch(
   () => activeTab.value,
-  (value) => {}
+  (value: any)  => {}
 )
 
 watch(
   () => eventErr.value,
-  (value) => {
+  (value: any)  => {
     loading.value = false
     console.log(value.success)
     console.log(value.error.details)
@@ -352,7 +353,7 @@ watch(
 
 watch(
   () => tasks.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
       getOtherEvents()
@@ -362,7 +363,7 @@ watch(
 
 watch(
   () => eventById.value,
-  (value) => {
+  (value: any)  => {
     console.log(`value ${value}`)
     setTimeout(() => {
       getTasks()
@@ -378,7 +379,7 @@ const popular = computed(() => eventStore.getPopularEvents)
 
 watch(
   () => popular.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

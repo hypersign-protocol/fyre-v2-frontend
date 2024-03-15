@@ -67,6 +67,7 @@
 <script setup lang="ts">
 import { useEventStore } from '@/store/event.ts'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
@@ -77,7 +78,7 @@ const popular = computed(() => eventStore.getPopularEvents)
 
 watch(
   () => popular.value,
-  (value) => {
+  (value: any)  => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

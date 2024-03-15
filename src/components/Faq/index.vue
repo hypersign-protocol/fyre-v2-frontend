@@ -22,6 +22,7 @@
   </v-container>
 </template>
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const faqs = ref([
   {
     title: `What is Fyre?`,

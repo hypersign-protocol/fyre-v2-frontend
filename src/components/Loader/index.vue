@@ -13,6 +13,7 @@
   </v-card>
 </template>
 <script setup lang="ts">
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 const props = defineProps({
   text: {
     type: String,

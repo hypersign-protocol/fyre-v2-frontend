@@ -35,6 +35,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 
@@ -56,7 +57,7 @@ const { performResult } = storeToRefs(useEventParticipantStore())
 
 watch(
   () => performResult.value,
-  (value) => {
+  (value: any)  => {
     console.log(performResult.value.tasks)
     if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
       isTaskVerified.value = true
