@@ -39,7 +39,7 @@
         <Loader v-if="loading" />
         <v-row class="mt-5" v-if="!loading && events.length > 0">
           <v-col v-for="(event, index) in events.slice(0, 8)" cols="12" sm="6" md="4" lg="3">
-            <v-card class="community-card rounded-xl cursor-pointer">
+            <v-card class="community-card rounded-xl cursor-pointer" @click="viewEvent(event)">
               <v-img class="align-end text-white" :src="event.banner" cover> </v-img>
               <v-card-text>
                 <div>{{ event.eventName }}</div>
