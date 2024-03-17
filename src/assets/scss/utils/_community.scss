@@ -5,6 +5,7 @@
 
   .logo {
     position: relative;
+
     .verify {
       position: absolute;
       right: 0;
@@ -17,6 +18,12 @@
   background: rgb(246, 246, 247, 8%) !important;
   border: 1px solid rgb(255, 255, 255, 20%) !important;
   height: 100%;
+  width: 100%;
+  transition: all 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  overflow: hidden;
+  &:hover {
+    transform: translateY(-4px) !important;
+  }
 }
 
 .community-banner {
@@ -24,10 +31,103 @@
   max-height: 200px;
   overflow: hidden;
   position: relative;
+
   img {
     width: 100%;
     height: 200px;
     display: block;
     object-fit: cover;
+  }
+}
+
+.explore__community_wrapper {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  flex-direction: column;
+
+  .row_wrap {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+
+    @include media-respond(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include media-respond(sm) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include media-respond(xs) {
+      grid-template-columns: 1fr;
+    }
+    &.first {
+      margin-left: 80px;
+    }
+
+    .explore-community-card {
+      padding: 13px 45px;
+      width: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(143, 143, 143, 0.2));
+      border-radius: 6px;
+      text-align: center;
+
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+      }
+
+      p {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.homepage__section__title {
+  font-size: 55px;
+  font-weight: 600;
+  text-align: center;
+  padding: 30px;
+  @include media-respond(md) {
+    font-size: 38px;
+  }
+
+  @include media-respond(sm) {
+    font-size: 38px;
+  }
+
+  @include media-respond(xs) {
+    font-size: 20px;
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* Three columns */
+  gap: 20px;
+  /* Gap between items */
+}
+
+.grid-item {
+  background-color: #f2f2f2;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Media query for responsiveness */
+@media screen and (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    /* Two columns for smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    /* Single column for even smaller screens */
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid>
-    <v-container class="container-large">
+  <div class="homepage-section">
+    <div class="section-content">
       <Loader v-if="loading" />
       <el-carousel
         v-if="!loading"
@@ -45,8 +45,8 @@
           </div>
         </el-carousel-item>
       </el-carousel>
-    </v-container>
-  </v-container>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import { useEventStore } from '@/store/event.ts'

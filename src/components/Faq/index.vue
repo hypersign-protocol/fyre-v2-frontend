@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="background-left padding-global-y">
-    <h2 class="text-center font-48 pt-15 pb-3">FAQs</h2>
+    <h2 class="homepage__section__title">FAQs</h2>
     <v-container>
       <v-expansion-panels color="transparent" variant="accordion">
         <v-expansion-panel

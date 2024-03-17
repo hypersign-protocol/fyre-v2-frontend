@@ -13,6 +13,7 @@
   background-repeat: no-repeat;
   padding-right: 50px;
 }
+
 .background-center {
   background-image: url('@/assets/images/bg-center.png');
   background-repeat: no-repeat;
@@ -32,4 +33,141 @@
 
 .footer_wrapper {
   border-top: 1px solid rgb(255 255 255 / 50%) !important;
+}
+
+.homepage-section {
+  position: relative;
+  padding: 0 72px 64px;
+
+  @include media-respond(md) {
+    padding: 0 48px 48px;
+  }
+
+  @include media-respond(sm) {
+    padding: 0 28px 28px;
+  }
+
+  @include media-respond(xs) {
+    padding: 0 28px 28px;
+  }
+
+  .section-content {
+    max-width: 2048px;
+    position: relative;
+    top: 0;
+    margin: auto;
+  }
+}
+
+.get_sarted_wrapper {
+  .title__text {
+    font-size: 48px;
+    font-weight: regular;
+    text-align: center;
+    @include media-respond(md) {
+      font-size: 38px;
+    }
+
+    @include media-respond(sm) {
+      font-size: 38px;
+    }
+
+    @include media-respond(xs) {
+      font-size: 20px;
+    }
+  }
+  .body__text {
+    font-size: 24px;
+    font-weight: regular;
+    text-align: center;
+    color: #adb9c7;
+    line-height: 36px;
+    letter-spacing: 0.5px;
+    width: 1000px;
+    margin: auto;
+
+    @include media-respond(md) {
+      width: 700px;
+      font-size: 18px;
+    }
+
+    @include media-respond(sm) {
+      width: 700px;
+      font-size: 18px;
+    }
+
+    @include media-respond(xs) {
+      width: 300px;
+      font-size: 16px;
+    }
+  }
+}
+
+.card__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  padding: 30px 40px;
+
+  @include media-respond(md) {
+    padding: 30px 40px;
+  }
+
+  @include media-respond(sm) {
+    padding: 30px 40px;
+  }
+
+  @include media-respond(xs) {
+    padding: 30px 40px;
+  }
+
+  .icon {
+    height: 91px;
+    text-align: center;
+
+    @include media-respond(md) {
+      height: 50px;
+    }
+
+    @include media-respond(sm) {
+      height: 50px;
+    }
+
+    @include media-respond(xs) {
+      height: 45px;
+    }
+  }
+  .title__text {
+    font-weight: 600;
+    font-size: 28px;
+    margin-top: 18px;
+    @include media-respond(md) {
+      font-size: 20px;
+    }
+
+    @include media-respond(sm) {
+      font-size: 20px;
+    }
+
+    @include media-respond(xs) {
+      font-size: 14px;
+    }
+  }
+  p {
+    font-size: 18px;
+    margin-top: 18px;
+    @include media-respond(md) {
+      font-size: 12px;
+    }
+
+    @include media-respond(sm) {
+      font-size: 12px;
+    }
+
+    @include media-respond(xs) {
+      font-size: 12px;
+    }
+  }
 }
