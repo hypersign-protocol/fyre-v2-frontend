@@ -21,7 +21,7 @@
   }
 
   @include media-respond(xs) {
-    padding: 0px 30px !important;
+    padding: 0px 17px !important;
   }
 }
 
@@ -43,16 +43,10 @@
   margin-bottom: 50px;
 
   border: 1px solid transparent;
-  /* Initially hide the border */
 
-  // &:hover {
-  //   border-color: #fff; /* Show the border on hover */
-
-  //   .task__top::before,
-  //   .task__top::after {
-  //     border-color: #fff; /* Show the borders on hover */
-  //   }
-  // }
+  @include media-respond(xs) {
+    padding: 4vw;
+  }
 
   .task__top {
     background: black;
@@ -82,7 +76,9 @@
       .text {
         font-size: 18px;
         @include media-respond(xs) {
-          font-size: 12px;
+          font-weight: 400;
+          font-size: 3.733vw;
+          line-height: 4.667vw;
         }
       }
       .points {
@@ -95,14 +91,18 @@
       }
 
       img {
-        height: 50px;
+        height: 34px;
         @include media-respond(xs) {
-          height: 28px;
+          width: 6.667vw;
+          height: 6.667vw;
         }
       }
 
       span {
-        margin-right: 3px;
+        margin-right: 16px;
+        @include media-respond(xs) {
+          margin-right: 2.667vw;
+        }
       }
     }
   }
@@ -141,10 +141,10 @@
     }
 
     @include media-respond(xs) {
-      font-size: 6px !important;
-      width: 56px;
-      height: 20px !important;
-      padding: 4px 10px;
+      min-width: 14.13px;
+      height: 6.67vw !important;
+      font-size: 3.2vw !important;
+      line-height: 4.3vw !important;
     }
   }
 

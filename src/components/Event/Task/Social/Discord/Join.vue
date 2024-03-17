@@ -7,13 +7,13 @@
     <div class="task__header">
       <div class="task__title">
         <span>
-          <img src="@/assets/images/discord.png" />
+          <img src="@/assets/images/task/discord.svg" />
         </span>
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand">Verify Task(s)</v-btn>
+        <v-btn v-if="!showExpand">Verify</v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
       <div class="task__action" v-if="isTaskVerified">

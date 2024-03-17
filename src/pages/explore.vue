@@ -40,7 +40,10 @@
                   v-for="(event, index) in popular.slice(i * 4, (i + 1) * 4)"
                   :key="index"
                   cols="12"
-                  md="3"
+                  sm="6"
+                  md="6"
+                  xl="3"
+                  lg="3"
                 >
                   <v-card class="rounded-xl" @click="viewEvent(event)">
                     <v-img class="align-end text-white" height="315" :src="event.banner" cover>
@@ -97,7 +100,10 @@
             <v-row>
               <v-col
                 cols="12"
+                sm="4"
                 md="4"
+                xl="4"
+                lg="4"
                 v-for="(event, index) in communities.slice(0, 3)"
                 :key="index"
               >
@@ -105,7 +111,8 @@
                   class="community-card rounded-xl cursor-pointer text-center"
                   @click="viewCommunity(event)"
                 >
-                  <v-card-title class="text-gradient-purple-1">
+                  <v-card-title class="pa-0 text-gradient-purple-1 communit-header">
+                    <div :class="`community-curve-${index}`"></div>
                     <v-avatar size="74" class="my-4">
                       <v-img :src="event.avatar"></v-img>
                     </v-avatar>
@@ -114,7 +121,12 @@
                   <p class="font-28 font-weight-bold mb-4">{{ event.communityName }}</p>
                   <p class="font-12 font-weight-regular mb-4">{{ event.description }}</p>
                   <div class="d-flex align-center justify-center py-4">
-                    <img class="mr-4" size="16" src="@/assets/images/telegram_out.svg" />
+                    <img
+                      class="mr-4"
+                      size="16"
+                      @click="socials"
+                      src="@/assets/images/telegram_out.svg"
+                    />
                     <img class="mr-4" size="16" src="@/assets/images/twitter_out.svg" />
                     <img class="mr-4" size="16" src="@/assets/images/discord_out.svg" />
                   </div>
@@ -176,7 +188,15 @@
             </v-row>
 
             <v-row>
-              <v-col cols="12" md="3" v-for="(event, index) in communities" :key="index">
+              <v-col
+                cols="12"
+                sm="4"
+                md="4"
+                xl="3"
+                lg="3"
+                v-for="(event, index) in communities"
+                :key="index"
+              >
                 <v-card
                   class="community-card rounded-xl cursor-pointer text-center"
                   @click="viewCommunity(event)"
@@ -282,7 +302,7 @@ const viewEvent = (event) => {
 
 onMounted(async () => {
   loading.value = true
-  await eventStore.POPULAR_EVENTS(`?page=1&limit=10`)
+  await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
   await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
 })
 </script>

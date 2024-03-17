@@ -287,7 +287,8 @@
 
   .el-carousel__button {
     width: 144px;
-    height: 2px;
+    height: 5px;
+    border-radius: 100px;
     @include media-respond(sm) {
       width: 144px;
     }

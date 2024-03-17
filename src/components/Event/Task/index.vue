@@ -1,12 +1,5 @@
 <template>
-  <template v-for="(item, index) in eventTasks">
-    <component
-      :task="task"
-      :communityId="communityId"
-      :is="item.path"
-      v-if="checkComponent(item)"
-    />
-  </template>
+  <component :task="task" :communityId="communityId" :is="checkComponent" class="mb-10" />
 </template>
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/EventTasks.ts'
@@ -23,6 +16,7 @@ const props = defineProps<{
 }>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
+const componentName = ref(null)
 
 // Split the string by underscores
 const parts = props.task.type.split('_')
@@ -35,7 +29,12 @@ const componentParts = parts.map(
 // Join the parts with slashes
 const formattedComp = componentParts.join('')
 
-const checkComponent = (item) => {
-  return item.type === formattedComp ? true : false
-}
+const checkComponent = computed(() => {
+  const task = eventTasks.find((task) => task.type === props.task.type)
+  if (task) {
+    return task.path
+  } else {
+    console.error(`Task with type ${targetType} not found.`)
+  }
+})
 </script>

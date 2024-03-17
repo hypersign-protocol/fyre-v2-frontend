@@ -131,3 +131,43 @@
     /* Single column for even smaller screens */
   }
 }
+
+.communit-header {
+  position: relative;
+
+  .v-avatar {
+    width: 74px;
+    height: 74px;
+    top: 16px;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+
+  .community-curve-0 {
+    position: relative;
+    top: -28px;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(90deg, rgb(30, 80, 255, 90%), rgb(255, 255, 255));
+  }
+
+  .community-curve-1 {
+    position: relative;
+    top: -28px;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(90deg, rgb(30, 80, 255, 90%), rgb(255, 255, 255));
+  }
+
+  .community-curve-2 {
+    position: relative;
+    top: -28px;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(90deg, rgb(30, 80, 255, 90%), rgb(255, 255, 255));
+  }
+}

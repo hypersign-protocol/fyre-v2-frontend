@@ -13,7 +13,7 @@
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand">Verify Task(s)</v-btn>
+        <v-btn v-if="!showExpand">Verify</v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
       <div class="task__action" v-if="isTaskVerified">

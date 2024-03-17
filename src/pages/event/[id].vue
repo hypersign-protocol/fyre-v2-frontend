@@ -212,66 +212,17 @@
           </v-card-text>
         </v-card>
       </v-container>
-
-      <v-container class="container-large pt-8">
-        <div class="padding-global-y">
-          <h4 class="font-42 font-weight-bold">Explore other Events</h4>
+      <div class="homepage-section">
+        <div class="section-content">
+          <h4 class="homepage__section__title text-left">Explore other Events</h4>
 
           <v-row class="mt-5">
             <v-col v-for="(event, index) in popular.slice(0, 4)" cols="12" sm="6" md="6" lg="3">
-              <v-hover v-slot="{ isHovering, props }">
-                <v-card class="community-card rounded-xl cursor-pointer" v-bind="props">
-                  <v-img class="align-end text-white" :src="event.banner" cover> </v-img>
-                  <v-card-text>
-                    <div>{{ event.eventName }}</div>
-                    <p class="my-2 font-12">Starts in: <Duration :eventDate="event.startDate" /></p>
-                    <div class="d-flex align-center">
-                      <v-chip size="small" label class="orange--chip mr-2"> 10 EXP </v-chip>
-                      <v-chip size="small" label class="green--chip"> 500 USTD </v-chip>
-                    </div>
-                    <p class="my-2">{{ event.participantCount }} Participants</p>
-                  </v-card-text>
-                  <v-divider></v-divider>
-                  <v-card-actions class="d-flex align-center justify-space-between">
-                    <div class="d-flex align-center">
-                      <v-avatar class="cursor-pointer mr-2">
-                        <v-img alt="John" :src="event.communityDetail?.avatar"></v-img>
-                      </v-avatar>
-                      <p class="mr-2 font-14 lh-16">{{ event.communityDetail?.communityName }}</p>
-                      <img
-                        v-if="event.communityDetail?.hasDomainVerified"
-                        src="@/assets/images/verify.svg"
-                        height="16"
-                      />
-                    </div>
-                    <div class="d-flex align-center">
-                      <v-avatar size="small" class="cursor-pointer mr-2">
-                        <v-img alt="John" src="@/assets/images/verify-check.svg"></v-img>
-                      </v-avatar>
-                    </div>
-                  </v-card-actions>
-                  <v-overlay
-                    :model-value="isHovering"
-                    class="align-center justify-center"
-                    scrim="#036358"
-                    contained
-                  >
-                    <v-chip
-                      @click="viewEvent(event)"
-                      color="white"
-                      height="53"
-                      class="rounded-10 px-15 cursor-pointer"
-                      label
-                    >
-                      View Event
-                    </v-chip>
-                  </v-overlay>
-                </v-card>
-              </v-hover>
+              <Card :eventData="event" />
             </v-col>
           </v-row>
         </div>
-      </v-container>
+      </div>
     </v-container>
     <EventDescription
       @close="toggleDescription = false"
