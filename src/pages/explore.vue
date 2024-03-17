@@ -15,13 +15,13 @@
           </template>
         </v-text-field>
       </v-card>
-      <v-card class="bg-light-100 mx-auto mt-10" max-width="400">
+      <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
         <v-tabs
           selected-class="tab--active"
           slider-color="secondary"
           v-model="activeTab"
           align-tabs="center"
-          color="#ADB9C7"
+          class="nav--tabs"
         >
           <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{
             item.name
@@ -48,13 +48,13 @@
                         <v-card-actions class="d-flex align-center justify-space-between">
                           <div class="d-flex align-center">
                             <v-avatar class="cursor-pointer mr-2">
-                              <v-img alt="John" :src="event.communityDetail.avatar"></v-img>
+                              <v-img alt="John" :src="event.communityDetail?.avatar"></v-img>
                             </v-avatar>
                             <p class="mr-2 font-14 lh-16 text-white-100">
-                              {{ event.communityDetail.communityName }}
+                              {{ event.communityDetail?.communityName }}
                             </p>
                             <img
-                              v-if="event.communityDetail.hasDomainVerified"
+                              v-if="event.communityDetail?.hasDomainVerified"
                               src="@/assets/images/verify.svg"
                               height="16"
                             />
@@ -105,9 +105,12 @@
                   class="community-card rounded-xl cursor-pointer text-center"
                   @click="viewCommunity(event)"
                 >
-                  <v-avatar size="74" class="my-4">
-                    <v-img :src="event.avatar"></v-img>
-                  </v-avatar>
+                  <v-card-title class="text-gradient-purple-1">
+                    <v-avatar size="74" class="my-4">
+                      <v-img :src="event.avatar"></v-img>
+                    </v-avatar>
+                  </v-card-title>
+
                   <p class="font-28 font-weight-bold mb-4">{{ event.communityName }}</p>
                   <p class="font-12 font-weight-regular mb-4">{{ event.description }}</p>
                   <div class="d-flex align-center justify-center py-4">
@@ -136,6 +139,8 @@
               </v-col>
             </v-row>
           </div>
+        </v-container>
+        <v-container class="container-large">
           <div class="padding-global-y">
             <h2 class="text-center font-48">All Communities</h2>
             <v-row class="py-4">
@@ -159,14 +164,14 @@
               <v-col>
                 <div class="d-flex align-center justify-end">
                   <v-btn
-                  variant="outlined"
-                  rounded="xl"
-                  size="x-large"
-                  height="40"
-                  class="cursor-pointer font-16"
-                  >Create Your Community</v-btn
-                >
-              </div>
+                    variant="outlined"
+                    rounded="xl"
+                    size="x-large"
+                    height="40"
+                    class="cursor-pointer font-16"
+                    >Create Your Community</v-btn
+                  >
+                </div>
               </v-col>
             </v-row>
 
@@ -208,7 +213,7 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const activeTab = ref('events')
 
 const slides = ref(['First', 'Second'])
@@ -239,7 +244,6 @@ const tabs = ref([
 import { useEventStore } from '@/store/event.ts'
 import { useCommunityStore } from '@/store/community.ts'
 
-
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
 const communityStore = useCommunityStore()
@@ -252,7 +256,7 @@ const communities = computed(() => communityStore.getPopularCommunities)
 
 watch(
   () => popular.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -261,7 +265,7 @@ watch(
 
 watch(
   () => communities.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

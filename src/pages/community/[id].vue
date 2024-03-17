@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="background-left padding-global-y">
-    <div class="w-100 h-25">
-      <img :src="communityById.banner" height="200" class="w-100 object-cover" />
+  <v-container fluid class="background-left pt-8">
+    <div class="w-100 community-banner">
+      <img :src="communityById.banner" />
     </div>
     <v-container style="background: url('@/assets/images/bg-center.png') center/cover no-repeat">
       <v-card color="transparent">
@@ -130,7 +130,7 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -171,12 +171,12 @@ onMounted(async () => {
 
 watch(
   () => activeTab.value,
-  (value: any)  => {}
+  (value: any) => {}
 )
 
 watch(
   () => communityById.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -185,7 +185,7 @@ watch(
 
 watch(
   () => communityEvents.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)

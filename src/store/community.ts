@@ -53,7 +53,9 @@ export const useCommunityStore = defineStore('community', {
     },
     async GET_EVENT_BY_COMMUNITY(communityId: string): Promise<EventType[]> {
       try {
-        const response: AxiosResponse<EventType[]> = await axios.get(`/community/${communityId}/event`)
+        const response: AxiosResponse<EventType[]> = await axios.get(
+          `/community/${communityId}/event`
+        )
 
         if (response.success) {
           this.communityEvents = response.data

@@ -1,0 +1,16 @@
+.nav--tabs {
+  .v-tab {
+    font-size: 20px !important;
+    font-weight: bold;
+    color: rgb(173, 185, 199);
+    margin-right: 40px;
+
+    &:hover {
+      background: transparent !important;
+    }
+
+    &.tab--active {
+      color: white;
+    }
+  }
+}

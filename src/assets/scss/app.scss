@@ -11,6 +11,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
+@import 'media';
 
 @import './utils/header';
 @import './utils/banner';
@@ -22,3 +23,6 @@
 @import './utils/modal';
 @import './utils/community';
 @import './utils/chip';
+@import './utils/helpers';
+@import './utils/tabs';
+@import './utils/footer';

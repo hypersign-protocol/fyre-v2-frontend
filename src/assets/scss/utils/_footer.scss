@@ -1,0 +1,14 @@
+.footer_wrapper {
+  width: 100%;
+  padding: 100px !important;
+
+  @include media-respond(md) {
+    padding: 30px !important;
+  }
+  @include media-respond(sm) {
+    padding: 30px !important;
+  }
+  @include media-respond(xs) {
+    padding: 20px !important;
+  }
+}

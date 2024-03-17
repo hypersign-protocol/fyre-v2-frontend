@@ -9,10 +9,8 @@
         <span>
           <img src="@/assets/images/twitter.png" />
         </span>
-        <span class="font-18 lh-20 font-weight--regular text-white-100 text-capitalize">{{
-          task.title
-        }}</span>
-        <span class="font-18 lh-20 font-weight--regular text-blue-100"> +{{ task.xp }}XP </span>
+        <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
+        <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
         <v-btn v-if="!showExpand">Verify Task(s)</v-btn>
@@ -40,7 +38,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 interface Task {
   _id: string
   type: string

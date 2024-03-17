@@ -11,10 +11,15 @@ import { registerPlugins } from '@/plugins'
 import App from './App.vue'
 import './assets/scss/app.scss'
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 // Composables
 import { createApp } from 'vue'
 
 const app = createApp(App)
+
+app.use(ElementPlus)
 
 registerPlugins(app)
 

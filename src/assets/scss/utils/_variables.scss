@@ -52,6 +52,13 @@
   }
 }
 
+@for $i from 1 through 1000 {
+  .vertical-space-#{$i} {
+    padding-top: #{$i}px !important;
+    padding-bottom: #{$i}px !important;
+  }
+}
+
 .font-weight- {
   &-extra-bold {
     font-weight: 800 !important;
@@ -211,6 +218,18 @@ $colors: (
   max-width: 90rem !important;
   margin-left: auto !important;
   margin-right: auto !important;
+
+  @include media-respond(md) {
+    padding: 0px 60px !important;
+  }
+
+  @include media-respond(sm) {
+    padding: 0px 30px !important;
+  }
+
+  @include media-respond(xs) {
+    padding: 0px 30px !important;
+  }
 }
 
 //gradients
@@ -233,6 +252,10 @@ $color-combinations: (
   'green': (
     rgba(42, 215, 152, 0),
     #2ad798
+  ),
+  'purple-1': (
+    rgb(30, 80, 255, 90%),
+    rgb(255, 255, 255, 100%)
   )
 );
 

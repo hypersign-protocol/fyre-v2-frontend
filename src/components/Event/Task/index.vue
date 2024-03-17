@@ -10,7 +10,7 @@
 </template>
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/EventTasks.ts'
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 interface Task {
   _id: string
   type: string

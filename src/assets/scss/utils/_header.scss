@@ -2,4 +2,41 @@
   background: rgba(255, 255, 255, 0.06) !important;
   backdrop-filter: blur(15px);
   padding: 0px 20px;
+  margin-top: 20px;
+
+  .logo {
+    img {
+      height: 60px;
+    }
+
+    @include media-respond(sm) {
+      img {
+        height: 60px;
+      }
+    }
+    @include media-respond(xs) {
+      img {
+        height: 60px;
+      }
+    }
+  }
+
+  .login-button {
+    width: 180px !important;
+    height: 53px !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    margin-left: 30px !important;
+
+    @include media-respond(sm) {
+      width: 90px !important;
+      height: 40px !important;
+      font-size: 13px !important;
+    }
+    @include media-respond(xs) {
+      width: 90px !important;
+      height: 40px !important;
+      font-size: 13px !important;
+    }
+  }
 }

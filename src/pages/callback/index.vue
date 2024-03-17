@@ -5,7 +5,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const handleAuthorizationCode = () => {
   // Retrieve the authorization code from the current route query parameters
   const code = $route.query.code

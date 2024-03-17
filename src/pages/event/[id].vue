@@ -19,7 +19,7 @@
 
   <template v-else>
     <v-container fluid class="background-left">
-      <v-container class="padding-global-y">
+      <v-container class="event__wrapper pt-8">
         <v-card color="transparent" class="rounded-lg">
           <div class="d-flex align-center justify-space-between pa-3 bg-black-100">
             <div
@@ -73,64 +73,58 @@
           <div class="image-container">
             <img :src="eventById.banner" alt="Your Image Description" />
             <div class="tags__wrapper">
-              <v-card-text class="d-flex py-4">
-                <v-chip class="event_tag__chip cursor-pointer" size="large">
-                  <img src="@/assets/images/label-tag.svg" height="16" />
-                  <span class="ml-2 font-16 font-weight-medium">PlayEarn</span>
-                </v-chip>
-                <v-chip class="event_tag__chip cursor-pointer" size="large">
-                  <img src="@/assets/images/label-tag.svg" height="16" />
-                  <span class="ml-2 font-16 font-weight-medium">Ethereum</span>
-                </v-chip>
-                <v-chip class="event_tag__chip cursor-pointer" size="large">
-                  <img src="@/assets/images/label-tag.svg" height="16" />
-                  <span class="ml-2 font-16 font-weight-medium">Avalanche</span>
-                </v-chip>
-              </v-card-text>
+              <v-chip
+                class="event_tag__chip cursor-pointer"
+                size="large"
+                v-for="(tag, index) in eventById.tags.slice(0, 2)"
+                :key="index"
+              >
+                <img src="@/assets/images/label-tag.svg" class="icon" />
+                <span class="content">{{ tag }}</span>
+              </v-chip>
             </div>
           </div>
         </v-card>
         <v-card color="transparent">
-          <v-card-text class="d-flex align-center">
+          <v-card-text class="event-information">
             <div
-              class="text-gray-100 font-20 font-weight-medium mr-2 cursor-pointer d-flex align-center"
+              class="text-gray-100 cursor-pointer partipant--sec"
               @click="toggleParticipant = true"
             >
-              <div class="d-flex mr-2">
+              <div class="img-wrap mr-2">
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
               </div>
-              {{ eventById.participantCount }} <v-divider vertical></v-divider>
+              <span class="count">{{ eventById.participantCount }}</span>
+              <v-divider vertical></v-divider>
             </div>
-            <div class="font-20 font-weight-medium mx-2">
+            <div class="event-time">
               Ends In <Duration v-if="eventById.endDate" :eventDate="eventById.endDate" />
             </div>
-            <div class="ml-3"><span class="text-green-100">Active</span></div>
+            <div class="event-status"><span class="text-green-100">Active</span></div>
           </v-card-text>
-          <v-card-title class="pl-0 font-weight-bold font-30"
-            >{{ eventById.eventName }}
-          </v-card-title>
-          <v-card-text class="pl-0 d-flex py-4">
+          <v-card-title class="event-title">{{ eventById.eventName }} </v-card-title>
+          <v-card-text class="event-meta">
             <v-chip
               class="event__chip cursor-pointer"
               size="large"
               @click="toggleDescription = true"
             >
-              <img src="@/assets/images/description.svg" height="16" />
-              <span class="ml-2 font-16 font-weight-medium">Description</span>
+              <img src="@/assets/images/description.svg" class="icon" />
+              <span class="content">Description</span>
             </v-chip>
             <v-chip class="event__chip cursor-pointer" size="large" @click="toggleRewards = true">
-              <img src="@/assets/images/reward01.svg" height="16" />
-              <span class="ml-2 font-16 font-weight-medium">Rewards</span>
+              <img src="@/assets/images/reward01.svg" class="icon" />
+              <span class="content">Rewards</span>
             </v-chip>
             <v-chip class="event__chip cursor-pointer" size="large" @click="toggleRefer = true">
-              <img src="@/assets/images/refer.svg" height="16" />
-              <span class="ml-2 font-16 font-weight-medium">Refer</span>
+              <img src="@/assets/images/refer.svg" class="icon" />
+              <span class="content">Refer</span>
             </v-chip>
           </v-card-text>
-          <v-card-text class="pl-0">
+          <v-card-text class="pa-0">
             <v-tabs
               selected-class="tab--active"
               slider-color="secondary"
@@ -217,7 +211,9 @@
             </v-window>
           </v-card-text>
         </v-card>
+      </v-container>
 
+      <v-container class="container-large pt-8">
         <div class="padding-global-y">
           <h4 class="font-42 font-weight-bold">Explore other Events</h4>
 
@@ -239,11 +235,11 @@
                   <v-card-actions class="d-flex align-center justify-space-between">
                     <div class="d-flex align-center">
                       <v-avatar class="cursor-pointer mr-2">
-                        <v-img alt="John" :src="event.communityDetail.avatar"></v-img>
+                        <v-img alt="John" :src="event.communityDetail?.avatar"></v-img>
                       </v-avatar>
-                      <p class="mr-2 font-14 lh-16">{{ event.communityDetail.communityName }}</p>
+                      <p class="mr-2 font-14 lh-16">{{ event.communityDetail?.communityName }}</p>
                       <img
-                        v-if="event.communityDetail.hasDomainVerified"
+                        v-if="event.communityDetail?.hasDomainVerified"
                         src="@/assets/images/verify.svg"
                         height="16"
                       />
@@ -288,7 +284,7 @@
   </template>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -338,12 +334,12 @@ onMounted(async () => {
 
 watch(
   () => activeTab.value,
-  (value: any)  => {}
+  (value: any) => {}
 )
 
 watch(
   () => eventErr.value,
-  (value: any)  => {
+  (value: any) => {
     loading.value = false
     console.log(value.success)
     console.log(value.error.details)
@@ -353,7 +349,7 @@ watch(
 
 watch(
   () => tasks.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
       getOtherEvents()
@@ -363,7 +359,7 @@ watch(
 
 watch(
   () => eventById.value,
-  (value: any)  => {
+  (value: any) => {
     console.log(`value ${value}`)
     setTimeout(() => {
       getTasks()
@@ -379,7 +375,7 @@ const popular = computed(() => eventStore.getPopularEvents)
 
 watch(
   () => popular.value,
-  (value: any)  => {
+  (value: any) => {
     setTimeout(() => {
       loading.value = false
     }, 1000)
@@ -396,7 +392,7 @@ const getTasks = async () => {
 }
 
 const getOtherEvents = async () => {
-  await eventStore.POPULAR_EVENTS(`?page=1&limit=10`)
+  await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
 }
 
 const loadEventTasks = async () => {

@@ -1,0 +1,17 @@
+@mixin responsive-flexbox {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+
+  @include media-respond(sm) {
+    flex-flow: column nowrap;
+  }
+
+  @include media-respond(xs) {
+    flex-flow: column nowrap;
+  }
+}
+
+.responsive-container {
+  @include responsive-flexbox;
+}

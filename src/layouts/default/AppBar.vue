@@ -1,50 +1,33 @@
 <template>
-  <v-app-bar absolute flat height="100" class="header__wrapper">
-    <v-app-bar-title class="cursor-pointer" @click="router.push({ path: '/' })">
-      <img src="@/assets/images/logo.svg" height="60" />
-    </v-app-bar-title>
-
-    <template v-slot:append>
-      <v-card variant="flat" class="mx-auto d-flex align-center" color="transparent">
-        <template v-if="!mobile">
-          <v-toolbar-items class="mr-4">
-            <v-btn
-              class="cursor-pointer"
-              v-for="(item, index) in menu"
-              @click="router.push({ path: `${item.link}` })"
-              :class="isActive(item) ? 'text-blue-100' : ''"
-              >{{ item.name }}</v-btn
-            >
-          </v-toolbar-items>
-          <v-btn
-            color="secondary"
-            variant="flat"
-            height="53"
-            width="180"
-            class="mr-4 cursor-pointer rounded-lg"
-          >
-            Login
-          </v-btn>
-        </template>
-        <template v-if="mobile">
-          <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        </template>
-        <v-btn variant="tonal" icon size="x-small" color="white" class="mr-4 cursor-pointer">
-          <v-icon size="18">mdi-bell-outline</v-icon>
-        </v-btn>
-        <v-avatar class="cursor-pointer">
-          <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
-        </v-avatar>
-      </v-card>
+  <v-toolbar fixed flat height="100" class="header__wrapper">
+    <template v-slot:prepend>
+      <a class="cursor-pointer logo" @click="router.push({ path: '/' })"
+        ><img src="@/assets/images/logo.svg" height="60"
+      /></a>
     </template>
-  </v-app-bar>
+    <template v-slot:append>
+      <v-btn
+        v-if="!mobile"
+        class="cursor-pointer"
+        v-for="(item, index) in menu"
+        @click="router.push({ path: `${item.link}` })"
+        :class="isActive(item) ? 'text-blue-100' : ''"
+        >{{ item.name }}</v-btn
+      >
+      <v-btn color="secondary" variant="flat" class="cursor-pointer login-button"> Login </v-btn>
+
+      <template v-if="mobile">
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </template>
+    </template>
+  </v-toolbar>
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
-import { useRoute, useRouter } from 'vue-router';
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
-const { mobile } = useDisplay()
+const { mobile, mdAndDown } = useDisplay()
 const router = useRouter()
 const route = useRoute()
 

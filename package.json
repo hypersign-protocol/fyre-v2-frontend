@@ -12,6 +12,7 @@
     "@mdi/font": "7.0.96",
     "axios": "^1.6.7",
     "core-js": "^3.34.0",
+    "element-plus": "^2.6.1",
     "roboto-fontface": "*",
     "swiper": "^11.0.7",
     "vue": "^3.3.0",

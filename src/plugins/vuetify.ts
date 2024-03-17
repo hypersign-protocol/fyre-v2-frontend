@@ -36,7 +36,7 @@ export default createVuetify({
       style: [{ textTransform: 'none', letterSpacing: '0px', fontSize: '16px' }]
     },
     VMain: {
-      style: [{ paddingTop: '40px' }]
+      style: [{ paddingTop: '0px' }]
     },
     VContainer: {
       style: [{ padding: '0px' }]

@@ -1,12 +1,16 @@
 <template>
   <Banner />
   <Slider />
-  <v-container fluid class="background-left padding-global-y">
-    <h1 class="text-center py-15 font-55">Top Campaigns</h1>
-  </v-container>
   <v-container fluid class="background-left">
+    <h1 class="text-center py-15 font-55">Top Campaigns</h1>
     <v-container class="container-large">
       <Tabs />
+      <div
+        class="d-flex align-center justify-center my-5"
+        @click="router.push({ path: `/explore` })"
+      >
+        <v-btn variant="outlined" rounded>See more</v-btn>
+      </div>
     </v-container>
   </v-container>
   <v-container fluid class="background-left padding-global-y">
@@ -103,13 +107,18 @@
             </div>
           </v-col>
         </v-row>
-        <v-btn class="d-flex align-center my-5" variant="outlined" rounded>See more</v-btn>
+        <div
+          class="d-flex align-center justify-center my-5"
+          @click="router.push({ path: `/explore` })"
+        >
+          <v-btn variant="outlined" rounded>See more</v-btn>
+        </div>
       </div>
     </v-container>
   </v-container>
   <v-container fluid class="background-left">
     <h2 class="text-center font-48 pt-15 pb-3">How To Get Started</h2>
-    <p class="text-center width-800 mx-auto mb-10 font-16 text-gray-100">
+    <p class="text-center mx-auto mb-10 font-16 text-gray-100">
       With just a few clicks, you can access a variety of rewards and benefits. Browse and claim the
       rewards that interest you the most and start earning now!
     </p>
@@ -198,3 +207,7 @@
 
   <Faq />
 </template>
+<script lang="ts" setup>
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+const router = useRouter()
+</script>

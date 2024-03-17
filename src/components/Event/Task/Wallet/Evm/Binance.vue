@@ -9,7 +9,7 @@
         <span>
           <img src="@/assets/images/wallet.png" />
         </span>
-        <span class="font-18 lh-20 font-weight--regular text-white-100">{{ task.title }}</span>
+        <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 interface Task {
   _id: string
   type: string

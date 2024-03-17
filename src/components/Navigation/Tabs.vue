@@ -5,7 +5,7 @@
       slider-color="secondary"
       v-model="activeTab"
       align-tabs="left"
-      color="white"
+      class="nav--tabs"
     >
       <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{ item.name }}</v-tab>
     </v-tabs>
@@ -38,7 +38,7 @@
         </v-row>
         <Loader v-if="loading" />
         <v-row class="mt-5" v-if="!loading && events.length > 0">
-          <v-col v-for="(event, index) in events" cols="12" sm="6" md="6" lg="3">
+          <v-col v-for="(event, index) in events.slice(0, 8)" cols="12" sm="6" md="6" lg="3">
             <v-hover v-slot="{ isHovering, props }">
               <v-card class="community-card rounded-xl cursor-pointer" v-bind="props">
                 <v-img class="align-end text-white" :src="event.banner" cover> </v-img>
@@ -55,11 +55,11 @@
                 <v-card-actions class="d-flex align-center justify-space-between">
                   <div class="d-flex align-center">
                     <v-avatar class="cursor-pointer mr-2">
-                      <v-img alt="John" :src="event.communityDetail.avatar"></v-img>
+                      <v-img alt="John" :src="event.communityDetail?.avatar"></v-img>
                     </v-avatar>
-                    <p class="mr-2 font-14 lh-16">{{ event.communityDetail.communityName }}</p>
+                    <p class="mr-2 font-14 lh-16">{{ event.communityDetail?.communityName }}</p>
                     <img
-                      v-if="event.communityDetail.hasDomainVerified"
+                      v-if="event.communityDetail?.hasDomainVerified"
                       src="@/assets/images/verify.svg"
                       height="16"
                     />
@@ -105,7 +105,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const loading = ref(false)
 const activeTab = ref('coming_soon')
 const tabs = ref([
@@ -152,6 +152,6 @@ const viewEvent = (event) => {
 
 const loadEvents = async () => {
   loading.value = true
-  await eventStore.TAB_EVENTS(`?page=1&limit=10`)
+  await eventStore.TAB_EVENTS(`?page=2&limit=10`)
 }
 </script>
