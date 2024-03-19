@@ -1,11 +1,15 @@
 <template>
-  <v-overlay
+  <div
     v-if="loading && !errorMessage"
-    v-model="loading"
-    class="align-center justify-center fill-height"
+    class="height-500 d-flex align-center justify-center fill-height"
   >
-    <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
-  </v-overlay>
+    <v-progress-circular
+      class="d-flex align-center justify-center"
+      alicolor="primary"
+      size="64"
+      indeterminate
+    ></v-progress-circular>
+  </div>
 
   <template v-else-if="errorMessage">
     <v-container fluid class="background-left">
@@ -46,20 +50,20 @@
                 </v-avatar>
               </div>
             </div>
-            <div class="d-flex align-center flex-row">
-              <div class="d-flex flex-column">
-                <div class="d-flex flex-row align-center">
+            <div class="rating__container">
+              <div class="rating__review">
+                <div class="rating__item">
                   <p class="font-20 font-weight-bold">3.2</p>
                   <p class="font-10 ml-3 font-weight-medium">
                     Out of <br />
                     5 stars
                   </p>
                 </div>
-                <div class="d-flex">
+                <div class="rating__count">
                   <p class="font-10 text-yellow-100">Based on 25 reviews</p>
                 </div>
               </div>
-              <div class="text-center">
+              <div class="rating__star">
                 <v-rating
                   v-model="rating"
                   hover
@@ -101,7 +105,11 @@
               <v-divider vertical></v-divider>
             </div>
             <div class="event-time">
-              Ends In <Duration v-if="eventById.endDate" :eventDate="eventById.endDate" />
+              <p>{{ isEventHappeningTrue }}</p>
+              <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
+              <Duration
+                :eventDate="isEventHappeningTrue ? eventById.endDate : eventById.startDate"
+              />
             </div>
             <div class="event-status"><span class="text-green-100">Active</span></div>
           </v-card-text>
@@ -268,13 +276,14 @@ const tabs = ref([
 ])
 
 import { useEventStore } from '@/store/event.ts'
-
+import { isEventHappening } from '@/composables/event.ts'
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
 const route = useRoute()
 const router = useRouter()
 
 const loading = ref(true)
+const isEventHappeningTrue = ref(true)
 const dialog = ref(true)
 const errorMessage = ref('')
 
@@ -288,6 +297,14 @@ onMounted(async () => {
   loading.value = true
   loadEventTasks()
 })
+
+const checkEventStarted = () => {
+  if (isEventHappening(eventById.startDate, eventById.endDate)) {
+    isEventHappeningTrue.value = true
+  } else {
+    isEventHappeningTrue.value = false
+  }
+}
 
 watch(
   () => activeTab.value,
@@ -320,6 +337,8 @@ watch(
     console.log(`value ${value}`)
     setTimeout(() => {
       getTasks()
+
+      checkEventStarted()
     }, 1000)
   }
 )
