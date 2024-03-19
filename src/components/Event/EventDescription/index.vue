@@ -1,7 +1,7 @@
 <!-- EventDescriptionDialog.vue -->
 
 <template>
-  <v-dialog max-width="680" persistent>
+  <v-dialog class="fyre--modal" persistent>
     <v-card class="modal__card">
       <v-icon class="modal__close cursor-pointer" @click="$emit('close')">mdi-close</v-icon>
       <div class="modal__header">

@@ -14,3 +14,17 @@
     background: rgba(246, 246, 247, 0.08) !important;
   }
 }
+
+.explore-search {
+  width: 800px;
+  margin: auto;
+  @include media-respond(md) {
+    width: 600px;
+  }
+  @include media-respond(sm) {
+    width: 600px;
+  }
+  @include media-respond(xs) {
+    width: 100%;
+  }
+}

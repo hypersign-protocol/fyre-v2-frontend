@@ -1,40 +1,51 @@
 <template>
   <v-container fluid class="background-center">
-    <v-container fluid class="padding-global-y background-center">
-      <v-card color="transparent" max-width="800" class="mx-auto">
-        <v-text-field
-          hide-details
-          class="rounded-pill is-border-radius mb-8 bg-light-100"
-          placeholder="Search communities and events"
-          variant="solo"
-          bg-color="transparent"
-          height="70"
-        >
-          <template v-slot:append-inner>
-            <v-icon icon="mdi-magnify" />
-          </template>
-        </v-text-field>
-      </v-card>
-      <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
-        <v-tabs
-          selected-class="tab--active"
-          slider-color="secondary"
-          v-model="activeTab"
-          align-tabs="center"
-          class="nav--tabs"
-        >
-          <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{
-            item.name
-          }}</v-tab>
-        </v-tabs>
-      </v-card>
-    </v-container>
+    <div class="homepage-section padding-global-y background-center">
+      <div class="section-content">
+        <v-card color="transparent" class="mx-auto explore-search">
+          <v-text-field
+            hide-details
+            class="rounded-pill is-border-radius mb-8 bg-light-100"
+            placeholder="Search communities and events"
+            variant="solo"
+            bg-color="transparent"
+            height="70"
+          >
+            <template v-slot:append-inner>
+              <v-icon icon="mdi-magnify" />
+            </template>
+          </v-text-field>
+        </v-card>
+        <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
+          <v-tabs
+            selected-class="tab--active"
+            slider-color="secondary"
+            v-model="activeTab"
+            align-tabs="center"
+            class="nav--tabs"
+          >
+            <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{
+              item.name
+            }}</v-tab>
+          </v-tabs>
+        </v-card>
+      </div>
+    </div>
     <v-window v-model="activeTab">
       <v-window-item value="events">
         <v-container fluid class="background-center">
-          <h2 class="padding-global-y text-center font-48 pt-15 pb-3">Popular Events</h2>
-          <v-carousel height="400" show-arrows="hover" hide-delimiters>
-            <v-carousel-item v-for="(slide, i) in slides" :key="i">
+          <h2 class="homepage__section__title">Popular Events</h2>
+          <el-carousel
+            class="event__slider"
+            :interval="5000"
+            arrow="always"
+            indicator-position="outside"
+          >
+            <el-carousel-item
+              class="home-slider-item--wrap cursor-pointer"
+              v-for="(slide, i) in slides"
+              :key="i"
+            >
               <v-row>
                 <v-col
                   v-for="(event, index) in popular.slice(i * 4, (i + 1) * 4)"
@@ -45,58 +56,20 @@
                   xl="3"
                   lg="3"
                 >
-                  <v-card class="rounded-xl" @click="viewEvent(event)">
-                    <v-img class="align-end text-white" height="315" :src="event.banner" cover>
-                      <v-card color="rgb(2 2 2 / 92%)">
-                        <v-card-actions class="d-flex align-center justify-space-between">
-                          <div class="d-flex align-center">
-                            <v-avatar class="cursor-pointer mr-2">
-                              <v-img alt="John" :src="event.communityDetail?.avatar"></v-img>
-                            </v-avatar>
-                            <p class="mr-2 font-14 lh-16 text-white-100">
-                              {{ event.communityDetail?.communityName }}
-                            </p>
-                            <img
-                              v-if="event.communityDetail?.hasDomainVerified"
-                              src="@/assets/images/verify.svg"
-                              height="16"
-                            />
-                          </div>
-                          <div class="d-flex align-center">
-                            <p class="my-2 font-11 text-white-100">
-                              Ends in: <span> <Duration :eventDate="event.endDate" /></span>
-                            </p>
-                          </div>
-                        </v-card-actions>
-                        <v-card-text>
-                          <div class="text-white-100">{{ event.eventName }}</div>
-
-                          <p class="my-2 text-orange-100">
-                            {{ event.participantCount }} Participants
-                          </p>
-                          <div class="d-flex">
-                            <v-avatar size="20" class="mr-2">
-                              <v-img src="@/assets/images/gift.svg"></v-img>
-                            </v-avatar>
-                            <p class="text-white-100">500 USTD</p>
-                          </div>
-                        </v-card-text>
-                      </v-card>
-                    </v-img>
-                  </v-card>
+                  <ExploreCard :eventData="event" />
                 </v-col>
               </v-row>
-            </v-carousel-item>
-          </v-carousel>
+            </el-carousel-item>
+          </el-carousel>
         </v-container>
         <v-container class="container-large">
           <Tabs class="padding-global-y" />
         </v-container>
       </v-window-item>
       <v-window-item value="communities">
-        <v-container>
-          <h2 class="text-center font-48 pt-15 pb-3">Popular Communities</h2>
-          <div class="padding-global-y background-center">
+        <v-container fluid class="background-center">
+          <h2 class="homepage__section__title">Popular Communities</h2>
+          <v-container>
             <v-row>
               <v-col
                 cols="12"
@@ -150,8 +123,9 @@
                 </v-card>
               </v-col>
             </v-row>
-          </div>
+          </v-container>
         </v-container>
+
         <v-container class="container-large">
           <div class="padding-global-y">
             <h2 class="text-center font-48">All Communities</h2>
@@ -235,7 +209,7 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const activeTab = ref('events')
-
+import { isEventHappening } from '@/composables/event.ts'
 const slides = ref(['First', 'Second'])
 const items = ref([
   {
