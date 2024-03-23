@@ -27,7 +27,6 @@ declare module 'vue' {
     Follow: typeof import('./src/components/Event/Task/Social/Twitter/Follow.vue')['default']
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     FyreXp: typeof import('./src/components/Event/Task/CollectInput/FyreXp.vue')['default']
-    Hyperersign: typeof import('./src/components/Event/Task/TokenHolding/Cosmos/Hyperersign.vue')['default']
     Hypersign: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Hypersign.vue')['default']
     Join: typeof import('./src/components/Event/Task/Social/Discord/Join.vue')['default']
     Like: typeof import('./src/components/Event/Task/Social/Twitter/Like.vue')['default']
