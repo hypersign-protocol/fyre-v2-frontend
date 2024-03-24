@@ -63,7 +63,9 @@
           </el-carousel>
         </v-container>
         <v-container class="container-large">
-          <Tabs class="padding-global-y" />
+          <div class="homepage-section">
+            <Tabs class="padding-global-y" />
+          </div>
         </v-container>
       </v-window-item>
       <v-window-item value="communities">
