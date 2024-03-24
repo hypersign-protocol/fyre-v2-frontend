@@ -101,15 +101,15 @@
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
               </div>
-              <span class="count">{{ eventById.participantCount }}</span>
+              <span class="count">{{ eventById.participantCount }}+  </span>
               <v-divider vertical></v-divider>
             </div>
             <div class="event-time">
-              <p>{{ isEventHappeningTrue }}</p>
               <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
               <Duration
                 :eventDate="isEventHappeningTrue ? eventById.endDate : eventById.startDate"
               />
+              <!-- <span class="text-green-100 padding-left-100">Active</span> -->
             </div>
             <div class="event-status"><span class="text-green-100">Active</span></div>
           </v-card-text>
@@ -299,7 +299,10 @@ onMounted(async () => {
 })
 
 const checkEventStarted = () => {
-  if (isEventHappening(eventById.startDate, eventById.endDate)) {
+
+  const x = isEventHappening(eventById.value.startDate, eventById.value.endDate)
+
+  if (x) {
     isEventHappeningTrue.value = true
   } else {
     isEventHappeningTrue.value = false
