@@ -38,23 +38,23 @@
           <el-carousel
             class="event__slider"
             :interval="5000"
-            arrow="always"
+            arrow="never"
             indicator-position="outside"
           >
             <el-carousel-item
               class="home-slider-item--wrap cursor-pointer"
-              v-for="(slide, i) in slides"
+              v-for="(popular, i) in paginatedpopular"
               :key="i"
             >
               <v-row>
                 <v-col
-                  v-for="(event, index) in popular.slice(i * 4, (i + 1) * 4)"
+                  v-for="(event, index) in popular"
                   :key="index"
-                  cols="12"
-                  sm="6"
-                  md="6"
-                  xl="3"
-                  lg="3"
+                  cols="4"
+                  sm="4"
+                  md="4"
+                  xl="4"
+                  lg="4"
                 >
                   <ExploreCard :eventData="event" />
                 </v-col>
@@ -212,6 +212,7 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const activeTab = ref('events')
 import { isEventHappening } from '@/composables/event.ts'
+import paginate from '@/utils/paginate'
 const slides = ref(['First', 'Second'])
 const items = ref([
   {
@@ -247,11 +248,12 @@ const router = useRouter()
 
 const loading = ref(false)
 
-const popular = computed(() => eventStore.getPopularEvents)
+const popularRaw = computed(() => eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
+const paginatedpopular = paginate(popularRaw.value,3)
 
 watch(
-  () => popular.value,
+  () => popularRaw.value,
   (value: any) => {
     setTimeout(() => {
       loading.value = false
@@ -281,4 +283,6 @@ onMounted(async () => {
   await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
   await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
 })
+debugger;
+
 </script>
