@@ -1,8 +1,9 @@
 <template>
   <v-container fluid class="background-center">
-    <div class="homepage-section padding-global-y background-center">
+    <!-- <div class="homepage-section padding-global-y background-center"> -->
+    <div class="background-center">
       <div class="section-content">
-        <v-card color="transparent" class="mx-auto explore-search">
+        <!-- <v-card color="transparent" class="mx-auto explore-search">
           <v-text-field
             hide-details
             class="rounded-pill is-border-radius mb-8 bg-light-100"
@@ -15,7 +16,7 @@
               <v-icon icon="mdi-magnify" />
             </template>
           </v-text-field>
-        </v-card>
+        </v-card> -->
         <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
           <v-tabs
             selected-class="tab--active"
@@ -35,32 +36,34 @@
       <v-window-item value="events">
         <v-container fluid class="background-center">
           <h2 class="homepage__section__title">Popular Events</h2>
-          <el-carousel
-            class="event__slider"
-            :interval="5000"
-            arrow="never"
-            indicator-position="outside"
-          >
-            <el-carousel-item
-              class="home-slider-item--wrap cursor-pointer"
-              v-for="(popular, i) in paginatedpopular"
-              :key="i"
+          <v-container>
+            <el-carousel
+              class="event__slider"
+              :interval="5000"
+              arrow="never"
+              indicator-position="outside"
             >
-              <v-row>
-                <v-col
-                  v-for="(event, index) in popular"
-                  :key="index"
-                  cols="4"
-                  sm="4"
-                  md="4"
-                  xl="4"
-                  lg="4"
-                >
-                  <ExploreCard :eventData="event" />
-                </v-col>
-              </v-row>
-            </el-carousel-item>
-          </el-carousel>
+              <el-carousel-item
+                class="home-slider-item--wrap cursor-pointer"
+                v-for="(popular, i) in paginatedPopular"
+                :key="i"
+              >
+                <v-row>
+                  <v-col
+                    v-for="(event, index) in popular"
+                    :key="index"
+                    cols="4"
+                    sm="4"
+                    md="4"
+                    xl="4"
+                    lg="4"
+                  >
+                    <ExploreCard :eventData="event" />
+                  </v-col>
+                </v-row>
+              </el-carousel-item>
+            </el-carousel>
+          </v-container>
         </v-container>
         <v-container class="container-large">
           <div class="homepage-section">
@@ -131,7 +134,8 @@
         <v-container class="container-large">
           <div class="padding-global-y">
             <h2 class="text-center font-48">All Communities</h2>
-            <v-row class="py-4">
+            <v-container>
+              <v-row class="py-4">
               <v-col>
                 <v-text-field
                   hide-details
@@ -162,7 +166,6 @@
                 </div>
               </v-col>
             </v-row>
-
             <v-row>
               <v-col
                 cols="12"
@@ -202,6 +205,7 @@
                 </v-card>
               </v-col>
             </v-row>
+          </v-container>
           </div>
         </v-container>
       </v-window-item>
@@ -248,15 +252,16 @@ const router = useRouter()
 
 const loading = ref(false)
 
-const popularRaw = computed(() => eventStore.getPopularEvents)
+const popularRaw = computed(() =>  eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
-const paginatedpopular = paginate(popularRaw.value,3)
+let paginatedPopular = paginate(popularRaw.value,3)
 
 watch(
   () => popularRaw.value,
   (value: any) => {
     setTimeout(() => {
       loading.value = false
+      paginatedPopular = paginate(popularRaw.value,3)
     }, 1000)
   }
 )
@@ -283,6 +288,4 @@ onMounted(async () => {
   await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
   await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
 })
-debugger;
-
 </script>
