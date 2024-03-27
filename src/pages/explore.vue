@@ -285,7 +285,7 @@ const viewEvent = (event) => {
 
 onMounted(async () => {
   loading.value = true
-  await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
-  await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
+  await eventStore.POPULAR_EVENTS(`?filter=popular&page=2&limit=10`)
+  await communityStore.POPULAR_COMMUNITIES(`?filter=popular&page=1&limit=10`)
 })
 </script>

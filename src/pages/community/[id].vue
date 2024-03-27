@@ -9,7 +9,7 @@
           <div class="logo--wrapper">
             <div class="d-flex">
               <div class="logo">
-                <v-avatar size="100">
+                <v-avatar size="100" vif="communityById">
                   <v-img :src="communityById.avatar"></v-img>
                 </v-avatar>
                 <img
