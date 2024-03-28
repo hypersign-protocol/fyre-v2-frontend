@@ -2,7 +2,7 @@
   <v-card class="event-card rounded-xl cursor-pointer" @click="viewEvent(eventData)">
     <v-img class="align-end text-white" height="200" :src="eventData.banner" cover> </v-img>
     <v-card-text class="card__body">
-      <v-card-title class="px-0 ffont-16">{{ eventData.eventName }}</v-card-title>
+      <v-card-title class="px-0 font-16">{{ eventData.eventName }}</v-card-title>
       <p class="my-2 font-12">
         <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
         <Duration :eventDate="isEventHappeningTrue ? eventData.endDate : eventData.startDate" />

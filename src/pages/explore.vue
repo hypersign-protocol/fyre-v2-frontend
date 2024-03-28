@@ -36,34 +36,36 @@
       <v-window-item value="events">
         <v-container fluid class="background-center">
           <h2 class="homepage__section__title">Popular Events</h2>
-          <v-container>
-            <el-carousel
-              class="event__slider"
-              :interval="5000"
-              arrow="never"
-              indicator-position="outside"
-            >
-              <el-carousel-item
-                class="home-slider-item--wrap cursor-pointer"
-                v-for="(popular, i) in paginatedPopular"
-                :key="i"
+          <div class="homepage-section">
+            <div class="section-content">
+              <el-carousel
+                class="event__slider"
+                :interval="5000"
+                arrow="never"
+                indicator-position="outside"
               >
-                <v-row>
-                  <v-col
-                    v-for="(event, index) in popular"
-                    :key="index"
-                    cols="4"
-                    sm="4"
-                    md="4"
-                    xl="4"
-                    lg="4"
-                  >
-                    <ExploreCard :eventData="event" />
-                  </v-col>
-                </v-row>
-              </el-carousel-item>
-            </el-carousel>
-          </v-container>
+                <el-carousel-item
+                  class="home-slider-item--wrap cursor-pointer"
+                  v-for="(popular, i) in paginatedPopular"
+                  :key="i"
+                >
+                  <v-row>
+                    <v-col
+                      v-for="(event, index) in popular"
+                      :key="index"
+                      cols="4"
+                      sm="4"
+                      md="4"
+                      xl="3"
+                      lg="3"
+                    >
+                      <ExploreCard :eventData="event" />
+                    </v-col>
+                  </v-row>
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </div>
         </v-container>
         <div class="homepage-section padding-global-y">
           <div class="section-content">
@@ -95,8 +97,9 @@
                       <v-img :src="event.avatar"></v-img>
                     </v-avatar>
                   </v-card-title>
-
-                  <p class="font-28 font-weight-bold mb-4">{{ event.communityName }}</p>
+                  <v-card-title class="px-0 font-28 text-white-100 font-weight-bold">{{
+                    event.communityName
+                  }}</v-card-title>
                   <p class="font-12 font-weight-regular mb-4">{{ event.description }}</p>
                   <div class="d-flex align-center justify-center py-4">
                     <img
@@ -182,7 +185,9 @@
                   <v-avatar size="74" class="my-4">
                     <v-img :src="event.avatar"></v-img>
                   </v-avatar>
-                  <p class="font-28 font-weight-bold mb-4">{{ event.communityName }}</p>
+                  <v-card-title class="px-0 font-28 text-white-100 font-weight-bold">{{
+                    event.communityName
+                  }}</v-card-title>
                   <div class="d-flex align-center justify-center py-4">
                     <img class="mr-4" size="16" src="@/assets/images/telegram_out.svg" />
                     <img class="mr-4" size="16" src="@/assets/images/twitter_out.svg" />
@@ -238,14 +243,14 @@ const loading = ref(false)
 
 const popularRaw = computed(() => eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
-let paginatedPopular = paginate(popularRaw.value, 3)
+let paginatedPopular = paginate(popularRaw.value, 4)
 
 watch(
   () => popularRaw.value,
   (value: any) => {
     setTimeout(() => {
       loading.value = false
-      paginatedPopular = paginate(popularRaw.value, 3)
+      paginatedPopular = paginate(popularRaw.value, 4)
     }, 1000)
   }
 )
