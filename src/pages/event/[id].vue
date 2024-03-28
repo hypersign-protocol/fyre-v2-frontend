@@ -101,7 +101,7 @@
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
                 <img class="ml-n3" src="@/assets/images/avatar01.png" height="28" />
               </div>
-              <span class="count">{{ eventById.participantCount }}+  </span>
+              <span class="count">{{ eventById.participantCount }}+ </span>
               <v-divider vertical></v-divider>
             </div>
             <div class="event-time">
@@ -299,7 +299,6 @@ onMounted(async () => {
 })
 
 const checkEventStarted = () => {
-
   const x = isEventHappening(eventById.value.startDate, eventById.value.endDate)
 
   if (x) {
@@ -318,8 +317,6 @@ watch(
   () => eventErr.value,
   (value: any) => {
     loading.value = false
-    console.log(value.success)
-    console.log(value.error.details)
     errorMessage.value = value.error.details[0]
   }
 )
@@ -340,7 +337,6 @@ watch(
     console.log(`value ${value}`)
     setTimeout(() => {
       getTasks()
-
       checkEventStarted()
     }, 1000)
   }

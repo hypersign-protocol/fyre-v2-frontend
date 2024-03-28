@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="background-center">
     <!-- <div class="homepage-section padding-global-y background-center"> -->
-    <div class="background-center">
+    <div class="homepage-section background-center">
       <div class="section-content">
         <!-- <v-card color="transparent" class="mx-auto explore-search">
           <v-text-field
@@ -65,11 +65,11 @@
             </el-carousel>
           </v-container>
         </v-container>
-        <v-container class="container-large">
-          <div class="homepage-section">
-            <Tabs class="padding-global-y" />
+        <div class="homepage-section padding-global-y">
+          <div class="section-content">
+            <Tabs />
           </div>
-        </v-container>
+        </div>
       </v-window-item>
       <v-window-item value="communities">
         <v-container fluid class="background-center">
@@ -131,11 +131,10 @@
           </v-container>
         </v-container>
 
-        <v-container class="container-large">
-          <div class="padding-global-y">
+        <div class="homepage-section padding-global-y">
+          <div class="section-content">
             <h2 class="text-center font-48">All Communities</h2>
-            <v-container>
-              <v-row class="py-4">
+            <v-row class="py-4">
               <v-col>
                 <v-text-field
                   hide-details
@@ -205,9 +204,8 @@
                 </v-card>
               </v-col>
             </v-row>
-          </v-container>
           </div>
-        </v-container>
+        </div>
       </v-window-item>
     </v-window>
   </v-container>
@@ -217,21 +215,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 const activeTab = ref('events')
 import { isEventHappening } from '@/composables/event.ts'
 import paginate from '@/utils/paginate'
-const slides = ref(['First', 'Second'])
-const items = ref([
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-  }
-])
+
 const tabs = ref([
   {
     name: 'Events',
@@ -252,16 +236,16 @@ const router = useRouter()
 
 const loading = ref(false)
 
-const popularRaw = computed(() =>  eventStore.getPopularEvents)
+const popularRaw = computed(() => eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
-let paginatedPopular = paginate(popularRaw.value,3)
+let paginatedPopular = paginate(popularRaw.value, 3)
 
 watch(
   () => popularRaw.value,
   (value: any) => {
     setTimeout(() => {
       loading.value = false
-      paginatedPopular = paginate(popularRaw.value,3)
+      paginatedPopular = paginate(popularRaw.value, 3)
     }, 1000)
   }
 )

@@ -1,8 +1,8 @@
 <template>
   <v-card class="event-card rounded-xl cursor-pointer" @click="viewEvent(eventData)">
-    <v-img class="align-end text-white" :src="eventData.banner" cover height="188"> </v-img>
+    <v-img class="align-end text-white" height="200" :src="eventData.banner" cover> </v-img>
     <v-card-text class="card__body">
-      <div>{{ eventData.eventName }}</div>
+      <v-card-title class="px-0 ffont-16">{{ eventData.eventName }}</v-card-title>
       <p class="my-2 font-12">
         <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
         <Duration :eventDate="isEventHappeningTrue ? eventData.endDate : eventData.startDate" />
@@ -12,6 +12,11 @@
         <v-chip size="small" label class="green--chip"> 500 USTD </v-chip>
       </div>
       <p class="my-2">{{ eventData.participantCount }} Participants</p>
+      <div class="d-flex align-center mb-2">
+        <v-chip class="tag__chip" size="x-small" v-for="(item, index) in eventData.tags">{{
+          item
+        }}</v-chip>
+      </div>
     </v-card-text>
     <div class="card__footer">
       <v-divider></v-divider>
