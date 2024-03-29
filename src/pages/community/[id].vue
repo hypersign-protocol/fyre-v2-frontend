@@ -8,7 +8,7 @@
     ></v-progress-circular>
   </div>
   <template v-if="!loading">
-    <v-container fluid class="background-left pt-8">
+    <v-container fluid class="background-left">
       <div class="w-100 community-banner">
         <img :src="communityById.banner" />
       </div>
