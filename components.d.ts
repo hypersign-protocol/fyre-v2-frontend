@@ -14,6 +14,7 @@ declare module 'vue' {
     Card: typeof import('./src/components/Event/Card/index.vue')['default']
     CommunityCard: typeof import('./src/components/CommunityCard/index.vue')['default']
     Cosmos: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Cosmos.vue')['default']
+    DeleteModal: typeof import('./src/components/User/DeleteModal.vue')['default']
     DexLpProvision: typeof import('./src/components/Event/Task/Osmosis/DexLpProvision.vue')['default']
     DexTradingVolume: typeof import('./src/components/Event/Task/Osmosis/DexTradingVolume.vue')['default']
     DexTxnCount: typeof import('./src/components/Event/Task/Osmosis/DexTxnCount.vue')['default']
@@ -39,6 +40,7 @@ declare module 'vue' {
     Omniflex: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Omniflex.vue')['default']
     Osmosis: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Osmosis.vue')['default']
     Polygon: typeof import('./src/components/Event/Task/CollectWallet/Evm/Polygon.vue')['default']
+    ProfileSetting: typeof import('./src/components/User/ProfileSetting.vue')['default']
     PullRequest: typeof import('./src/components/Event/Task/Social/Github/PullRequest.vue')['default']
     Quiz: typeof import('./src/components/Event/Task/CollectInput/Quiz.vue')['default']
     Retweet: typeof import('./src/components/Event/Task/Social/Twitter/Retweet.vue')['default']
@@ -47,6 +49,7 @@ declare module 'vue' {
     Secret: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Secret.vue')['default']
     SlickSlider: typeof import('./src/components/Banner/slick-slider.vue')['default']
     Slider: typeof import('./src/components/Banner/slider.vue')['default']
+    SocialAccount: typeof import('./src/components/User/SocialAccount.vue')['default']
     Stargraze: typeof import('./src/components/Event/Task/CollectWallet/Cosmos/Stargraze.vue')['default']
     SupportedChain: typeof import('./src/components/SupportedChain/index.vue')['default']
     Tabs: typeof import('./src/components/Navigation/Tabs.vue')['default']
@@ -55,5 +58,6 @@ declare module 'vue' {
     TxnCount: typeof import('./src/components/Event/Task/Osmosis/TxnCount.vue')['default']
     Url: typeof import('./src/components/Event/Task/CollectInput/Url.vue')['default']
     VisitUrl: typeof import('./src/components/Event/Task/CollectInput/VisitUrl.vue')['default']
+    WalletAddress: typeof import('./src/components/User/WalletAddress.vue')['default']
   }
 }

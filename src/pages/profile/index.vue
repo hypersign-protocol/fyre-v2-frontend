@@ -143,7 +143,9 @@
                       />
                     </svg>
                   </a>
-                  <a class="edit--icon" href=""><img src="@/assets/images/user_edit.svg" /></a>
+                  <a class="edit--icon cursor-pointer" @click="router.push({ path: '/profile/1' })"
+                    ><img src="@/assets/images/user_edit.svg"
+                  /></a>
                 </div>
               </v-card-text>
               <v-card-text class="profile__container">
@@ -362,7 +364,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useUserStore } from '@/store/user.ts'
 import { storeToRefs } from 'pinia'
 const store = useUserStore()
-
+const router = useRouter()
 const loading = ref(false)
 const eventData = computed(() => store.getUserEvents)
 const communityData = computed(() => store.getUserCommunities)

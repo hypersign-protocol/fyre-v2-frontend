@@ -339,3 +339,165 @@
     }
   }
 }
+
+.edit__profile__menu {
+  ul {
+    list-style: none;
+    li {
+      padding-bottom: 30px;
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+
+      &:not(:first-child) {
+        font-size: 16px;
+        font-weight: bold;
+        color: #adb9c7;
+        span {
+          margin-left: 50px;
+        }
+        &.active {
+          color: white;
+        }
+      }
+      span {
+        margin-left: 30px;
+      }
+    }
+  }
+}
+
+.profile__setting__container {
+  .title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .v-avatar {
+    border-radius: 10px;
+    border: 1px dashed #adb9c7;
+    width: 150px !important;
+    height: 150px !important;
+    padding: 10px;
+    margin-bottom: 50px;
+  }
+
+  label {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  .v-input {
+    .v-field {
+      background: black !important;
+      border-radius: 10px !important;
+      border: 1px solid #353a4b;
+    }
+  }
+
+  .button__wrapper {
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    .v-btn {
+      height: 40px;
+      border-radius: 8px !important;
+    }
+    .v-btn:nth-of-type(1) {
+      width: 30%;
+      margin-right: 5%;
+    }
+    .v-btn:nth-of-type(2) {
+      width: 65%;
+    }
+  }
+}
+.delete__modal {
+  padding: 20px;
+  .modal__content {
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+  }
+  .button__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
+    .v-btn {
+      height: 40px;
+      border-radius: 8px !important;
+    }
+    .v-btn:nth-of-type(1) {
+      width: 30%;
+      margin-right: 5%;
+    }
+    .v-btn:nth-of-type(2) {
+      width: 30%;
+    }
+  }
+}
+
+.wallet__address__container {
+  display: flex;
+  flex-direction: column;
+  background: rgb(255 255 255 / 8%);
+  border-radius: 10px;
+  padding: 30px 20px;
+
+  &.address {
+    border: 2px solid #adb9c7;
+    position: relative;
+    .tag {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #f6f6f7;
+      font-size: 10px;
+      line-height: 12px;
+      color: #2656d6 !important;
+      padding: 5px;
+      border-top-right-radius: 8px;
+      border-bottom-left-radius: 8px;
+      font-weight: bold;
+    }
+  }
+  .wallet__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    p {
+      font-size: 16px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .wallet__meta {
+      display: flex;
+      align-items: center;
+      img {
+        width: 42px;
+        height: 42px;
+      }
+    }
+  }
+  .wallet__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    .v-btn {
+      width: 100%;
+      font-size: 12px !important;
+      color: white;
+    }
+
+    .btn-copy {
+      background: rgb(255 255 255 / 8%);
+      border-radius: 10px;
+      color: white;
+    }
+  }
+}
