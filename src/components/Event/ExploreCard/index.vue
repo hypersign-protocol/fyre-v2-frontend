@@ -22,12 +22,7 @@
           <v-card-title class="pa-0 font-16 text-white-100">{{ eventData.eventName }}</v-card-title>
           <div class="d-flex align-center justify-space-between">
             <p class="my-2 text-orange-100">{{ eventData.participantCount }} Participants</p>
-            <p class="my-2 font-11 text-white-100">
-              <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
-              <Duration
-                :eventDate="isEventHappeningTrue ? eventData.endDate : eventData.startDate"
-              />
-            </p>
+            <EventStatus class="font-12" :eventData="eventData" />
           </div>
           <div class="d-flex">
             <v-avatar size="20" class="mr-2">

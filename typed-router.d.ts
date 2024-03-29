@@ -45,6 +45,7 @@ declare module 'vue-router/auto/routes' {
     '/community/[id]': RouteRecordInfo<'/community/[id]', '/community/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/event/[id]': RouteRecordInfo<'/event/[id]', '/event/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/explore': RouteRecordInfo<'/explore', '/explore', Record<never, never>, Record<never, never>>,
+    '/profile/': RouteRecordInfo<'/profile/', '/profile', Record<never, never>, Record<never, never>>,
   }
 }
 

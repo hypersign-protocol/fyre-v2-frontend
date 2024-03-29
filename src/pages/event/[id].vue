@@ -105,11 +105,7 @@
               <v-divider vertical></v-divider>
             </div>
             <div class="event-time">
-              <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
-              <Duration
-                :eventDate="isEventHappeningTrue ? eventById.endDate : eventById.startDate"
-              />
-              <!-- <span class="text-green-100 padding-left-100">Active</span> -->
+              <EventStatus :eventData="eventById" />
             </div>
             <div class="event-status"><span class="text-green-100">Active</span></div>
           </v-card-text>

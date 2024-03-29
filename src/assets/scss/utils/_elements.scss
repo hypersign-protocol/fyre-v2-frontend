@@ -28,3 +28,13 @@
     width: 100%;
   }
 }
+
+.menu__wrap {
+  border-radius: 10px !important;
+  background: black !important;
+  border: 1px solid #3a3a3a !important;
+}
+
+.v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+  width: 10px !important;
+}

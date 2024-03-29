@@ -2,11 +2,8 @@
   <v-card class="event-card rounded-xl cursor-pointer" @click="viewEvent(eventData)">
     <v-img class="align-end text-white" height="200" :src="eventData.banner" cover> </v-img>
     <v-card-text class="card__body">
-      <v-card-title class="px-0 font-16">{{ eventData.eventName }}</v-card-title>
-      <p class="my-2 font-12">
-        <span class="mr-2">{{ isEventHappeningTrue ? 'Ends In' : 'Starts In' }}:</span>
-        <Duration :eventDate="isEventHappeningTrue ? eventData.endDate : eventData.startDate" />
-      </p>
+      <v-card-title class="pa-0 font-16">{{ eventData.eventName }}</v-card-title>
+      <EventStatus class="font-12" :eventData="eventData" />
       <div class="d-flex align-center">
         <v-chip size="small" label class="orange--chip mr-2"> 10 EXP </v-chip>
         <v-chip size="small" label class="green--chip"> 500 USTD </v-chip>
@@ -43,24 +40,9 @@
 </template>
 <script lang="ts" setup>
 import { onMounted } from 'vue'
-import { isEventHappening } from '@/composables/event.ts'
 
 const { eventData } = defineProps(['eventData'])
 const viewEvent = (event) => {
   window.location.href = `/event/${eventData._id}`
-}
-
-const isEventHappeningTrue = ref(true)
-
-onMounted(() => {
-  checkEventStarted()
-})
-
-const checkEventStarted = () => {
-  if (isEventHappening(eventData.startDate, eventData.endDate)) {
-    isEventHappeningTrue.value = true
-  } else {
-    isEventHappeningTrue.value = false
-  }
 }
 </script>

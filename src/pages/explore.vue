@@ -175,38 +175,10 @@
                 md="4"
                 xl="3"
                 lg="3"
-                v-for="(event, index) in communities"
+                v-for="(community, index) in communities"
                 :key="index"
               >
-                <v-card
-                  class="community-card rounded-xl cursor-pointer text-center"
-                  @click="viewCommunity(event)"
-                >
-                  <v-avatar size="74" class="my-4">
-                    <v-img :src="event.avatar"></v-img>
-                  </v-avatar>
-                  <v-card-title class="px-0 font-28 text-white-100 font-weight-bold">{{
-                    event.communityName
-                  }}</v-card-title>
-                  <div class="d-flex align-center justify-center py-4">
-                    <img class="mr-4" size="16" src="@/assets/images/telegram_out.svg" />
-                    <img class="mr-4" size="16" src="@/assets/images/twitter_out.svg" />
-                    <img class="mr-4" size="16" src="@/assets/images/discord_out.svg" />
-                  </div>
-                  <v-divider></v-divider>
-                  <v-card-actions>
-                    <div class="d-flex align-center justify-space-between w-100 px-8">
-                      <div class="d-flex flex-column">
-                        <p class="font-12 font-weight-regular">Followers</p>
-                        <p class="font-14 font-weight-bold mt-2">{{ event.followerCount }}</p>
-                      </div>
-                      <div class="d-flex flex-column">
-                        <p class="font-12 font-weight-regular">Participants</p>
-                        <p class="font-14 font-weight-bold mt-2">{{ event.participantCount }}</p>
-                      </div>
-                    </div>
-                  </v-card-actions>
-                </v-card>
+                <CommunityCard :communityData="community" />
               </v-col>
             </v-row>
           </div>
