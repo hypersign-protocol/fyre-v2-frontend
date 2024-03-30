@@ -77,7 +77,7 @@ watch(
 )
 
 const handleTwitterLogin = () => {
-  const url = `https://twitter.com/'${props.task.options.cta.visitUrl}'?ref_src=twsrc%5Etfw`
+  const url = `https://twitter.com/${props.task.options.cta.visitUrl}?ref_src=twsrc%5Etfw`
   console.log(url)
   webAuth.popup.authorize(
     {

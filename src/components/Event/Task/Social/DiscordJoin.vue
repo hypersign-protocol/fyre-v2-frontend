@@ -57,8 +57,18 @@ const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
+const socialAccessToken = ref(null)
 const discordId = ref(null)
 const discordUserName = ref(null)
+
+watch(
+  () => socialAccessToken.value,
+  (value: any) => {
+    console.log(value)
+    getUserInfo()
+  },
+  { deep: true }
+)
 
 watch(
   () => discordId.value,
@@ -82,26 +92,37 @@ watch(
   { deep: true }
 )
 
+const getUserInfo = () => {
+  webAuth.client.userInfo(socialAccessToken.value, async (err, user) => {
+    console.log(user)
+
+    discordId.value = user.sub.split('|')[2]
+    discordUserName.value = user.name
+  })
+}
+
 const authenticateWithDiscord = () => {
   webAuth.popup.authorize(
     {
       connection: 'discord',
       owp: true
     },
-    (err, authRes) => {
+    (err, response) => {
       console.log(err)
-      console.log(authRes)
+      console.log(response)
+      socialAccessToken.value = response.accessToken
     }
   )
 }
 
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
+    socialToken: socialAccessToken.value,
     eventId: props.task.eventId,
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: true
+      proof: props.task.options.proofConfig.proof
     }
   })
 }

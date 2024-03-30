@@ -9,32 +9,23 @@
         <span>
           <img src="@/assets/images/task/github.svg" />
         </span>
-        <span class="text text-white-100">{{ task.title }}</span>
+        <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand && !isTaskVerified">Verify</v-btn>
-        <v-btn variant="outlined" v-if="isTaskVerified">
+      <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
+        <v-btn v-if="!showExpand">Verify</v-btn>
+        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+      </div>
+      <div class="task__action" v-if="isTaskVerified">
+        <v-btn variant="outlined">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn
         >
-        <v-icon v-if="showExpand" class="cursor-pointer" color="white">mdi-close</v-icon>
       </div>
     </div>
-    <div class="task__body" v-if="showExpand">
-      <div class="task__input">
-        <v-text-field
-          class="rounded-xl"
-          variant="outlined"
-          hide-details="auto"
-          bg-color="transparent"
-          v-model="inputText"
-          :placeholder="task.options.userInput.collectUrl.label"
-          :disabled="isTaskVerified"
-        ></v-text-field>
-      </div>
-      <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction">Verify</v-btn>
+    <div class="task__body" v-if="showExpand && !isTaskVerified">
+      <div class="task__submit">
+        <v-btn @click="authenticateWithDiscord"> Join our Discord</v-btn>
       </div>
     </div>
   </div>
@@ -43,6 +34,9 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
+import { webAuth } from '@/composables/twitterAuth.ts'
+
 interface Task {
   _id: string
   type: string
@@ -51,12 +45,35 @@ interface Task {
 
 const props = defineProps<{
   task: Task
+  communityId: string
 }>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+
+const socialAccessToken = ref(null)
+const discordId = ref(null)
+const discordUserName = ref(null)
+
+watch(
+  () => socialAccessToken.value,
+  (value: any) => {
+    console.log(value)
+    getUserInfo()
+  },
+  { deep: true }
+)
+
+watch(
+  () => discordId.value,
+  (value: any) => {
+    console.log(value)
+    performAction()
+  },
+  { deep: true }
+)
 
 watch(
   () => performResult.value,
@@ -71,15 +88,37 @@ watch(
   { deep: true }
 )
 
+const getUserInfo = () => {
+  webAuth.client.userInfo(socialAccessToken.value, async (err, user) => {
+    console.log(user)
+
+    discordId.value = user.sub.split('|')[2]
+    discordUserName.value = user.name
+  })
+}
+
+const authenticateWithDiscord = () => {
+  webAuth.popup.authorize(
+    {
+      connection: 'discord',
+      owp: true
+    },
+    (err, response) => {
+      console.log(err)
+      console.log(response)
+      socialAccessToken.value = response.accessToken
+    }
+  )
+}
+
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
+    socialToken: socialAccessToken.value,
     eventId: props.task.eventId,
-    communityId: '65e43eca9a3b5d2bd597e43b',
+    communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: {
-        userUrlInput: inputText.value
-      }
+      proof: true
     }
   })
 }
