@@ -34,6 +34,9 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
+import { webAuth } from '@/composables/twitterAuth.ts'
+
 interface Task {
   _id: string
   type: string
@@ -50,6 +53,16 @@ const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
+const socialAccessToken = ref(null)
+watch(
+  () => socialAccessToken.value,
+  (value: any) => {
+    console.log(value)
+    performAction()
+  },
+  { deep: true }
+)
+
 watch(
   () => performResult.value,
   (value: any) => {
@@ -64,37 +77,29 @@ watch(
 )
 
 const handleTwitterLogin = () => {
-  const apiKey = 'NyjbZn2ssQR3bjy9IqR9KUbMj'
-  const callbackUrl = 'http://localhost:3002/api/v1/login/callback'
-
-  const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=VkJiZEgtTDhMWk0yU3BPUDFBSEk6MTpjaQ&redirect_uri=${callbackUrl}&scope=tweet.read%20users.read%20follows.read%20follows.write&state=state&code_challenge=1234785&code_challenge_method=plain`
-
-  const authWindow = window.open(twitterAuthUrl, '_blank', 'width=600,height=400')
-
-  window.addEventListener('message', (event) => {
-    if (event.origin === window.location.origin) {
-      const { oauthToken, oauthVerifier } = event.data
-
-      if (oauthToken && oauthVerifier) {
-        authWindow.close()
-        console.log('OAuth Token:', oauthToken)
-        console.log('OAuth Verifier:', oauthVerifier)
-      }
+  const url = `https://twitter.com/'${props.task.options.cta.visitUrl}'?ref_src=twsrc%5Etfw`
+  console.log(url)
+  webAuth.popup.authorize(
+    {
+      connection: 'twitter',
+      owp: true
+    },
+    (err, authRes) => {
+      console.log(err)
+      console.log(authRes)
     }
-  })
+  )
 }
 
 const performAction = async () => {
-  await store.TWITTER_OAUTH_REQUEST()
-  // await store.PERFORM_EVENT_TASK({
-  //   eventId: props.task.eventId,
-  //   communityId: props.communityId,
-  //   task: {
-  //     id: props.task._id,
-  //     proof: {
-  //       twitterHandle: props.task.options.cta.visitUrl
-  //     }
-  //   }
-  // })
+  await store.PERFORM_EVENT_TASK({
+    socialToken: socialAccessToken.value,
+    eventId: props.task.eventId,
+    communityId: props.communityId,
+    task: {
+      id: props.task._id,
+      proof: true
+    }
+  })
 }
 </script>

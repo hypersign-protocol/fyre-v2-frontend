@@ -1,6 +1,8 @@
 TOKEN_HOLDING_EVM_ETHEREUM
 TOKEN_HOLDING_EVM_POLYGON
 TOKEN_HOLDING_EVM_BINANCE
+
+
 TOKEN_HOLDING_COSMOS_AGORIC
 TOKEN_HOLDING_COSMOS_ARCHWAY
 TOKEN_HOLDING_COSMOS_NIBIRU
@@ -21,27 +23,27 @@ NFT_CW721_HOLDING_COSMOS_HYPERERSIGN
 NFT_CW721_HOLDING_COSMOS_OMNIFLEX
 NFT_CW721_HOLDING_COSMOS_STARGRAZE
 
-SOCIAL_TWITTER_FOLLOW  - Social/Twitter/Follow.vue
-SOCIAL_TWITTER_RETWEET -- Social/Twitter/Retweet.vue
-SOCIAL_TWITTER_LIKE -- Social/Twitter/Like.vue
+SOCIAL_TWITTER_FOLLOW
+SOCIAL_TWITTER_RETWEET
+SOCIAL_TWITTER_LIKE
 SOCIAL_TELEGRAM_JOIN
 SOCIAL_DISCORD_JOIN
 GITHUB_PULL_REQUEST
 SOCIAl_GITHUB_PULL_REQUEST
 
 
-COLLECT_INPUT_URL  --- CollectInput/url.vue 
+COLLECT_INPUT_URL 
 COLLECT_INPUT_QUIZ
 COLLECT_INPUT_TEXT
 COLLECT_INPUT_VISIT_URL
 COLLECT_INPUT_FYRE_XP
 
 
-COLLECT_WALLETADDRESS_EVM_ETHEREUM  -- CollectWallet/Evm/Ethemrem.vue
+COLLECT_WALLETADDRESS_EVM_ETHEREUM 
 COLLECT_WALLETADDRESS_EVM_POLYGON
 COLLECT_WALLETADDRESS_EVM_BINANCE
 
-COLLECT_WALLETADDRESS_COSMOS_AGORIC  -- CollectWallet/Cosmos/Ethemrem.vue
+COLLECT_WALLETADDRESS_COSMOS_AGORIC 
 COLLECT_WALLETADDRESS_COSMOS_ARCHWAY
 COLLECT_WALLETADDRESS_COSMOS_NIBIRU
 COLLECT_WALLETADDRESS_COSMOS_SECRET
@@ -52,7 +54,7 @@ COLLECT_WALLETADDRESS_COSMOS_STARGRAZE
 COLLECT_WALLETADDRESS_COSMOS_OSMOSIS
 
 
-STACKING_COSMOS_AGORIC  -- Stacking/Cosmos/Agoric
+STACKING_COSMOS_AGORIC
 STACKING_COSMOS_HYPERSIGN
 STACKING_COSMOS_ARCHWAY
 STACKING_COSMOS_NIBIRU
@@ -85,79 +87,7 @@ NATIVE_COIN_HOLDING_COSMOS_HYPERERSIGN
 NATIVE_COIN_HOLDING_COSMOS_COSMOS
 NATIVE_COIN_HOLDING_COSMOS_OMNIFLEX
 NATIVE_COIN_HOLDING_COSMOS_STARGRAZE
+
 NATIVE_COIN_HOLDING_EVM_ETHEREUM
 NATIVE_COIN_HOLDING_EVM_POLYGON
 NATIVE_COIN_HOLDING_EVM_BINANCE
-
-
-src/
-|_ components/
-   |_ Social/
-      |_ Twitter/
-         |_ Follow.vue
-         |_ Retweet.vue
-         |_ Like.vue
-      |_ Telegram/
-         |_ Join.vue
-      |_ Discord/
-         |_ Join.vue
-   |_ CollectInput/
-      |_ Url.vue
-      |_ Quiz.vue
-      |_ Text.vue
-      |_ VisitUrl.vue
-      |_ FyreXp.vue
-   |_ CollectWallet/
-      |_ Evm/
-         |_ Ethereum.vue
-         |_ Polygon.vue
-         |_ Binance.vue
-      |_ Cosmos/
-         |_ Agoric.vue
-         |_ Archway.vue
-         |_ Nibiru.vue
-         |_ Secret.vue
-         |_ Hyperersign.vue
-         |_ Cosmos.vue
-         |_ Omniflex.vue
-         |_ Stargraze.vue
-         |_ Osmosis.vue
-   |_ Stacking/
-      |_ Cosmos/
-         |_ Agoric.vue
-         |_ Hypersign.vue
-         |_ Archway.vue
-         |_ Nibiru.vue
-         |_ Secret.vue
-         |_ Cosmos.vue
-         |_ Omniflex.vue
-         |_ Stargraze.vue
-   |_ Osmosis/
-      |_ DexTradingVolume.vue
-      |_ LpProvision.vue
-      |_ TxnCount.vue
-   |_ TxnTracking/
-      |_ Cosmos/
-         |_ Agoric.vue
-         |_ Hypersign.vue
-         |_ Archway.vue
-         |_ Nibiru.vue
-         |_ Secret.vue
-         |_ Cosmos.vue
-         |_ Omniflex.vue
-         |_ Stargraze.vue
-         |_ Osmosis.vue
-   |_ NativeCoinHolding/
-      |_ Cosmos/
-         |_ Agoric.vue
-         |_ Archway.vue
-         |_ Nibiru.vue
-         |_ Secret.vue
-         |_ Hyperersign.vue
-         |_ Cosmos.vue
-         |_ Omniflex.vue
-         |_ Stargraze.vue
-      |_ Evm/
-         |_ Ethereum.vue
-         |_ Polygon.vue
-         |_ Binance.vue

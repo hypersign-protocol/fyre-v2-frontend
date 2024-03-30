@@ -7,14 +7,14 @@
     <div class="task__header">
       <div class="task__title">
         <span>
-          <img src="@/assets/images/task/collect-url.png" />
+          <img :src="getImage(task.type)" />
         </span>
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
         <v-btn v-if="!showExpand && !isTaskVerified">Verify</v-btn>
-        <v-btn variant="outlined" v-if="!showExpand && isTaskVerified">
+        <v-btn variant="outlined" v-if="isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn
         >
@@ -43,6 +43,9 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
+import { getImage } from '@/composables/event.ts'
+
 interface Task {
   _id: string
   type: string

@@ -235,6 +235,7 @@
       </div>
     </v-container>
     <EventDescription
+      v-if="eventById"
       @close="toggleDescription = false"
       v-model="toggleDescription"
       :description="eventById.description"
@@ -330,7 +331,6 @@ watch(
 watch(
   () => eventById.value,
   (value: any) => {
-    console.log(`value ${value}`)
     setTimeout(() => {
       getTasks()
       checkEventStarted()

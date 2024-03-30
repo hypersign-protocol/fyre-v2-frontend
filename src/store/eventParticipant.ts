@@ -37,7 +37,12 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
       try {
         const response: AxiosResponse<EventTask[]> = await axios.post(
           `/event-participants/perform-task`,
-          payload
+          payload,
+          {
+            headers: {
+              'x-hf-social-accesstoken': payload.socialToken
+            }
+          }
         )
 
         if (response.success) {

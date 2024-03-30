@@ -25,17 +25,17 @@
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__submit">
-        <v-btn :href="task.options.cta.visitUrl" target="_blank" @click="performAction"
-          >Retweet</v-btn
-        >
+        <v-btn @click="handleTwitterLogin"> Retweet URL</v-btn>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
+import { webAuth } from '@/composables/twitterAuth.ts'
 
 interface Task {
   _id: string
@@ -45,12 +45,23 @@ interface Task {
 
 const props = defineProps<{
   task: Task
+  communityId: string
 }>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+
+const socialAccessToken = ref(null)
+watch(
+  () => socialAccessToken.value,
+  (value: any) => {
+    console.log(value)
+    performAction()
+  },
+  { deep: true }
+)
 
 watch(
   () => performResult.value,
@@ -65,15 +76,29 @@ watch(
   { deep: true }
 )
 
+const handleTwitterLogin = () => {
+  const url = `https://twitter.com/intent/tweet?text=${props.task.options.cta.visitUrl}`
+  console.log(url)
+  webAuth.popup.authorize(
+    {
+      connection: 'twitter',
+      owp: true
+    },
+    (err, authRes) => {
+      console.log(err)
+      console.log(authRes)
+    }
+  )
+}
+
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
+    socialToken: socialAccessToken.value,
     eventId: props.task.eventId,
-    communityId: '65e43eca9a3b5d2bd597e43b',
+    communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: {
-        twitterHandle: ''
-      }
+      proof: true
     }
   })
 }

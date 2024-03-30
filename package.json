@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
+    "auth0-js": "^9.24.1",
     "axios": "^1.6.7",
     "core-js": "^3.34.0",
     "element-plus": "^2.6.1",
