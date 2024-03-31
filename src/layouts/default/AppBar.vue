@@ -18,7 +18,7 @@
         color="secondary"
         variant="flat"
         class="cursor-pointer login-button"
-        @click="login"
+        @click="options.showBwModal = true"
         v-if="!isUserLoggedIn"
       >
         Login
@@ -70,6 +70,7 @@
       </template>
     </template>
   </v-toolbar>
+  <BlockChainWallet :options="options" @userAuthSuccess="userAuthSuccess" />
 </template>
 
 <script lang="ts" setup>
@@ -79,6 +80,10 @@ import { useDisplay } from 'vuetify'
 const { mobile, mdAndDown } = useDisplay()
 const router = useRouter()
 const route = useRoute()
+
+const options = ref({
+  showBwModal: false
+})
 
 const isUserLoggedIn = computed(() => {
   return localStorage.getItem('userLoggedIn')
@@ -109,7 +114,8 @@ const menu = ref([
   }
 ])
 
-const login = () => {
+const userAuthSuccess = () => {
+  console.log('auth success')
   localStorage.setItem('userLoggedIn', true)
   location.reload()
 }

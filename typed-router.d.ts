@@ -47,6 +47,9 @@ declare module 'vue-router/auto/routes' {
     '/explore': RouteRecordInfo<'/explore', '/explore', Record<never, never>, Record<never, never>>,
     '/profile/': RouteRecordInfo<'/profile/', '/profile', Record<never, never>, Record<never, never>>,
     '/profile/[id]': RouteRecordInfo<'/profile/[id]', '/profile/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/rewards/': RouteRecordInfo<'/rewards/', '/rewards', Record<never, never>, Record<never, never>>,
+    '/rewards/flat20Modal': RouteRecordInfo<'/rewards/flat20Modal', '/rewards/flat20Modal', Record<never, never>, Record<never, never>>,
+    '/rewards/tenXpModal': RouteRecordInfo<'/rewards/tenXpModal', '/rewards/tenXpModal', Record<never, never>, Record<never, never>>,
   }
 }
 

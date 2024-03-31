@@ -1,0 +1,310 @@
+.bw3-modal {
+  color: white;
+  background: rgba(20, 20, 20, 0.8);
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  .grid-two-column {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 8px;
+    row-gap: 16px;
+    padding: 12px;
+    display: grid;
+  }
+
+  .header__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgb(255 255 255 / 7%);
+
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+      /*    color: color-mix(in srgb, white 30%, #141414);*/
+      color: white;
+    }
+
+    .close {
+      font-size: 16px;
+      font-weight: bold;
+      color: color-mix(in srgb, white 30%, #141414);
+
+      .el-icon {
+        width: 30px;
+        height: 30px;
+        color: white;
+
+        &:hover {
+          background: rgb(255 255 255 / 7%);
+          cursor: pointer;
+          border-radius: 10px;
+        }
+
+        svg {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  .main__wrapper {
+    display: grid;
+    padding: 40px;
+
+    .main__item {
+      display: flex;
+      background: #ebedf0;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      padding: 16px;
+      border-radius: 20px;
+      flex-direction: column;
+      text-align: center;
+
+      &:hover {
+        background: color-mix(in srgb, #3396ff 20%, transparent);
+        cursor: pointer;
+      }
+
+      .image__wrap {
+        height: 40px;
+        width: 40px;
+        border-radius: 100%;
+        padding: 2px;
+        background: #dcdfe6;
+        margin-bottom: 10px;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .content__wrap {
+        font-size: 16px;
+        font-weight: bolder;
+      }
+    }
+  }
+}
+
+.bw3-modal_extension__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(255 255 255 / 3%);
+  margin: auto;
+  border-radius: 80px;
+  padding: 4px 10px;
+
+  .extension__item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 4px 8px;
+    column-gap: 12px;
+    border-radius: 16px;
+
+    &.active {
+      background-color: rgb(255 255 255 / 7%);
+
+      .content__wrap {
+        color: white;
+      }
+    }
+
+    &:hover {
+      background-color: rgb(255 255 255 / 4%);
+      cursor: pointer;
+    }
+
+    .image__wrap {
+      width: 12px;
+      height: 12px;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        border-radius: inherit;
+      }
+    }
+
+    .content__wrap {
+      font-size: 14px;
+      letter-spacing: -0.48px;
+      font-weight: 600;
+      color: rgb(255 255 255 / 40%);
+    }
+  }
+}
+
+.bw3-modal_browser__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  text-align: center;
+
+  .image__wrap {
+    width: 100px;
+    height: 100px;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      border-radius: inherit;
+    }
+  }
+
+  .content__wrap {
+    font-size: 14px;
+    letter-spacing: -0.48px;
+    font-weight: 600;
+    color: white;
+    margin-top: 20px;
+  }
+}
+
+.bw3-modal_wallet__wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: clamp(360px, 540px, 80vh);
+  padding: 12px;
+  gap: 8px;
+
+  .wallet_item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 7px;
+    column-gap: 12px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.02);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+    }
+
+    &.active {
+      background-color: color-mix(in srgb, #3396ff 20%, transparent);
+
+      .content__wrap {
+        color: #3396ff;
+      }
+    }
+
+    .image__wrap {
+      width: 40px;
+      height: 40px;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        border-radius: inherit;
+      }
+    }
+
+    .content__wrap {
+      font-size: 14px;
+      letter-spacing: -0.48px;
+      font-weight: 600;
+      color: white;
+    }
+  }
+}
+
+.bw3-modal__card__wrapper {
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 8px;
+  row-gap: 16px;
+  padding: 20px;
+  max-height: 360px;
+  overflow: auto;
+  display: grid;
+
+  .card__item {
+    flex-direction: column;
+    width: 76px;
+    row-gap: 8px;
+    padding: 8px 0px;
+    background-color: rgb(255 255 255 / 2%);
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: all cubic-bezier(0, 0, 0.55, 1) 200ms;
+    outline: none;
+    border: 1px solid transparent;
+    column-gap: 4px;
+    text-decoration: none;
+
+    &.active {
+      background-color: color-mix(in srgb, #3396ff 20%, transparent);
+
+      .content__wrap {
+        color: #3396ff;
+      }
+    }
+
+    &:hover {
+      background-color: rgb(255 255 255 / 2%);
+    }
+
+    .image__wrap {
+      width: 48px;
+      height: 54px;
+      clip-path: path(
+        'M43.4605 10.7248L28.0485 1.61089C25.5438 0.129705 22.4562 0.129705 19.9515 1.61088L4.53951 10.7248C2.03626 12.2051 0.5 14.9365 0.5 17.886V36.1139C0.5 39.0635 2.03626 41.7949 4.53951 43.2752L19.9515 52.3891C22.4562 53.8703 25.5438 53.8703 28.0485 52.3891L43.4605 43.2752C45.9637 41.7949 47.5 39.0635 47.5 36.114V17.8861C47.5 14.9365 45.9637 12.2051 43.4605 10.7248Z'
+      );
+      background: rgb(0 0 0 / 30%);
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .content__wrap {
+      font-size: 14px;
+      letter-spacing: -0.48px;
+      font-weight: 600;
+      /*      color: color-mix(in srgb, white 30%, #141414);*/
+      color: white;
+    }
+  }
+}

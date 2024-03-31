@@ -1,0 +1,124 @@
+.reward__background {
+  background-image: url('@/assets/images/reward-bg.png');
+  background-repeat: no-repeat;
+  background-position: right top;
+}
+.rewards__wrapper {
+  .title {
+    font-size: 25px;
+  }
+  .level {
+    font-size: 25px;
+    padding-bottom: 8px;
+  }
+  .xp {
+    font-size: 150px;
+    line-height: 150px;
+  }
+  .points {
+    font-size: 16px;
+    padding-top: 8px;
+  }
+  .v-progress-linear {
+    border-radius: 10px !important;
+  }
+}
+
+.rewards-column {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgb(255, 255, 255, 8%);
+  border-radius: 20px;
+  padding: 25px;
+
+  .left {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    .title {
+      color: #adb9c7;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .number {
+      font-size: 30px;
+      font-weight: bold;
+    }
+  }
+}
+
+.check-in {
+  background: linear-gradient(180deg, rgba(242, 107, 79, 1), rgba(253, 179, 109, 1));
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  p {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  span {
+    background: #ffc200;
+    border-radius: 3px;
+    padding: 5px;
+    color: black;
+    font-size: 10px;
+    font-weight: bold;
+  }
+}
+
+.scratch-wrap {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.token__row {
+  margin-bottom: 8px !important;
+  background-color: black;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.reward__modal {
+  position: relative;
+  height: auto;
+  text-align: center;
+  padding: 0px 0px 50px 0px !important;
+  .gift-wrap__image {
+    position: relative;
+    margin-top: -95px;
+  }
+  .won-wrap {
+    position: relative;
+    top: 23%;
+  }
+
+  .close-icon {
+    z-index: 1;
+  }
+}
+
+.scratch-card {
+  position: relative;
+  .scratch-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: black;
+    padding: 20px;
+    p:nth-of-type(1) {
+      font-size: 40px;
+    }
+    p:nth-of-type(2) {
+      font-size: 20px;
+    }
+  }
+}
