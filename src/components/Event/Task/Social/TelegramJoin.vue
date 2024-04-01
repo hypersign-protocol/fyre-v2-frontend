@@ -29,7 +29,8 @@
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__submit">
-        <v-btn @click="authenticate"> Join our Telegram</v-btn>
+        <v-btn @click="authenticate" class="mr-2"> Join our Telegram</v-btn>
+        <v-btn @click="performAction"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -53,21 +54,9 @@ const props = defineProps<{
 }>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
-const inputText = ref(null)
+const tgUserID = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
-
-const discordId = ref(null)
-const discordUserName = ref(null)
-
-watch(
-  () => discordId.value,
-  (value: any) => {
-    console.log(value)
-    performAction()
-  },
-  { deep: true }
-)
 
 watch(
   () => performResult.value,
@@ -87,6 +76,11 @@ const authenticate = () => {
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
       console.log(data)
+      if (data) {
+        tgUserID.value = data.user.id
+      } else {
+        console.log('Som')
+      }
     }
   )
 }
@@ -97,7 +91,10 @@ const performAction = async () => {
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: true
+      proof: {
+        tgUserID: tgUserID.value,
+        telegramJoinHandle: props.task.options.proofConfig.proof.telegramJoinHandle
+      }
     }
   })
 }
