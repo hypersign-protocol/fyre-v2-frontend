@@ -93,7 +93,7 @@ const performAction = async () => {
       id: props.task._id,
       proof: {
         tgUserID: tgUserID.value,
-        telegramJoinHandle: props.task.options.proofConfig.proof.telegramJoinHandle
+        tgGroupId: props.task.options.proofConfig.proof.tgGroupId
       }
     }
   })
