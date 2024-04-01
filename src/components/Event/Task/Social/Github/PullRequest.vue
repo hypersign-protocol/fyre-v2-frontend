@@ -24,8 +24,23 @@
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
+      <div class="task__input">
+        <div class="task__submit">
+          <v-btn @click="handleTwitterLogin"> Authorize Github</v-btn>
+        </div>
+
+        <v-text-field
+          v-model="inputText"
+          :placeholder="task.options.userInput.collectUrl.label"
+          class="rounded-xl"
+          variant="outlined"
+          hide-details="auto"
+          bg-color="transparent"
+          :disabled="isTaskVerified"
+        ></v-text-field>
+      </div>
       <div class="task__submit">
-        <v-btn @click="authenticateWithDiscord"> Join our Discord</v-btn>
+        <v-btn @click="performAction"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -54,23 +69,10 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
-const discordId = ref(null)
-const discordUserName = ref(null)
-
 watch(
   () => socialAccessToken.value,
   (value: any) => {
     console.log(value)
-    getUserInfo()
-  },
-  { deep: true }
-)
-
-watch(
-  () => discordId.value,
-  (value: any) => {
-    console.log(value)
-    performAction()
   },
   { deep: true }
 )
@@ -88,25 +90,19 @@ watch(
   { deep: true }
 )
 
-const getUserInfo = () => {
-  webAuth.client.userInfo(socialAccessToken.value, async (err, user) => {
-    console.log(user)
-
-    discordId.value = user.sub.split('|')[2]
-    discordUserName.value = user.name
-  })
-}
-
-const authenticateWithDiscord = () => {
+const handleTwitterLogin = () => {
+  const url = `https://twitter.com/intent/tweet?text=${props.task.options.cta.visitUrl}`
   webAuth.popup.authorize(
     {
-      connection: 'discord',
+      connection: 'github',
       owp: true
     },
     (err, response) => {
-      console.log(err)
-      console.log(response)
-      socialAccessToken.value = response.accessToken
+      if (response) {
+        socialAccessToken.value = response.accessToken
+      } else {
+        console.log('Something went wrong')
+      }
     }
   )
 }
@@ -118,7 +114,10 @@ const performAction = async () => {
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: true
+      proof: {
+        repoUrl: props.task.options.proofConfig.proof.repoUrl,
+        githubPrUrl: inputText.value
+      }
     }
   })
 }
