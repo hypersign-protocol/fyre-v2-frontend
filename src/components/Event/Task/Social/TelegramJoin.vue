@@ -72,7 +72,7 @@ watch(
 )
 
 const authenticate = () => {
-  const url = `https://telegram.me/FyreV2bot?startgroup=any`
+  const url = `https://telegram.me/${props.task.options.proofConfig.proof.tgGroupId}`
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
