@@ -77,7 +77,7 @@ const authenticate = () => {
     (data) => {
       console.log(data)
       if (data) {
-        tgUserID.value = data.user.id
+        tgUserID.value = data.id
       } else {
         console.log('Som')
       }
