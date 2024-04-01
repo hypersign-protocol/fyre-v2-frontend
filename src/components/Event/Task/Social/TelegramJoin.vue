@@ -72,12 +72,14 @@ watch(
 )
 
 const authenticate = () => {
+  const url = `https://telegram.me/FyreV2bot?startgroup=any`
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
       console.log(data)
       if (data) {
         tgUserID.value = data.id
+        window.open(url, '_blank')
       } else {
         console.log('Som')
       }
