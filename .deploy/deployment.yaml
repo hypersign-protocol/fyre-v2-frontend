@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: fyre-ui
-          image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/fyre-ui:latest
+          image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/fyre-frontend:latest
           imagePullPolicy: Always
           resources:
             limits:
