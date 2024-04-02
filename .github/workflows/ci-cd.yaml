@@ -8,6 +8,7 @@ on:
 jobs:
   Build-Pipeline:
     runs-on: ubuntu-22.04
+    environment: stage
     steps:
       - name: code checkout
         uses: actions/checkout@v3
@@ -58,6 +59,8 @@ jobs:
   Deploy-Pipeline:
     needs: [Build-Pipeline]
     runs-on: ubuntu-latest
+    environment: stage
+
     steps:
       - name: code checkout
         uses: actions/checkout@v3
