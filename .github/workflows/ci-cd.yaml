@@ -52,7 +52,7 @@ jobs:
 
           find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_TELEGRAM_BOT_ID__#${{ vars.VITE_APP_TELEGRAM_BOT_ID }}#" {} \;
 
-          docker build -t $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-ui:latest  .
+          docker build -t $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-ui  .
 
           docker push $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-ui:latest
 
