@@ -41,6 +41,8 @@ const prevStep = (item) => {
 }
 
 const nextStep = (item) => {
+  console.log(item)
+
   store.$patch({
     interChainObject: {
       ...{
@@ -50,11 +52,12 @@ const nextStep = (item) => {
         selectedWalletName: item.name
       },
       ...{
-        selectedExtension: 'extension'
+        selectedExtension: item.walletType
       }
     },
-    interChainActiveStep: 'extension'
+    interChainActiveStep: item.walletType
   })
+
   emit('changeStep', 'extension')
 }
 </script>

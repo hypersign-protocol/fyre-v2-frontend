@@ -42,7 +42,10 @@
 import { ref, reactive, watch, inject } from 'vue'
 import { walletOptionsInject } from './'
 import InterChainModal from './InterChain/index.vue'
+import { purposes } from 'jsonld-signatures'
+import jsSig from 'jsonld-signatures'
 
+import { docloader, initializeDidSDK } from './utils'
 const emit = defineEmits(['userAuthSuccess'])
 
 const props = defineProps({
@@ -58,8 +61,12 @@ const props = defineProps({
 const interchainModal = ref(false)
 const showEvmModal = ref(false)
 
+let reactiveConnector = ref({
+  connector: {} as any as Connection
+})
+
 import { mainnet, bsc } from '@wagmi/core/chains'
-import { getAccount, signTypedData } from '@wagmi/core'
+import { Connection, getAccount, signTypedData } from '@wagmi/core'
 
 import {
   createWeb3Modal,
@@ -71,9 +78,10 @@ import {
 } from '@web3modal/wagmi/vue'
 import { reconnect } from '@wagmi/core'
 import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
+import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
 
 // @ts-expect-error 1. Get projectId
-const projectId = '46808fcc7a91e0856a6734652cf14fa2'
+const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
 if (!projectId) {
   throw new Error('VITE_PROJECT_ID is not set')
 }
@@ -124,12 +132,13 @@ const closeModal = () => {
 const showEvm = () => {
   props.options.showBwModal = false
   modal.open({ view: 'Networks' })
+  console.log('Get Challenge')
 }
 
 watch(
   () => events.data,
   (value) => {
-    if (value.event === 'CONNECT_SUCCESS') {
+    if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected === true) {
       evemResultObject.value.walletAddress = getAccount(wagmiConfig).address
     }
   }
@@ -154,49 +163,102 @@ watch(
     }
   }
 )
+wagmiConfig.subscribe((value) => {
+  if (value.status === 'connected') {
+    reactiveConnector = { connector: value.connections.get(value.current) }
+  }
+})
 
 const getSignature = async () => {
-  console.log('heree')
+  const hsSDK = initializeDidSDK()
+
   const chainId = getAccount(wagmiConfig).chainId
+  const address = getAccount(wagmiConfig).address
+  const didDoc = await hsSDK.createByClientSpec({
+    address,
+    methodSpecificId: address,
+    chainId,
+    clientSpec: 'eth-personalSign'
+  })
+  delete didDoc.keyAgreement
 
-  const domain = {
-    name: 'Ether Mail',
-    version: '1',
-    chainId: chainId,
-    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
-  }
+  const provider = await reactiveConnector.connector.connector.getProvider()
 
-  const types = {
-    Person: [
-      { name: 'name', type: 'string' },
-      { name: 'wallet', type: 'address' }
-    ],
-    Mail: [
-      { name: 'from', type: 'Person' },
-      { name: 'to', type: 'Person' },
-      { name: 'contents', type: 'string' }
-    ]
-  }
+  const eth = new EthereumEip712Signature2021({}, { _provider: provider })
 
-  const message = {
-    from: {
-      name: 'Cow',
-      wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-    },
-    to: {
-      name: 'Bob',
-      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
-    },
-    contents: 'Hello, Bob!'
-  }
+  const proof = await jsSig.sign(didDoc, {
+    suite: eth,
+    purpose: new purposes.AuthenticationProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        authentication: didDoc.authentication
+      },
+      challenge: '123',
+      domain: 'http://example.com'
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(proof)
+
+  const verifed = await jsSig.verify(proof, {
+    suite: new EthereumEip712Signature2021({}),
+    purpose: new purposes.AuthenticationProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        authentication: didDoc.authentication
+      },
+      challenge: '123',
+      domain: 'http://example.com'
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(verifed)
+
+  // const domain = {
+  //   name: 'Ether Mail',
+  //   version: '1',
+  //   chainId: chainId,
+  //   verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
+  // }
+
+  // const types = {
+  //   Person: [
+  //     { name: 'name', type: 'string' },
+  //     { name: 'wallet', type: 'address' }
+  //   ],
+  //   Mail: [
+  //     { name: 'from', type: 'Person' },
+  //     { name: 'to', type: 'Person' },
+  //     { name: 'contents', type: 'string' }
+  //   ]
+  // }
+
+  // const message = {
+  //   from: {
+  //     name: 'Cow',
+  //     wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+  //   },
+  //   to: {
+  //     name: 'Bob',
+  //     wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
+  //   },
+  //   contents: 'Hello, Bob!'
+  // }
+
   try {
-    const signature = await signTypedData(wagmiConfig, {
-      domain,
-      message,
-      primaryType: 'Mail',
-      types
-    })
-    evemResultObject.value.signature = signature
+    // const signature = await signTypedData(wagmiConfig, {
+    //   domain,
+    //   message,
+    //   primaryType: 'Mail',
+    //   types
+    // })
+    // evemResultObject.value.signature = signature
   } catch (e) {
     console.log(e)
   }
