@@ -29,7 +29,8 @@
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__submit">
-        <v-btn @click="authenticateWithDiscord"> Join our Discord</v-btn>
+        <v-btn @click="authenticateWithDiscord" class="mr-2"> Join our Discord</v-btn>
+        <v-btn @click="performAction"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -74,7 +75,6 @@ watch(
   () => discordId.value,
   (value: any) => {
     console.log(value)
-    performAction()
   },
   { deep: true }
 )
@@ -102,15 +102,19 @@ const getUserInfo = () => {
 }
 
 const authenticateWithDiscord = () => {
+  const url = `${props.task.options.cta.visitUrl}`
   webAuth.popup.authorize(
     {
       connection: 'discord',
       owp: true
     },
     (err, response) => {
-      console.log(err)
-      console.log(response)
-      socialAccessToken.value = response.accessToken
+      if (response) {
+        socialAccessToken.value = response.accessToken
+        window.open(url, '_blank')
+      } else {
+        console.log('Something went wrong')
+      }
     }
   )
 }
@@ -122,7 +126,7 @@ const performAction = async () => {
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: props.task.options.proofConfig.proof
+      ...props.task.options.proofConfig
     }
   })
 }

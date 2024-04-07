@@ -78,15 +78,17 @@ watch(
 
 const handleTwitterLogin = () => {
   const url = `https://twitter.com/${props.task.options.cta.visitUrl}?ref_src=twsrc%5Etfw`
-  console.log(url)
   webAuth.popup.authorize(
     {
       connection: 'twitter',
       owp: true
     },
-    (err, authRes) => {
-      console.log(err)
-      console.log(authRes)
+    (err, response) => {
+      if (response) {
+        socialAccessToken.value = response.accessToken
+      } else {
+        console.log('Something went wrong')
+      }
     }
   )
 }
@@ -98,7 +100,7 @@ const performAction = async () => {
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: true
+      ...props.task.options.proofConfig
     }
   })
 }

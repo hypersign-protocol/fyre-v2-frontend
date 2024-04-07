@@ -24,8 +24,23 @@
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
+      <div class="task__input">
+        <div class="task__submit">
+          <v-btn @click="handleTwitterLogin"> Retweet URL</v-btn>
+        </div>
+
+        <v-text-field
+          v-model="inputText"
+          :placeholder="task.options.userInput.collectUrl.label"
+          class="rounded-xl"
+          variant="outlined"
+          hide-details="auto"
+          bg-color="transparent"
+          :disabled="isTaskVerified"
+        ></v-text-field>
+      </div>
       <div class="task__submit">
-        <v-btn @click="handleTwitterLogin"> Retweet URL</v-btn>
+        <v-btn @click="performAction"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -58,7 +73,6 @@ watch(
   () => socialAccessToken.value,
   (value: any) => {
     console.log(value)
-    performAction()
   },
   { deep: true }
 )
@@ -78,15 +92,18 @@ watch(
 
 const handleTwitterLogin = () => {
   const url = `https://twitter.com/intent/tweet?text=${props.task.options.cta.visitUrl}`
-  console.log(url)
   webAuth.popup.authorize(
     {
       connection: 'twitter',
       owp: true
     },
-    (err, authRes) => {
-      console.log(err)
-      console.log(authRes)
+    (err, response) => {
+      if (response) {
+        socialAccessToken.value = response.accessToken
+        window.open(url, '_blank')
+      } else {
+        console.log('Something went wrong')
+      }
     }
   )
 }
@@ -98,7 +115,10 @@ const performAction = async () => {
     communityId: props.communityId,
     task: {
       id: props.task._id,
-      proof: true
+      proof: {
+        tweetUrl: props.task.options.proofConfig.proof.tweetUrl,
+        retweetUrl: inputText.value
+      }
     }
   })
 }
