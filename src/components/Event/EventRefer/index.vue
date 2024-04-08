@@ -11,7 +11,7 @@
       <div class="modal__body">
         <div class="border__dotted pa-6 d-flex flex-column align-center">
           <div class="d-flex align-center mb-2">
-            <p class="mr-2">0/10</p>
+            <p class="mr-2">0/{{ eventData.referral.limit }}</p>
             <img src="@/assets/images/user.svg" />
           </div>
           <p class="font-16 font-weight-bold mb-2">Refer and gain +15XP points</p>
@@ -34,11 +34,15 @@
     </v-card>
   </v-dialog>
 </template>
-
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
+interface eventById {
+  _id: string
+}
+
 const props = defineProps<{
-  description: string
+  eventData: eventById
 }>()
 
 const dialog = ref(true)

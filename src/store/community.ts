@@ -9,13 +9,16 @@ import type { EventType } from '@/data/types/event/eventType.ts'
 interface communityType {
   popularCommunities: CommunityType[]
   communityId: CommunityType
+  communityFollow: Boolean
   communityEvents: EventType[]
+  errors: unknown
 }
 
 export const useCommunityStore = defineStore('community', {
   state: (): communityType => ({
     popularCommunities: [],
     communityId: {},
+    communityFollow: false,
     communityEvents: []
   }),
   actions: {
@@ -68,6 +71,24 @@ export const useCommunityStore = defineStore('community', {
         console.error('Error fetching data:', error)
         return []
       }
+    },
+    async FOLLOW_COMMUNITY(communityId: string): Promise<CommunityType | null> {
+      try {
+        const response: AxiosResponse<CommunityType> = await axios.post(
+          `/community/${communityId}/follow`
+        )
+
+        if (response.success) {
+          this.communityFollow = true
+          return response
+        } else {
+          console.error('Error fetching data:', response)
+          return []
+        }
+      } catch (error: AxiosError) {
+        console.error('Error fetching data:', error)
+        return []
+      }
     }
   },
   getters: {
@@ -79,6 +100,9 @@ export const useCommunityStore = defineStore('community', {
     },
     getEventsByCommunityId(): EventType[] {
       return this.communityEvents
+    },
+    getCommunityFollow() {
+      return this.communityFollow
     }
   }
 })

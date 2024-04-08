@@ -44,8 +44,23 @@
                   </div>
                 </div>
               </div>
-              <v-btn color="white" height="53" class="rounded-10 px-15 cursor-pointer">
-                Follow
+              <v-btn
+                color="white"
+                height="53"
+                class="rounded-10 px-15 cursor-pointer"
+                :loading="following"
+                v-if="!isFollowed"
+                @click="followCommunity"
+              >
+                <span>Follow</span>
+              </v-btn>
+              <v-btn
+                v-if="isFollowed"
+                color="rgb(255,255,255,8%)"
+                height="53"
+                class="rounded-10 px-15 cursor-pointer"
+              >
+                <v-icon class="mr-2">mdi-check</v-icon> Following
               </v-btn>
             </div>
           </v-card-text>
@@ -142,6 +157,7 @@ const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
 const toggleParticipant = ref(false)
+const following = ref(false)
 const rating = ref('3.2')
 const activeTab = ref('events')
 const tabs = ref([
@@ -160,26 +176,36 @@ const tabs = ref([
 ])
 
 import { useCommunityStore } from '@/store/community.ts'
+import { useUserStore } from '@/store/user.ts'
 
 import { storeToRefs } from 'pinia'
 const store = useCommunityStore()
+const userStore = useUserStore()
+
 const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
 const dialog = ref(true)
+const isFollowed = ref(false)
 
 const communityById = computed(() => store.getCommunityByIdData)
 const communityEvents = computed(() => store.getEventsByCommunityId)
+const communityFollowSuccess = computed(() => store.getCommunityFollow)
+
+const { userMeta } = storeToRefs(useUserStore)
 
 onMounted(async () => {
   loading.value = true
   fetchCommunity()
+  await userStore.USER_AUTH()
 })
 
 watch(
-  () => activeTab.value,
-  (value: any) => {}
+  () => userStore.userMeta,
+  (value: any) => {
+    isFollowed.value = value.communityIds.includes(route.params.id)
+  }
 )
 
 watch(
@@ -200,8 +226,21 @@ watch(
   }
 )
 
+watch(
+  () => communityFollowSuccess.value,
+  (value: any) => {
+    following.value = false
+    isFollowed.value = value
+  }
+)
+
 const viewEvent = (event) => {
   router.push({ path: `/event/${event._id}` })
+}
+
+const followCommunity = async () => {
+  following.value = true
+  await store.FOLLOW_COMMUNITY(`${route.params.id}`)
 }
 
 const fetchCommunity = async () => {

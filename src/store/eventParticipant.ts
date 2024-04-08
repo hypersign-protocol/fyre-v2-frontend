@@ -23,14 +23,14 @@ interface PerformTaskResult {
   __v: number
 }
 
-interface TwitterHandle {
-  code: string
+interface LeaderboardData {
+  id: string
 }
 
 export const useEventParticipantStore = defineStore('eventParticipant', {
   state: () => ({
     performResult: {} as PerformTaskResult,
-    twitterOAuth: {} as TwitterHandle
+    leaderBoard: {} as LeaderboardData
   }),
   actions: {
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
@@ -57,20 +57,23 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
         return null
       }
     },
-
-    async TWITTER_OAUTH_REQUEST() {
+    async GET_LEADER_BOARD(
+      communityId: string,
+      eventId: string,
+      isLeaderboard: boolean
+    ): Promise<EventTask[]> {
       try {
-        const response = await axios.post('https://api.twitter.com/oauth2/token', '', {
-          params: {
-            grant_type: 'client_credentials'
-          },
-          auth: {
-            username: 'NyjbZn2ssQR3bjy9IqR9KUbMj',
-            password: 'VkJiZEgtTDhMWk0yU3BPUDFBSEk6MTpjaQ'
-          }
-        })
+        const response: AxiosResponse<EventTask[]> = await axios.get(
+          `/event-participants/${communityId}/${eventId}?leaderboard=${isLeaderboard}`
+        )
 
-        console.log(response)
+        if (response.success) {
+          this.leaderBoard = response.data
+          return response.data
+        } else {
+          console.error('Error fetching data:', response)
+          return null
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
         return null

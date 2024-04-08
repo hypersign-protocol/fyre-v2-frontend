@@ -128,7 +128,7 @@
               <span class="content">Refer</span>
             </v-chip>
           </v-card-text>
-          <v-card-text class="pa-0">
+          <v-card-text class="pt-5">
             <v-tabs
               selected-class="tab--active"
               slider-color="secondary"
@@ -154,31 +154,10 @@
                 </v-card>
               </v-window-item>
               <v-window-item :eager="true" value="leaderboard">
-                <div class="d-flex align-center justify-space-between pa-5 mt-4">
-                  <p class="font-25 font-weight--bold">Live Leaderboard</p>
-                  <p class="font-16 font-weight--bold">
-                    <span class="text-blue-100">Total Participants </span>
-                    <span>1900</span>
-                  </p>
-                </div>
-                <v-card class="event-task--card">
-                  <div
-                    class="d-flex align-center justify-space-between bg-black-100 pa-2 rounded-10 mb-4"
-                    v-for="(item, index) in 10"
-                    :key="index"
-                  >
-                    <div class="d-flex align-center">
-                      <img src="@/assets/images/leader01.svg" class="mr-2" />
-                      <v-avatar size="large" class="mr-2">
-                        <v-img src="@/assets/images/avatar01.png"> </v-img>
-                      </v-avatar>
-                      <p class="ml-2 font-22 font-weight-bold">Kelvin</p>
-                    </div>
-                    <div class="d-flex align-center">
-                      <p class="font-22 font-weight-medium">900 XP</p>
-                    </div>
-                  </div>
-                </v-card>
+                <Leaderboard :eventId="eventById._id" :communityId="eventById.communityId" />
+              </v-window-item>
+              <v-window-item :eager="true" value="reward">
+                <RewardTab :eventId="eventById._id" />
               </v-window-item>
               <v-window-item :eager="true" value="result">
                 <div class="d-flex align-center justify-space-between pa-5 mt-4">
@@ -238,11 +217,15 @@
       v-if="eventById"
       @close="toggleDescription = false"
       v-model="toggleDescription"
-      :description="eventById.description"
+      :eventData="eventById"
     />
-    <EventRewards @close="toggleRewards = false" v-model="toggleRewards" />
-    <EventRefer @close="toggleRefer = false" v-model="toggleRefer" />
-    <EventParticipant @close="toggleParticipant = false" v-model="toggleParticipant" />
+    <EventRewards :eventData="eventById" @close="toggleRewards = false" v-model="toggleRewards" />
+    <EventRefer :eventData="eventById" @close="toggleRefer = false" v-model="toggleRefer" />
+    <EventParticipant
+      :eventData="eventById"
+      @close="toggleParticipant = false"
+      v-model="toggleParticipant"
+    />
   </template>
 </template>
 <script lang="ts" setup>
@@ -275,7 +258,9 @@ const tabs = ref([
 import { useEventStore } from '@/store/event.ts'
 import { isEventHappening } from '@/composables/event.ts'
 import { storeToRefs } from 'pinia'
+
 const eventStore = useEventStore()
+
 const route = useRoute()
 const router = useRouter()
 

@@ -16,10 +16,12 @@
               <v-col cols="12" md="6">
                 <div class="rewards__wrapper">
                   <p class="title">Your total experience points</p>
-                  <p class="xp">360 XP</p>
-                  <p class="level">Level 37</p>
+                  <p class="xp">{{ userMeta.totalXps }} XP</p>
+                  <p class="level">Level {{ userMeta.levelReached }}</p>
                   <v-progress-linear model-value="20" :height="12"></v-progress-linear>
-                  <p class="points">Need 140 points to reach the next level</p>
+                  <p class="points">
+                    Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level
+                  </p>
                 </div>
               </v-col>
             </v-row>
@@ -76,7 +78,7 @@
               <v-col><h1>Scratch Cards</h1></v-col>
             </v-row>
             <v-row class="pt-8 scratch-wrap">
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
                 <div
                   v-if="!show10xp"
                   class="scratch-card cursor-pointer"
@@ -92,7 +94,7 @@
                   </div>
                 </div>
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
                 <div v-if="!flat20" class="scratch-card cursor-pointer" @click="show20Modal = true">
                   <img src="@/assets/images/scratch.png" />
                 </div>
@@ -104,12 +106,12 @@
                   </div>
                 </div>
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
                 <div class="scratch-card">
                   <img src="@/assets/images/scratch.png" />
                 </div>
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
                 <div class="scratch-card">
                   <img src="@/assets/images/scratch.png" />
                 </div>
@@ -117,50 +119,7 @@
             </v-row>
           </v-container>
           <v-container>
-            <div class="tab__card">
-              <v-tabs
-                selected-class="tab--active"
-                slider-color="secondary"
-                v-model="activeTab"
-                align-tabs="left"
-                color="white"
-                class="event__tabs"
-              >
-                <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">
-                  {{ item.title }}
-                </v-tab>
-              </v-tabs>
-              <v-window v-model="activeTab">
-                <v-window-item :eager="true" value="tokens">
-                  <div class="user__profile">
-                    <v-card class="bg__card pa-10 mt-8">
-                      <v-row class="token__row" v-for="(item, index) in tokenItems">
-                        <v-col>
-                          <p class="d-flex align-center">
-                            <img src="@/assets/images/trophy.svg" class="mr-2" />
-                            {{ item.name }}
-                          </p>
-                        </v-col>
-                        <v-col>
-                          <p>{{ item.price }}</p>
-                        </v-col>
-                        <v-col>
-                          <p>{{ item.expiry }}</p>
-                        </v-col>
-                        <v-col>
-                          <p class="text-green-accent-3" v-if="item.status === 'Claimed'">
-                            {{ item.status }}
-                          </p>
-                          <v-btn class="bg-blue-accent-3" v-if="item.status === 'Claim Now'">{{
-                            item.status
-                          }}</v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                  </div>
-                </v-window-item>
-              </v-window>
-            </div>
+            <RewardTab :eventTab="eventTab" />
           </v-container>
         </div>
       </div>
@@ -186,7 +145,8 @@ import tenXpModal from './tenXpModal.vue'
 import flat20Modal from './flat20Modal.vue'
 const router = useRouter()
 const store = useUserStore()
-
+const { userMeta } = storeToRefs(useUserStore())
+const eventTab = ref(null)
 const loading = ref(false)
 const show10xp = ref(false)
 const flat20 = ref(false)
@@ -196,50 +156,32 @@ const activeTab = ref('tokens')
 const tabs = ref([
   {
     title: 'Tokens',
-    slug: 'tokens'
+    slug: 'TOKEN'
   },
   {
-    title: 'Vouchers',
-    slug: 'vouchers'
+    title: 'XP',
+    slug: 'XP'
   },
   {
     title: 'NFTs',
-    slug: 'nfts'
+    slug: 'NFT'
   },
   {
-    title: 'OATs',
-    slug: 'oats'
-  },
-  {
-    title: 'Tx History',
-    slug: 'tx-history'
+    title: 'Other',
+    slug: 'OTHER'
   }
 ])
 
-const tokenItems = ref([
-  {
-    name: 'Premium Event 1',
-    price: '3000$ in USDT',
-    expiry: 'Expiring in 2 days',
-    status: 'Claimed'
+watch(
+  () => store.userMeta,
+  (value: any) => {
+    loading.value = false
   },
-  {
-    name: 'Premium Event 1',
-    price: '3000$ in USDT',
-    expiry: 'Expiring in 2 days',
-    status: 'Claim Now'
-  },
-  {
-    name: 'Premium Event 1',
-    price: '3000$ in USDT',
-    expiry: 'Expiring in 2 days',
-    status: 'Claimed'
-  },
-  {
-    name: 'Premium Event 1',
-    price: '3000$ in USDT',
-    expiry: 'Expired',
-    status: 'Expired'
-  }
-])
+  { deep: true }
+)
+
+onMounted(async () => {
+  loading.value = true
+  await store.USER_AUTH()
+})
 </script>
