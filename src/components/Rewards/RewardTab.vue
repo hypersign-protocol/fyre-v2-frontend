@@ -31,9 +31,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 const activeTab = ref('tokens')
-const props = defineProps<{
-  eventId: { type: String; required: false }
-}>()
+const props = defineProps({
+  eventId: { type: String, required: false, default: '' }
+})
 const tabs = ref([
   {
     title: 'Tokens',

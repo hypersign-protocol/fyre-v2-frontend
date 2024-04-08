@@ -21,7 +21,12 @@
         <h1 class="homepage__section__title">Explore Communities</h1>
         <div class="explore__community_wrapper">
           <div class="row_wrap">
-            <div class="explore-community-card" style="cursor: pointer;" v-for="(item, index) in communities" @click="viewCommunity(item._id)">
+            <div
+              class="explore-community-card"
+              style="cursor: pointer"
+              v-for="(item, index) in communities"
+              @click="viewCommunity(item._id)"
+            >
               <img :src="item.avatar" />
               <p>{{ item.communityName }}</p>
             </div>
@@ -155,5 +160,4 @@ onMounted(async () => {
 const viewCommunity = (id) => {
   router.replace({ path: `/community/${id}` })
 }
-
 </script>

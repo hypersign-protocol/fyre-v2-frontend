@@ -78,7 +78,7 @@
               <v-col><h1>Scratch Cards</h1></v-col>
             </v-row>
             <v-row class="pt-8 scratch-wrap">
-              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
+              <v-col cols="12" sm="6" md="3" lg="3" xl="3">
                 <div
                   v-if="!show10xp"
                   class="scratch-card cursor-pointer"
@@ -94,7 +94,7 @@
                   </div>
                 </div>
               </v-col>
-              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
+              <v-col cols="12" sm="6" md="3" lg="3" xl="3">
                 <div v-if="!flat20" class="scratch-card cursor-pointer" @click="show20Modal = true">
                   <img src="@/assets/images/scratch.png" />
                 </div>
@@ -106,12 +106,12 @@
                   </div>
                 </div>
               </v-col>
-              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
+              <v-col cols="12" sm="6" md="3" lg="3" xl="3">
                 <div class="scratch-card">
                   <img src="@/assets/images/scratch.png" />
                 </div>
               </v-col>
-              <v-col cols="12" md="3" lg="2" xl="4" sm="2">
+              <v-col cols="12" sm="6" md="3" lg="3" xl="3">
                 <div class="scratch-card">
                   <img src="@/assets/images/scratch.png" />
                 </div>

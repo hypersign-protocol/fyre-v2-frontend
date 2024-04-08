@@ -45,9 +45,9 @@ import { storeToRefs } from 'pinia'
 const store = useUserStore()
 const { userRewards } = storeToRefs(useUserStore())
 const loading = ref(false)
-const props = defineProps<{
-  eventId: { type: String; required: false }
-}>()
+const props = defineProps({
+  eventId: { type: String, required: false, default: '' }
+})
 watch(
   () => store.userRewards,
   (value: any) => {

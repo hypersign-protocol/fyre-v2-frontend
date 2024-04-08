@@ -2,22 +2,41 @@
   background-image: url('@/assets/images/reward-bg.png');
   background-repeat: no-repeat;
   background-position: right top;
+  @include media-respond(xs) {
+    background: none;
+  }
+  @include media-respond(sm) {
+    background: none;
+  }
 }
 .rewards__wrapper {
   .title {
     font-size: 25px;
+    @include media-respond(xs) {
+      font-size: 16px;
+    }
   }
   .level {
     font-size: 25px;
     padding-bottom: 8px;
+    @include media-respond(xs) {
+      font-size: 14px;
+    }
   }
   .xp {
     font-size: 150px;
     line-height: 150px;
+    @include media-respond(xs) {
+      font-size: 60px;
+      line-height: 70px;
+    }
   }
   .points {
     font-size: 16px;
     padding-top: 8px;
+    @include media-respond(xs) {
+      font-size: 14px;
+    }
   }
   .v-progress-linear {
     border-radius: 10px !important;
