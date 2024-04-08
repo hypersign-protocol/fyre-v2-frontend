@@ -56,8 +56,8 @@
                       cols="4"
                       sm="4"
                       md="4"
-                      xl="3"
-                      lg="3"
+                      xl="4"
+                      lg="4"
                     >
                       <ExploreCard :eventData="event" />
                     </v-col>
@@ -215,14 +215,14 @@ const loading = ref(false)
 
 const popularRaw = computed(() => eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
-let paginatedPopular = paginate(popularRaw.value, 4)
+let paginatedPopular = paginate(popularRaw.value, 3)
 
 watch(
   () => popularRaw.value,
   (value: any) => {
     setTimeout(() => {
       loading.value = false
-      paginatedPopular = paginate(popularRaw.value, 4)
+      paginatedPopular = paginate(popularRaw.value, 3)
     }, 1000)
   }
 )

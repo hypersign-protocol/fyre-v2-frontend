@@ -72,7 +72,7 @@ watch(
 )
 
 const authenticate = () => {
-  const url = `https://telegram.me/${props.task.options.proofConfig.proof.tgGroupId}`
+  const url = `https://telegram.me/${props.task.options.cta.visitUrl}`
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
