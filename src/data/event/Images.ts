@@ -18,7 +18,7 @@ const images = {
   telegram: new URL(`@/assets/images/task/telegram.svg`, import.meta.url).href,
   text: new URL(`@/assets/images/task/text.png`, import.meta.url).href,
   twitter: new URL(`@/assets/images/task/twitter.svg`, import.meta.url).href,
-  visitUrl: new URL(`@/assets/images/task/visit-url.svg`, import.meta.url).href
+  visitUrl: new URL(`@/assets/images/task/visit-url.png`, import.meta.url).href
 }
 
 export { images }
