@@ -52,10 +52,6 @@ import {
   watch,
   defineAsyncComponent
 } from 'vue'
-import { useUserStore } from '@/store/user.ts'
-import { storeToRefs } from 'pinia'
-const router = useRouter()
-const store = useUserStore()
 
 const loading = ref(false)
 const activeTab = ref('profile-setting')

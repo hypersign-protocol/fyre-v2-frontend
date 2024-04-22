@@ -34,6 +34,16 @@ const store = useInterChainStore()
 
 const emit = defineEmits(['changeStep', 'close'])
 
+const props = defineProps({
+  text: { type: String, required: false },
+  options: {
+    type: Object,
+    default() {
+      return {}
+    }
+  }
+})
+
 const { interChainObject } = storeToRefs(store)
 
 const prevStep = (item) => {
@@ -41,6 +51,8 @@ const prevStep = (item) => {
 }
 
 const nextStep = (item) => {
+  console.log(item)
+
   store.$patch({
     interChainObject: {
       ...{
@@ -50,11 +62,12 @@ const nextStep = (item) => {
         selectedWalletName: item.name
       },
       ...{
-        selectedExtension: 'extension'
+        selectedExtension: item.walletType
       }
     },
-    interChainActiveStep: 'extension'
+    interChainActiveStep: item.walletType
   })
+
   emit('changeStep', 'extension')
 }
 </script>

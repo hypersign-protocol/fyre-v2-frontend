@@ -6,6 +6,7 @@ import Layouts from 'vite-plugin-vue-layouts'
 import Vue from '@vitejs/plugin-vue'
 import VueRouter from 'unplugin-vue-router/vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -46,6 +47,7 @@ export default defineConfig({
       },
       vueTemplate: true,
     }),
+    nodePolyfills()
   ],
   define: { 'process.env': {} },
   resolve: {
@@ -63,6 +65,6 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 3000,
+    port: 9002,
   },
 })

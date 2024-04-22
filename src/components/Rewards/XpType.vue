@@ -13,7 +13,7 @@
             <p>{{ item.reward.denomination }}</p>
           </v-col>
           <v-col>
-            <p>{{ calculateDaysUntilExpiry(item.reward.options.expiresAt) }}</p>
+            <p>{{ calculateDaysUntilExpiry(item?.reward?.options?.expiresAt) }}</p>
           </v-col>
           <v-col>
             <p class="text-green-accent-3" v-if="item.hasClaimed">Claimed</p>

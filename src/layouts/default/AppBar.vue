@@ -70,23 +70,42 @@
       </template>
     </template>
   </v-toolbar>
-  <BlockChainWallet :options="options" @userAuthSuccess="userAuthSuccess" />
+  <template v-if="!isUserLoggedIn">
+    <BlockChainWallet
+      :options="options"
+      @emitProvider="getProvider"
+      @getSignedData="collectSignedData"
+    />
+    <div id="update-challenge" @click="postChallenge(challenge)"></div>
+  </template>
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 const { mobile, mdAndDown } = useDisplay()
 const router = useRouter()
 const route = useRoute()
+import { useAuthStore } from '@/store/auth.ts'
+import { useUserStore } from '@/store/user.ts'
 
-const options = ref({
-  showBwModal: false
+const authStore = useAuthStore()
+const userStore = useUserStore()
+const { challenge, loginRes } = storeToRefs(useAuthStore())
+const { userMeta } = storeToRefs(useUserStore())
+
+const options = reactive({
+  showBwModal: false,
+  providers: ['evm', 'interchain'],
+  chains: ['mainnet', 'bsc', 'polygon', 'cosmos', 'osmosis'],
+  isRequiredDID: true,
+  isPerformAction: false
 })
 
 const isUserLoggedIn = computed(() => {
-  return localStorage.getItem('userLoggedIn')
+  return localStorage.getItem('accessToken')
 })
 
 const userMenu = ref([
@@ -114,18 +133,60 @@ const menu = ref([
   }
 ])
 
-const userAuthSuccess = () => {
-  console.log('auth success')
-  localStorage.setItem('userLoggedIn', true)
-  location.reload()
-}
+watch(
+  () => authStore.challenge,
+  (value: any) => {
+    console.log(value)
+    options.challenge = value.challenge
+    document.getElementById('update-challenge').click()
+  },
+  { deep: true }
+)
+
+watch(
+  () => authStore.loginRes,
+  (value: any) => {
+    localStorage.setItem('accessToken', value)
+    setTimeout(async () => {
+      await authStore.USER_DETAILS()
+    })
+  },
+  { deep: true }
+)
+
+watch(
+  () => authStore.userMeta,
+  (value: any) => {
+    localStorage.setItem('user', JSON.stringify(value))
+    location.reload()
+  },
+  { deep: true }
+)
 
 const navigate = (item) => {
+  console.log(item)
   if (item.title === 'Log Out') {
-    localStorage.removeItem('userLoggedIn')
+    localStorage.removeItem('accessToken')
     location.reload()
   } else {
-    router.push({ path: `${item.link}` })
+    window.location.href = `${item.link}`
+  }
+}
+
+const getProvider = async (data) => {
+  if (data) {
+    await authStore.USER_LOGIN(`?provider=${data}-wallet`)
+  } else {
+    console.log('Please select the provider before you proceed')
+  }
+}
+
+const collectSignedData = async (data) => {
+  console.log(data)
+  if (data) {
+    await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
+  } else {
+    console.log('Please select the provider before you proceed')
   }
 }
 

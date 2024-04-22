@@ -9,6 +9,8 @@ export function getDenom(chain: string): string {
   switch (chain) {
     case 'osmosis-1':
       return 'uosmo'
+    case 'cataclysm-1':
+      return 'nibi'
     case 'juno-1':
       return 'ujuno'
     case 'kaiyo-1':
@@ -36,6 +38,8 @@ export function getDenom(chain: string): string {
 export function getGasPrice(chain: string): GasPrice {
   switch (chain) {
     case 'osmosis-1':
+      return { amount: '0.0025', denom: getDenom(chain) }
+    case 'cataclysm-1':
       return { amount: '0.0025', denom: getDenom(chain) }
     case 'juno-1':
       return { amount: '0.001', denom: getDenom(chain) }

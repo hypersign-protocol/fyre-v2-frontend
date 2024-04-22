@@ -6,7 +6,6 @@
       <v-btn icon="mdi-close" @click="$emit('close')"> </v-btn>
     </v-card-actions>
     <v-divider></v-divider>
-
     <div class="d-flex align-center justify-center fill-height pa-6" v-if="loading">
       <v-progress-circular
         class="d-flex align-center justify-center"
@@ -15,89 +14,28 @@
         indeterminate
       ></v-progress-circular>
     </div>
-    <template v-if="!loading">
-      <template v-if="interChainResultObject.walletAddress">
-        <div class="d-flex flex-column align-center justify-center pa-5">
-          <p class="font-weight-bold mb-2">Wallet Authentication Success.</p>
-          <v-text-field
-            v-model="interChainResultObject.arbitraryMessage"
-            clearable
-            variant="solo"
-            class="w-100"
-            bg-color="white"
-            placeholder="Message"
-          ></v-text-field>
-          <v-btn rounded="xl" color="#303133" width="204" @click="signArbitrary"> Sign In </v-btn>
-        </div>
-      </template>
-      <template v-else>
-        <div class="bw3-modal_extension__wrapper my-4">
-          <div
-            class="extension__item cursor-pointer"
-            :class="interChainObject.selectedExtension === 'walletconnect' ? 'active' : ''"
-            @click="interChainObject.selectedExtension = 'walletconnect'"
-          >
-            <div class="image__wrap">
-              <img src="../assets/images/smartphone.png" />
-            </div>
-            <div class="content__wrap">Mobile</div>
-          </div>
-          <div
-            class="extension__item cursor-pointer"
-            :class="interChainObject.selectedExtension === 'extension' ? 'active' : ''"
-            @click="interChainObject.selectedExtension = 'extension'"
-          >
-            <div class="image__wrap">
-              <img src="../assets/images/extension.png" />
-            </div>
-            <div class="content__wrap">Browser</div>
-          </div>
-        </div>
-        <div v-if="showQrCode">
-          <div class="bw3-modal_browser__wrap pa-5"></div>
-        </div>
-        <div v-if="!showQrCode">
-          <div class="bw3-modal_browser__wrap pa-5">
-            <div class="image__wrap">
-              <img :src="getWallet(interChainObject.selectedWallet).image" />
-            </div>
-            <div class="content__wrap">
-              <p>Continue in {{ getWallet(interChainObject.selectedWallet).name }}</p>
-              <p>Accept connection request in the wallet</p>
-            </div>
-          </div>
-        </div>
-      </template>
-    </template>
   </v-card>
 </template>
 <script lang="ts" setup>
 import { ref, watch, computed, reactive, toRef, toRefs, onMounted } from 'vue'
+import { purposes } from 'jsonld-signatures'
+import jsSig from 'jsonld-signatures'
+import { base58btc } from 'multiformats/bases/base58'
+import { EcdsaSecp256k1Signature2019 } from 'keplr-ecdsasecp256k1signature2019'
 
+import { docloader, initializeDidSDK } from '../utils'
 import { getImageUrl } from '../composables/general.ts'
 import { getGasPrice } from '../composables/gasUtils.ts'
 import { getRpc } from '../composables/rpcUtils.ts'
+import { chains } from '../composables/chainsData.ts'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain'
 const store = useInterChainStore()
 
-const { interChainObject } = storeToRefs(store)
+const { interChainObject, challenge } = storeToRefs(store)
 
 import { wallets } from '../composables/walletData.ts'
-import { mainnet, bsc } from 'viem/chains'
-import { getAccount, reconnect } from '@wagmi/core'
-import {
-  createWeb3Modal,
-  defaultWagmiConfig,
-  useWeb3Modal,
-  useWeb3ModalEvents,
-  useWeb3ModalState,
-  useWeb3ModalTheme
-} from '@web3modal/wagmi/vue'
-
-// @ts-expect-error 1. Get projectId
-const projectId = '46808fcc7a91e0856a6734652cf14fa2'
 
 import {
   CompassController,
@@ -114,7 +52,17 @@ import {
 } from 'cosmes/wallet'
 import { Buffer } from 'buffer'
 
-const emit = defineEmits(['changeStep', 'close'])
+const emit = defineEmits(['changeStep', 'close', 'getSignedData'])
+
+const props = defineProps({
+  text: { type: String, required: false },
+  options: {
+    type: Object,
+    default() {
+      return {}
+    }
+  }
+})
 
 store.$subscribe((mutation, state) => {
   console.log(mutation, state)
@@ -147,7 +95,8 @@ watch(
 )
 
 onMounted(() => {
-  interChainObject.selectedExtension = 'extension'
+  console.log(props.options)
+  // interChainObject.selectedExtension = 'extension'
   setTimeout(() => {
     makeConnection()
   }, 200)
@@ -159,21 +108,35 @@ const getWallet = (walletType: string) => {
 }
 
 const interChainResultObject = reactive({
+  walletObj: null,
   walletAddress: null,
-  signature: null,
-  arbitraryMessage: null,
-  walletObj: null
+  signProof: null,
+  isSignedVerified: false
 })
+
+const getRpcAndGasPriceByType = (type) => {
+  for (const obj of chains) {
+    if (obj.type === type) {
+      return {
+        rpc: obj.rpc,
+        gasPrice: obj.gasPrice
+      }
+    }
+  }
+  return null
+}
 
 const makeConnection = async () => {
   loading.value = true
   let chainInfo = []
+
+  const chainObj = getRpcAndGasPriceByType(store.interChainObject.selectedChain)
+
   chainInfo.push({
     chainId: store.interChainObject.selectedChain,
-    rpc: getRpc(store.interChainObject.selectedChain),
-    gasPrice: getGasPrice(store.interChainObject.selectedChain)
+    rpc: chainObj ? chainObj.rpc : null,
+    gasPrice: chainObj ? chainObj.gasPrice : null
   })
-  console.log(chainInfo)
 
   interChainResultObject.walletObj = await CONTROLLERS[
     store.interChainObject.selectedWallet
@@ -185,9 +148,16 @@ const makeConnection = async () => {
 
 watch(
   () => interChainResultObject.walletAddress,
-  (value) => {
+  async (value) => {
     if (value) {
       console.log(`Wallet Address: ${value}`)
+      emit('getWalletAddress', value)
+      loading.value = false
+      if (props.options.isPerformAction) {
+        signArbitrary()
+      } else {
+        getSignature()
+      }
       setTimeout(() => {
         loading.value = false
       }, 200)
@@ -196,12 +166,18 @@ watch(
 )
 
 watch(
-  () => interChainResultObject.signature,
+  () => interChainResultObject.signProof,
   (value) => {
+    console.log(value)
+  }
+)
+
+watch(
+  () => interChainResultObject.isSignedVerified,
+  (value) => {
+    console.log(value)
     if (value) {
       loading.value = false
-      console.log(`Signature: ${value}`)
-      localStorage.setItem('userLoggedIn', true)
       emit('close')
     }
   }
@@ -214,36 +190,160 @@ const SIGN_ARBITRARY_MSG = Buffer.from(
 const TX_MEMO = 'signed via cosmes'
 
 const CONTROLLERS = {
-  [WalletName.STATION]: new StationController(),
+  // [WalletName.STATION]: new StationController(),
   [WalletName.KEPLR]: new KeplrController(WC_PROJECT_ID),
-  [WalletName.LEAP]: new LeapController(WC_PROJECT_ID),
-  [WalletName.COMPASS]: new CompassController(),
-  [WalletName.COSMOSTATION]: new CosmostationController(WC_PROJECT_ID),
-  [WalletName.METAMASK_INJECTIVE]: new MetamaskInjectiveController(),
-  [WalletName.NINJI]: new NinjiController()
+  [WalletName.LEAP]: new LeapController(WC_PROJECT_ID)
+  // [WalletName.COMPASS]: new CompassController(),
+  // [WalletName.COSMOSTATION]: new CosmostationController(WC_PROJECT_ID),
+  // [WalletName.METAMASK_INJECTIVE]: new MetamaskInjectiveController(),
+  // [WalletName.NINJI]: new NinjiController()
 }
 
 const signArbitrary = async () => {
-  if (interChainResultObject.arbitraryMessage) {
-    loading.value = true
-    console.log(interChainResultObject.walletObj)
-    const wallet = Object.fromEntries(interChainResultObject.walletObj)[
-      store.interChainObject.selectedChain
-    ]
-    console.log(wallet)
-    try {
-      const res = await wallet.signArbitrary(Buffer.from(interChainResultObject.arbitraryMessage))
-      console.log(res)
-      const data = Buffer.from(new Uint8Array(res.data)).toString('utf-8')
-      res.data = data
-      interChainResultObject.signature = res.signature
-      alert('Sign success! Check console logs for details.')
-    } catch (err) {
-      console.error(err)
-      alert(err.message)
-    }
-  } else {
-    alert('Please enter Sign Arbitrary message before signing...')
+  const wallet = Object.fromEntries(interChainResultObject.walletObj)[
+    store.interChainObject.selectedChain
+  ]
+  const publicKey = base58btc.encode(wallet.pubKey.data.key)
+  const chainId = wallet.pubKey.data.chainId
+  const address = wallet.address
+  const hsSDK = initializeDidSDK()
+
+  const didDoc = await hsSDK.createByClientSpec({
+    address,
+    publicKey,
+    methodSpecificId: address,
+    chainId,
+    clientSpec: 'cosmos-ADR036'
+  })
+
+  console.log(didDoc)
+
+  const addVerification = await hsSDK.addVerificationMethod({
+    didDocument: didDoc,
+    type: 'EcdsaSecp256k1VerificationKey2019',
+    id: `${didDoc.id}#key-2`,
+    controller: didDoc.controller,
+    blockchainAccountId: `cosmos:${chainId}:${interChainResultObject.walletAddress}`,
+    publicKeyMultibase: publicKey
+  })
+
+  const prefix = address.split('1')[0]
+  try {
+    const address = wallet.address
+
+    const eds = new EcdsaSecp256k1Signature2019({
+      chainId,
+      provider: wallet.ext ? wallet.ext : wallet.wc,
+      bech32AddressPrefix: prefix
+    })
+
+    const signed = await jsSig.sign(didDoc, {
+      suite: eds,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: `${didDoc.id}#key-2`,
+          assertionMethod: didDoc.authentication
+        }
+      }),
+      documentLoader: docloader
+    })
+    console.log(signed)
+    interChainResultObject.signProof = signed
+
+    const verify = await jsSig.verify(signed, {
+      suite: new EcdsaSecp256k1Signature2019({
+        chainId,
+        bech32AddressPrefix: prefix,
+        provider: wallet.ext ? wallet.ext : wallet.wc
+      }),
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: `${didDoc.id}#key-2`,
+          assertionMethod: didDoc.authentication
+        }
+      }),
+      documentLoader: docloader
+    })
+    console.log(verify)
+    interChainResultObject.isSignedVerified = verify
+
+    emit('getSignedData', interChainResultObject)
+  } catch (err) {
+    console.log(err)
+    alert(err.message)
+  }
+}
+
+const getSignature = async () => {
+  console.log(store.challenge)
+
+  const wallet = Object.fromEntries(interChainResultObject.walletObj)[
+    store.interChainObject.selectedChain
+  ]
+  const publicKey = base58btc.encode(wallet.pubKey.data.key)
+  const chainId = wallet.pubKey.data.chainId
+  const address = wallet.address
+  const hsSDK = initializeDidSDK()
+  const didDoc = await hsSDK.createByClientSpec({
+    address,
+    publicKey,
+    methodSpecificId: address,
+    chainId,
+    clientSpec: 'cosmos-ADR036'
+  })
+
+  const prefix = address.split('1')[0]
+  try {
+    const address = wallet.address
+
+    const eds = new EcdsaSecp256k1Signature2019({
+      chainId,
+      provider: wallet.ext ? wallet.ext : wallet.wc,
+      bech32AddressPrefix: prefix
+    })
+    const signed = await jsSig.sign(didDoc, {
+      suite: eds,
+      purpose: new purposes.AuthenticationProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: didDoc.verificationMethod[0].id,
+          authentication: didDoc.authentication[0]
+        },
+        challenge: store.challenge,
+        domain: 'https://example.com'
+      }),
+      documentLoader: docloader
+    })
+    console.log(signed)
+    interChainResultObject.signProof = signed
+
+    // emit('getSignedData', interChainResultObject.signProof)
+
+    const verify = await jsSig.verify(signed, {
+      suite: new EcdsaSecp256k1Signature2019({
+        chainId,
+        bech32AddressPrefix: prefix
+      }),
+      purpose: new purposes.AuthenticationProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: didDoc.verificationMethod[0].id,
+          authentication: didDoc.authentication[0]
+        },
+        challenge: store.challenge,
+        domain: 'https://example.com'
+      }),
+      documentLoader: docloader
+    })
+    console.log(verify)
+    interChainResultObject.isSignedVerified = verify
+
+    emit('getSignedData', interChainResultObject)
+  } catch (err) {
+    console.log(err)
+    alert(err.message)
   }
 }
 </script>

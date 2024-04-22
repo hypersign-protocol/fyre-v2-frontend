@@ -1,5 +1,5 @@
 <template>
-  <div class="bw3-modal">
+  <div class="bw3-modal" ref="bcWallet">
     <v-dialog v-model="options.showBwModal" max-width="340" max-height="340" persistent>
       <template v-slot:default="{ isActive }">
         <v-card color="rgba(28, 29, 41, 1)" theme="dark" class="rounded-xl py-0">
@@ -9,10 +9,10 @@
           </v-card-actions>
           <v-divider></v-divider>
           <v-row class="pa-5 ma-0">
-            <v-col>
+            <v-col v-if="options.providers.includes('evm')">
               <div
                 class="d-flex flex-fill flex-column align-center cursor-pointer bg-grey-lighten-5 pa-4 rounded-xl"
-                @click="showEvm"
+                @click="chooseProvider('evm')"
               >
                 <v-avatar color="#D4D7DE" size="50">
                   <img src="./assets/images/ethereum.svg" height="40" />
@@ -20,10 +20,10 @@
                 <div class="pt-3">EVM</div>
               </div>
             </v-col>
-            <v-col>
+            <v-col v-if="options.providers.includes('interchain')">
               <div
                 class="d-flex flex-fill flex-column align-center cursor-pointer bg-grey-lighten-5 pa-4 rounded-xl"
-                @click="interchainModal = true"
+                @click="chooseProvider('interchain')"
               >
                 <v-avatar color="#D4D7DE" size="50">
                   <img src="./assets/images/cosmos.svg" height="40" />
@@ -35,15 +35,39 @@
         </v-card>
       </template>
     </v-dialog>
-    <InterChainModal v-model="interchainModal" v-if="interchainModal" @close="closeModal" />
+    <InterChainModal
+      v-model="interchainModal"
+      v-if="interchainModal"
+      @close="closeModal"
+      :options="options"
+      @getWalletAddress="collectWalletAddress"
+      @getSignedData="collectSignedData"
+    />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, inject } from 'vue'
+import { ref, reactive, watch, inject, onMounted, onUpdated, onUnmounted } from 'vue'
 import { walletOptionsInject } from './'
 import InterChainModal from './InterChain/index.vue'
+import { purposes } from 'jsonld-signatures'
+import jsSig from 'jsonld-signatures'
 
-const emit = defineEmits(['userAuthSuccess'])
+import { storeToRefs } from 'pinia'
+import { useInterChainStore } from './stores/interchain'
+const store = useInterChainStore()
+import { docloader, initializeDidSDK } from './utils'
+
+const { challenge } = storeToRefs(store)
+
+const didDocResult = ref(null)
+
+const emit = defineEmits([
+  'emitProvider',
+  'getSignature',
+  'getWalletAddress',
+  'getSignInProof',
+  'getSignedData'
+])
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -58,8 +82,12 @@ const props = defineProps({
 const interchainModal = ref(false)
 const showEvmModal = ref(false)
 
-import { mainnet, bsc } from '@wagmi/core/chains'
-import { getAccount, signTypedData } from '@wagmi/core'
+let reactiveConnector = ref({
+  connector: {} as any as Connection
+})
+
+import { mainnet, bsc, polygon } from '@wagmi/core/chains'
+import { Connection, getAccount, signTypedData } from '@wagmi/core'
 
 import {
   createWeb3Modal,
@@ -71,15 +99,16 @@ import {
 } from '@web3modal/wagmi/vue'
 import { reconnect } from '@wagmi/core'
 import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
+import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
 
 // @ts-expect-error 1. Get projectId
-const projectId = '46808fcc7a91e0856a6734652cf14fa2'
+const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
 if (!projectId) {
   throw new Error('VITE_PROJECT_ID is not set')
 }
 
 // 2. Create wagmiConfig
-const chains = [mainnet, bsc]
+let chains = reactive([mainnet, bsc, polygon])
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
@@ -111,94 +140,204 @@ const state = useWeb3ModalState()
 const { setThemeMode, themeMode, themeVariables } = useWeb3ModalTheme()
 const events = useWeb3ModalEvents()
 
-const evemResultObject = ref({
+const evmResultObject = ref({
+  provider: null,
   walletAddress: null,
-  signature: null
+  signProof: null,
+  isSignedVerified: false
 })
 
 const closeModal = () => {
   interchainModal.value = false
-  emit('userAuthSuccess')
 }
 
-const showEvm = () => {
-  props.options.showBwModal = false
-  modal.open({ view: 'Networks' })
+const collectWalletAddress = (data) => {
+  console.log(data)
+  emit('getWalletAddress', data)
 }
+
+const collectSignedData = (data) => {
+  console.log(data)
+  emit('getSignedData', data)
+  props.options.showBwModal = false
+}
+
+const chooseProvider = (data) => {
+  emit('emitProvider', data)
+  if (data === 'evm') {
+    props.options.showBwModal = false
+    modal.open({ view: 'Networks' })
+  } else {
+    interchainModal.value = true
+  }
+}
+
+watch(
+  () => props.options,
+  (value) => {
+    console.log(value)
+  }
+)
 
 watch(
   () => events.data,
   (value) => {
-    if (value.event === 'CONNECT_SUCCESS') {
-      evemResultObject.value.walletAddress = getAccount(wagmiConfig).address
+    if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected === true) {
+      evmResultObject.value.walletAddress = getAccount(wagmiConfig).address
     }
   }
 )
 
 watch(
-  () => evemResultObject.value.walletAddress,
+  () => evmResultObject.value.walletAddress,
   (value) => {
     if (value) {
-      console.log(`Wallet Address: ${value}`)
-      getSignature()
+      emit('getWalletAddress', evmResultObject.value.walletAddress)
+
+      if (props.options.isPerformAction) {
+        signArbitrary()
+      } else {
+        getSignature()
+      }
     }
   }
 )
 
-watch(
-  () => evemResultObject.value.signature,
-  (value) => {
-    if (value) {
-      console.log(`Signature: ${value}`)
-      emit('userAuthSuccess')
-    }
+wagmiConfig.subscribe((value) => {
+  if (value.status === 'connected') {
+    reactiveConnector = { connector: value.connections.get(value.current) }
   }
-)
+})
+
+const signArbitrary = async () => {
+  const hsSDK = initializeDidSDK()
+
+  const chainId = getAccount(wagmiConfig).chainId
+  const address = getAccount(wagmiConfig).address
+
+  console.log(address)
+
+  const didDoc = await hsSDK.createByClientSpec({
+    address,
+    methodSpecificId: address,
+    chainId,
+    clientSpec: 'eth-personalSign'
+  })
+
+  didDocResult.value = didDoc
+
+  const addVerification = await hsSDK.addVerificationMethod({
+    didDocument: didDoc,
+    type: 'EcdsaSecp256k1RecoveryMethod2020',
+    id: `${didDoc.id}#key-2`,
+    controller: didDoc.controller,
+    blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
+  })
+
+  delete didDoc.keyAgreement
+
+  const provider = await reactiveConnector.connector.connector.getProvider()
+
+  const eth = new EthereumEip712Signature2021({}, { _provider: provider })
+
+  const proof = await jsSig.sign(didDoc, {
+    suite: eth,
+    purpose: new purposes.AssertionProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        assertionMethod: didDoc.authentication
+      }
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(proof)
+
+  evmResultObject.value.signProof = proof
+
+  const verifed = await jsSig.verify(proof, {
+    suite: new EthereumEip712Signature2021({}),
+    purpose: new purposes.AssertionProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        assertionMethod: didDoc.authentication
+      },
+      challenge: challenge,
+      domain: 'http://example.com'
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(verifed)
+  console.log(verifed)
+  evmResultObject.value.isSignedVerified = verifed
+
+  emit('getSignedData', evmResultObject.value)
+  options.showBwModal = false
+}
 
 const getSignature = async () => {
-  console.log('heree')
+  const hsSDK = initializeDidSDK()
+
   const chainId = getAccount(wagmiConfig).chainId
+  const address = getAccount(wagmiConfig).address
+  console.log(address)
 
-  const domain = {
-    name: 'Ether Mail',
-    version: '1',
-    chainId: chainId,
-    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
-  }
+  const didDoc = await hsSDK.createByClientSpec({
+    address,
+    methodSpecificId: address,
+    chainId,
+    clientSpec: 'eth-personalSign'
+  })
 
-  const types = {
-    Person: [
-      { name: 'name', type: 'string' },
-      { name: 'wallet', type: 'address' }
-    ],
-    Mail: [
-      { name: 'from', type: 'Person' },
-      { name: 'to', type: 'Person' },
-      { name: 'contents', type: 'string' }
-    ]
-  }
+  delete didDoc.keyAgreement
 
-  const message = {
-    from: {
-      name: 'Cow',
-      wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-    },
-    to: {
-      name: 'Bob',
-      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
-    },
-    contents: 'Hello, Bob!'
-  }
-  try {
-    const signature = await signTypedData(wagmiConfig, {
-      domain,
-      message,
-      primaryType: 'Mail',
-      types
-    })
-    evemResultObject.value.signature = signature
-  } catch (e) {
-    console.log(e)
-  }
+  const provider = await reactiveConnector.connector.connector.getProvider()
+
+  const eth = new EthereumEip712Signature2021({}, { _provider: provider })
+
+  const proof = await jsSig.sign(didDoc, {
+    suite: eth,
+    purpose: new purposes.AuthenticationProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        authentication: didDoc.authentication
+      },
+      challenge: store.challenge,
+      domain: 'http://example.com'
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(proof)
+
+  evmResultObject.value.signProof = proof
+
+  const verifed = await jsSig.verify(proof, {
+    suite: new EthereumEip712Signature2021({}),
+    purpose: new purposes.AuthenticationProofPurpose({
+      controller: {
+        '@context': ['https://w3id.org/security/v2'],
+        id: didDoc.id,
+        authentication: didDoc.authentication
+      },
+      challenge: store.challenge,
+      domain: 'http://example.com'
+    }),
+    verificationMethod: didDoc.verificationMethod[0].id,
+    domain: {},
+    documentLoader: docloader
+  })
+  console.log(verifed)
+  evmResultObject.value.isSignedVerified = verifed
+
+  emit('getSignedData', evmResultObject.value)
+  props.options.showBwModal = false
 }
 </script>

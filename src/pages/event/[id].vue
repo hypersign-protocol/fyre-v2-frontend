@@ -149,7 +149,12 @@
                 </div>
                 <v-card class="event-task--card">
                   <template v-for="(task, index) in tasks">
-                    <Task :task="task" :communityId="eventById.communityId" class="mb-5" />
+                    <Task
+                      :task="task"
+                      :communityId="eventById.communityId"
+                      :eventParticipants="eventParticipants"
+                      class="mb-5"
+                    />
                   </template>
                 </v-card>
               </v-window-item>
@@ -257,9 +262,13 @@ const tabs = ref([
 
 import { useEventStore } from '@/store/event.ts'
 import { isEventHappening } from '@/composables/event.ts'
+import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 
 const eventStore = useEventStore()
+const eventParticipantStore = useEventParticipantStore()
+
+const { eventParticipants } = storeToRefs(useEventParticipantStore())
 
 const route = useRoute()
 const router = useRouter()
@@ -306,9 +315,10 @@ watch(
 watch(
   () => tasks.value,
   (value: any) => {
-    setTimeout(() => {
+    setTimeout(async () => {
       loading.value = false
-      getOtherEvents()
+      await eventParticipantStore.EVENT_PARTICIPANTS(route.params.id)
+      await getOtherEvents()
     }, 1000)
   }
 )

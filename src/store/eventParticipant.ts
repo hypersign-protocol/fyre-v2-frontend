@@ -30,7 +30,8 @@ interface LeaderboardData {
 export const useEventParticipantStore = defineStore('eventParticipant', {
   state: () => ({
     performResult: {} as PerformTaskResult,
-    leaderBoard: {} as LeaderboardData
+    leaderBoard: {} as LeaderboardData,
+    eventParticipants: {}
   }),
   actions: {
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
@@ -77,6 +78,23 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
       } catch (error) {
         console.error('Error fetching data:', error)
         return null
+      }
+    },
+
+    async EVENT_PARTICIPANTS(eventId: string): Promise {
+      try {
+        const response: AxiosResponse = await axios.get(`/event-participants/${eventId}`)
+
+        if (response.success) {
+          this.eventParticipants = response.data
+          return response.data
+        } else {
+          console.error('Error fetching data:', response)
+          return []
+        }
+      } catch (error: AxiosError) {
+        console.error('Error fetching data:', error)
+        return []
       }
     }
   }

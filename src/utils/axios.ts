@@ -11,9 +11,9 @@ const axiosServices = axios.create({
 // Add an interceptor for requests
 axiosServices.interceptors.request.use((config) => {
   // token stored in localStorage
-  // const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken')
 
-  const token = import.meta.env.VITE_API_TOKEN
+  // const token = import.meta.env.VITE_API_TOKEN
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

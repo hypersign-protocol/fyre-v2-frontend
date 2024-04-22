@@ -16,11 +16,11 @@
               <v-col cols="12" md="6">
                 <div class="rewards__wrapper">
                   <p class="title">Your total experience points</p>
-                  <p class="xp">{{ userMeta.totalXps }} XP</p>
-                  <p class="level">Level {{ userMeta.levelReached }}</p>
+                  <p class="xp">{{ user.totalXps }} XP</p>
+                  <p class="level">Level {{ user.levelReached }}</p>
                   <v-progress-linear model-value="20" :height="12"></v-progress-linear>
                   <p class="points">
-                    Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level
+                    Need {{ user.xpRequiredForNextLevel }} points to reach the next level
                   </p>
                 </div>
               </v-col>
@@ -140,12 +140,16 @@ import {
   defineAsyncComponent
 } from 'vue'
 import { useUserStore } from '@/store/user.ts'
+import { useAuthStore } from '@/store/auth.ts'
+import { getUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 import tenXpModal from './tenXpModal.vue'
 import flat20Modal from './flat20Modal.vue'
 const router = useRouter()
 const store = useUserStore()
-const { userMeta } = storeToRefs(useUserStore())
+const authStore = useAuthStore()
+const { userMeta } = storeToRefs(useAuthStore())
+
 const eventTab = ref(null)
 const loading = ref(false)
 const show10xp = ref(false)
@@ -171,17 +175,7 @@ const tabs = ref([
     slug: 'OTHER'
   }
 ])
-
-watch(
-  () => store.userMeta,
-  (value: any) => {
-    loading.value = false
-  },
-  { deep: true }
-)
-
-onMounted(async () => {
-  loading.value = true
-  await store.USER_AUTH()
+const user = computed(() => {
+  return getUser()
 })
 </script>

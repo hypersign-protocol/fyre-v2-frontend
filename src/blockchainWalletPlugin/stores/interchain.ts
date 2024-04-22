@@ -4,7 +4,8 @@ import { defineStore } from 'pinia'
 export const useInterChainStore = defineStore('interchain', {
   state: () => ({
     interChainObject: {},
-    interChainActiveStep: 'chain'
+    interChainActiveStep: 'chain',
+    challenge: null
   }),
   actions: {
     RESET_STORE() {

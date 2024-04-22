@@ -4,6 +4,22 @@ export function getRpc(chain: string): string {
   switch (chain) {
     case 'osmosis-1':
       return 'https://rpc.osmosis.zone'
+    case 'cataclysm-1':
+      return 'https://nibiru.rpc.kjnodes.com'
+    case 'comdex-1':
+      return 'https://nibiru.rpc.kjnodes.com'
+    case 'archway-1':
+      return 'https://archway.rpc.kjnodes.com'
+    case 'prajna':
+      return 'https://rpc.prajna.hypersign.id'
+    case 'omniflixhub-1':
+      return 'https://omniflix-rpc.polkachu.com'
+    case 'secret-4':
+      return 'https://secretnetwork-rpc.highstakes.ch'
+    case 'osmos-1':
+      return 'https://osmosis-rpc.polkachu.com'
+    case 'agoric-3':
+      return 'https://agoric.rpc.kjnodes.com'
     case 'juno-1':
       return 'https://juno-rpc.polkachu.com'
     case 'kaiyo-1':

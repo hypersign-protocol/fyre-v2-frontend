@@ -33,6 +33,16 @@ const store = useInterChainStore()
 
 const emit = defineEmits(['changeStep', 'close'])
 
+const props = defineProps({
+  text: { type: String, required: false },
+  options: {
+    type: Object,
+    default() {
+      return {}
+    }
+  }
+})
+
 const { interChainObject } = storeToRefs(store)
 
 const nextStep = (item) => {

@@ -12,11 +12,18 @@
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
+      <div
+        class="task__action"
+        v-if="!isTaskVerified && !eventParticipants.tasks.hasOwnProperty(task._id)"
+        @click="showExpand = !showExpand"
+      >
         <v-btn v-if="!showExpand">Verify</v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
-      <div class="task__action" v-if="isTaskVerified">
+      <div
+        class="task__action"
+        v-if="isTaskVerified || eventParticipants.tasks.hasOwnProperty(task._id)"
+      >
         <v-btn variant="outlined">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn
@@ -37,16 +44,24 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 
 import { webAuth } from '@/composables/twitterAuth.ts'
 
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 
-const props = defineProps<{
-  task: Task
-  communityId: string
-}>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)

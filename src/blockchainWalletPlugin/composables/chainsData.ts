@@ -1,8 +1,5 @@
 // chainsData.ts
 
-import CosmosIcon from '../assets/images/cosmos-icon.svg'
-import OsmosisIcon from '../assets/images/osmosis.svg'
-
 interface ChainData {
   type: string
   name: string
@@ -11,17 +8,95 @@ interface ChainData {
 }
 
 const chains: ChainData[] = [
-  { type: 'osmosis-1', name: 'Osmosis', image: OsmosisIcon, showOption: true },
-  { type: 'cosmoshub-4', name: 'Cosmos', image: CosmosIcon, showOption: true },
-  { type: 'juno-1', name: 'Juno', image: 'juno.png', showOption: false },
-  { type: 'kaiyo-1', name: 'Kujira', image: 'kujira.png', showOption: false },
-  { type: 'phoenix-1', name: 'Terra', image: 'terra.png', showOption: false },
-  { type: 'columbus-5', name: 'Terra Classic', image: 'terra-classic.png', showOption: false },
-  { type: 'neutron-1', name: 'Neutron', image: 'neutron.png', showOption: false },
-  { type: 'migaloo-1', name: 'Migaloo', image: 'migaloo.png', showOption: false },
-  { type: 'injective-1', name: 'Injective', image: 'injective.png', showOption: false },
-  { type: 'pacific-1', name: 'Sei', image: 'sei.png', showOption: false },
-  { type: 'dymension_1100-1', name: 'Dymension', image: 'dymension.png', showOption: false }
+  {
+    type: 'osmosis-1',
+    name: 'Osmosis',
+    image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://rpc.osmosis.zone',
+    gasPrice: { amount: '0.0025', denom: 'uosmo' }
+  },
+
+  {
+    type: 'cosmoshub-4',
+    name: 'Cosmos',
+    image: new URL(`@/assets/images/task/cosmos.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://cosmos-rpc.publicnode.com',
+    gasPrice: { amount: '0.0025', denom: 'uatom' }
+  },
+
+  {
+    type: 'cataclysm-1',
+    name: 'Nibiru',
+    image: new URL(`@/assets/images/task/nibiru.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://rpc.osmosis.zone',
+    gasPrice: { amount: '0.0025', denom: 'uosmo' }
+  },
+
+  {
+    type: 'comdex-1',
+    name: 'Comdex',
+    image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://rpc.comdex.one',
+    gasPrice: { amount: '0.0025', denom: 'ucmdx' }
+  },
+
+  {
+    type: 'archway-1',
+    name: 'Archway',
+    image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://archway.rpc.kjnodes.com',
+    gasPrice: { amount: '0.0025', denom: 'agoric' }
+  },
+
+  {
+    type: 'prajna',
+    name: 'Hypersign',
+    image: new URL(`@/assets/images/task/hypersign.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://rpc.prajna.hypersign.id',
+    gasPrice: { amount: '0.0025', denom: 'hid' }
+  },
+
+  {
+    type: 'omniflixhub-1',
+    name: 'Omniflex',
+    image: new URL(`@/assets/images/task/omniflex.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://omniflix-rpc.polkachu.com',
+    gasPrice: { amount: '0.0025', denom: 'omniflix' }
+  },
+
+  {
+    type: 'secret-4',
+    name: 'Secret',
+    image: new URL(`@/assets/images/task/secret.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://secretnetwork-rpc.highstakes.ch',
+    gasPrice: { amount: '0.0025', denom: 'secret' }
+  },
+
+  {
+    type: 'osmos-1',
+    name: 'Osmosis',
+    image: new URL(`@/assets/images/task/osmosis.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://osmosis-rpc.polkachu.com',
+    gasPrice: { amount: '0.0025', denom: 'osmos' }
+  },
+
+  {
+    type: 'agoric-3',
+    name: 'Agoric',
+    image: new URL(`@/assets/images/task/agoric.png`, import.meta.url).href,
+    showOption: true,
+    rpc: 'https://agoric.rpc.kjnodes.com',
+    gasPrice: { amount: '0.0025', denom: 'agoric' }
+  }
 ]
 
 export { chains }

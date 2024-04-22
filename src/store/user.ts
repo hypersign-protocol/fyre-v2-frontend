@@ -29,7 +29,6 @@ export const useUserStore = defineStore('user', {
     events: [],
     communities: [],
     userRewards: [],
-    userMeta: {},
     errors: {}
   }),
   actions: {
@@ -71,22 +70,6 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.userRewards = response.data
-          return response.data
-        } else {
-          console.error('Error fetching data:', response)
-          return []
-        }
-      } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
-        return []
-      }
-    },
-    async USER_AUTH(): Promise {
-      try {
-        const response: AxiosResponse = await axios.post(`/authorize`)
-
-        if (response.success) {
-          this.userMeta = response.data
           return response.data
         } else {
           console.error('Error fetching data:', response)

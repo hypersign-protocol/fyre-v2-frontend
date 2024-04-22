@@ -15,7 +15,13 @@
             </div>
           </div>
           <div class="wallet__footer">
-            <v-btn v-if="!item.isAddress" color="secondary" variant="flat">Connect Wallet</v-btn>
+            <v-btn
+              v-if="!item.isAddress"
+              color="secondary"
+              variant="flat"
+              @click="connectWallet(item)"
+              >Connect Wallet</v-btn
+            >
             <v-btn v-if="item.isAddress" color="white" variant="text" class="btn-copy">
               {{ item.address }}
               <img src="@/assets/images/content-copy.svg" class="ml-2" />
@@ -25,6 +31,12 @@
       </v-col>
     </v-row>
   </div>
+  <BlockChainWallet
+    :options="options"
+    @emitProvider="getProvider"
+    @getWalletAddress="collectWalletAddress"
+    @getSignedData="collectSignedData"
+  />
 </template>
 <script lang="ts" setup>
 import {
@@ -37,79 +49,197 @@ import {
   defineAsyncComponent
 } from 'vue'
 
+import { useAuthStore } from '@/store/auth.ts'
+import { getUser, saveUser } from '@/composables/jwtService.ts'
+import { storeToRefs } from 'pinia'
+const router = useRouter()
+const store = useAuthStore()
+
+const options = reactive({
+  showBwModal: false,
+  providers: ['evm', 'interchain'],
+  chains: [''],
+  isRequiredDID: false,
+  isPerformAction: true
+})
+
+const formData = reactive({
+  walletAddress: null,
+  chainName: null,
+  signedDidDoc: null,
+  walletPrefix: null,
+  selectedWallet: null,
+  editMode: 'wallet'
+})
+
+const loading = ref(false)
+
+const user = computed(() => {
+  return getUser()
+})
+
+const getProvider = async (data) => {
+  formData.chainName = data === 'evm' ? 'EVM' : 'COSMOS'
+}
+
+const collectWalletAddress = async (data) => {
+  formData.walletAddress = data
+}
+
+const collectSignedData = async (data) => {
+  formData.signedDidDoc = data.signProof
+  console.log(formData)
+}
+
+watch(
+  () => formData.signedDidDoc,
+  (value) => {
+    if (value) {
+      checkIfWalletExists()
+    }
+  }
+)
+
+watch(
+  () => store.userProfileResponse,
+  (value: any) => {
+    console.log(value)
+    loading.value = false
+    saveUser(value)
+  },
+  { deep: true }
+)
+
+const updateWallet = () => {
+  setTimeout(async () => {
+    await store.UPDATE_USER_PROFILE(formData)
+  }, 100)
+}
+
+const connectWallet = async (item) => {
+  options.showBwModal = true
+  formData.selectedWallet = item
+  formData.walletPrefix = item.title
+}
+
+const checkIfWalletExists = async (item) => {
+  const searchAccountId = `${formData.selectedWallet.provider}:${formData.selectedWallet.chainId}:${formData.selectedWallet.walletAddress}`
+  const addresses = user.value.didDocument.verificationMethod
+  const IfExists = accountIdExists(addresses, searchAccountId)
+
+  if (!IfExists) {
+    updateWallet()
+  } else {
+    console.log('Wallet Address is already connected')
+  }
+}
+
+const accountIdExists = (dataArray, accountId) => {
+  for (const item of dataArray) {
+    if (item.blockchainAccountId === accountId) {
+      return true
+    }
+  }
+  return false
+}
+
 const items = ref([
   {
     title: 'Cosmos',
     address: '0xd42dc40cc6...7814a0da',
     tag: 'CONTROLLER',
     image: new URL(`@/assets/images/task/cosmos.png`, import.meta.url).href,
-    isAddress: true
+    isAddress: true,
+    chainId: 'cosmoshub-4',
+    provider: 'cosmos'
   },
   {
     title: 'Polygon',
     address: null,
     image: new URL(`@/assets/images/task/polygon.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'eip155:1',
+    provider: 'eip155'
   },
   {
     title: 'Ethereum',
     address: null,
     image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'eip155:56',
+    provider: 'eip155'
   },
   {
     title: 'Binance Smart Chain',
     address: null,
     image: new URL(`@/assets/images/task/binance.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'eip155:137',
+    provider: 'eip155'
   },
   {
     title: 'Comdex',
     address: null,
     image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'comdex-1',
+    provider: 'cosmos'
   },
   {
     title: 'Nibiru',
     address: null,
     image: new URL(`@/assets/images/task/nibiru.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'cataclysm-1',
+    provider: 'cosmos'
   },
   {
     title: 'Archway',
     address: null,
     image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'archway-1',
+    provider: 'cosmos'
   },
   {
     title: 'Hypersign',
     address: null,
     image: new URL(`@/assets/images/task/hypersign.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'prajna',
+    provider: 'cosmos'
   },
   {
     title: 'Agoric',
     address: null,
     image: new URL(`@/assets/images/task/agoric.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'agoric-3',
+    provider: 'cosmos'
   },
   {
     title: 'Omniflex',
     address: null,
     image: new URL(`@/assets/images/task/omniflex.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'omniflixhub-1',
+    provider: 'cosmos'
   },
   {
     title: 'Secret',
     address: null,
     image: new URL(`@/assets/images/task/secret.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'secret-4',
+    provider: 'cosmos'
   },
   {
     title: 'Osmosis',
     address: null,
     image: new URL(`@/assets/images/task/osmosis.png`, import.meta.url).href,
-    isAddress: false
+    isAddress: false,
+    chainId: 'osmos-1',
+    provider: 'cosmos'
   }
 ])
 </script>
