@@ -20,13 +20,15 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
-interface eventById {
-  _id: string
-}
-
-const props = defineProps<{
-  eventData: eventById
-}>()
+const props = defineProps({
+  eventData: {
+    type: Object,
+    required: false,
+    default() {
+      return {}
+    }
+  }
+})
 
 const dialog = ref(true)
 </script>

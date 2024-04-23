@@ -16,13 +16,13 @@
           </div>
           <div class="wallet__footer">
             <v-btn
-              v-if="!item.isAddress"
+              v-if="!checkIfExists(item)"
               color="secondary"
               variant="flat"
               @click="connectWallet(item)"
               >Connect Wallet</v-btn
             >
-            <v-btn v-if="item.isAddress" color="white" variant="text" class="btn-copy">
+            <v-btn v-if="checkIfExists(item)" color="white" variant="text" class="btn-copy">
               {{ item.address }}
               <img src="@/assets/images/content-copy.svg" class="ml-2" />
             </v-btn>
@@ -120,6 +120,7 @@ const connectWallet = async (item) => {
   options.showBwModal = true
   formData.selectedWallet = item
   formData.walletPrefix = item.title
+  formData.chainId = item.chainId
 }
 
 const checkIfWalletExists = async (item) => {
@@ -132,6 +133,17 @@ const checkIfWalletExists = async (item) => {
   } else {
     console.log('Wallet Address is already connected')
   }
+}
+
+const checkIfExists = (item) => {
+  const searchString = `${item.provider}:${item.chainId}`
+  const addresses = user.value.didDocument.verificationMethod
+  const IfExists = hasBlockchainAccountId(addresses, searchString)
+  return IfExists
+}
+
+function hasBlockchainAccountId(data, searchString) {
+  return data.some((item) => item.blockchainAccountId.includes(searchString))
 }
 
 const accountIdExists = (dataArray, accountId) => {

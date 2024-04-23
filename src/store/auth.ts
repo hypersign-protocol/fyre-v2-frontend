@@ -38,11 +38,15 @@ export const useAuthStore = defineStore('auth', {
     },
     async UPDATE_USER_PROFILE(payload: Object): Promise {
       try {
-        const response: AxiosResponse = await axios.patch(`/user`, payload, {
-          headers: {
-            'x-hf-social-accesstoken': payload.socialToken
+        const response: AxiosResponse = await axios.patch(
+          `/user?editMode=${payload.editMode}`,
+          payload,
+          {
+            headers: {
+              'x-hf-social-accesstoken': payload.socialAccessToken
+            }
           }
-        })
+        )
 
         if (response.success) {
           this.userProfileResponse = response.data

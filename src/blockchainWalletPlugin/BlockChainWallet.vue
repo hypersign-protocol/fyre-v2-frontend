@@ -277,7 +277,7 @@ const signArbitrary = async () => {
   evmResultObject.value.isSignedVerified = verifed
 
   emit('getSignedData', evmResultObject.value)
-  options.showBwModal = false
+  props.options.showBwModal = false
 }
 
 const getSignature = async () => {

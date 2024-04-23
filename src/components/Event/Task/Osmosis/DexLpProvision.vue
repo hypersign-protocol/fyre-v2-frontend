@@ -27,7 +27,7 @@
           bg-color="transparent"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
-          :disabled="isTaskVerified"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
@@ -40,15 +40,23 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
-
-const props = defineProps<{
-  task: Task
-}>()
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)

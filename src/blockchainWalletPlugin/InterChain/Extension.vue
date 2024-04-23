@@ -152,15 +152,11 @@ watch(
     if (value) {
       console.log(`Wallet Address: ${value}`)
       emit('getWalletAddress', value)
-      loading.value = false
       if (props.options.isPerformAction) {
         signArbitrary()
       } else {
         getSignature()
       }
-      setTimeout(() => {
-        loading.value = false
-      }, 200)
     }
   }
 )
@@ -200,6 +196,7 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
+  loading.value = true
   const wallet = Object.fromEntries(interChainResultObject.walletObj)[
     store.interChainObject.selectedChain
   ]
@@ -277,6 +274,7 @@ const signArbitrary = async () => {
 }
 
 const getSignature = async () => {
+  loading.value = true
   console.log(store.challenge)
 
   const wallet = Object.fromEntries(interChainResultObject.walletObj)[

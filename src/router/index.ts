@@ -17,4 +17,18 @@ const router = createRouter({
   }
 })
 
+// Define a function to check if the user is authenticated
+function isAuthenticated(): boolean {
+  const token = localStorage.getItem('accessToken')
+  return !!token
+}
+
+router.beforeEach((to, from, next) => {
+  if (to.path === 'rewards' && !isAuthenticated()) {
+    console.log('hhhh')
+  } else {
+    next()
+  }
+})
+
 export default router

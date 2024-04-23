@@ -12,8 +12,23 @@
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand">Verify</v-btn>
+      <div class="task__action" @click="showExpand = !showExpand">
+        <v-btn
+          v-if="
+            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+          "
+        >
+          Verify
+        </v-btn>
+        <v-btn
+          variant="outlined"
+          v-else-if="
+            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+          "
+        >
+          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          Verified
+        </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
       <div class="task__action" v-if="isTaskVerified">
@@ -23,10 +38,15 @@
         >
       </div>
     </div>
-    <div class="task__body" v-if="showExpand && !isTaskVerified">
+    <div class="task__body" v-if="showExpand">
       <div class="task__input">
-        <div class="task__submit">
-          <v-btn @click="handleTwitterLogin"> Retweet URL</v-btn>
+        <div class="task__submit mb-3">
+          <v-btn
+            :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+            @click="handleTwitterLogin"
+          >
+            Retweet URL</v-btn
+          >
         </div>
 
         <v-text-field
@@ -36,11 +56,16 @@
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
-          :disabled="isTaskVerified"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
         ></v-text-field>
       </div>
       <div class="task__submit">
-        <v-btn @click="performAction"> Verify</v-btn>
+        <v-btn
+          @click="performAction"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+        >
+          Verify</v-btn
+        >
       </div>
     </div>
   </div>
@@ -52,16 +77,23 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 
 import { webAuth } from '@/composables/twitterAuth.ts'
 
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
-
-const props = defineProps<{
-  task: Task
-  communityId: string
-}>()
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)

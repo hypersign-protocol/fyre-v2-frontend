@@ -26,4 +26,6 @@ app.use(blockChainWalletPlugin())
 
 registerPlugins(app)
 
+app.config.warnHandler = () => {}
+
 app.mount('#app')

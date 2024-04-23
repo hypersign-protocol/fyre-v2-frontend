@@ -13,12 +13,23 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand && !isTaskVerified">Verify</v-btn>
-        <v-btn variant="outlined" v-if="isTaskVerified">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2 cursor-pointer" />
-          Verified</v-btn
+        <v-btn
+          v-if="
+            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+          "
         >
-        <v-icon v-if="showExpand && !isTaskVerified" color="white">mdi-close</v-icon>
+          Verify
+        </v-btn>
+        <v-btn
+          variant="outlined"
+          v-else-if="
+            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+          "
+        >
+          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          Verified
+        </v-btn>
+        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand">
@@ -30,7 +41,7 @@
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
-          :disabled="isTaskVerified"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
@@ -44,16 +55,24 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 
-const props = defineProps<{
-  task: Task
-  communityId: string
-}>()
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)

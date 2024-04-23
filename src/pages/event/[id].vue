@@ -145,7 +145,14 @@
               <v-window-item :eager="true" value="task">
                 <div class="d-flex align-center justify-space-between pa-5 mt-4">
                   <p class="font-25 font-weight--bold">Tasks</p>
-                  <p class="font-16 font-weight--bold">0 of 5</p>
+                  <p class="font-16 font-weight--bold">
+                    <span v-if="eventParticipants && eventParticipants.tasks"
+                      >{{ Object.keys(eventParticipants.tasks).length }}
+                    </span>
+                    <span v-else>0</span> of
+                    <span v-if="tasks">{{ tasks.length }}</span>
+                    <span v-else>0</span>
+                  </p>
                 </div>
                 <v-card class="event-task--card">
                   <template v-for="(task, index) in tasks">

@@ -10,34 +10,53 @@
         <span>
           <img :src="getImage(task.type)" />
         </span>
-        <span class="text text-white-100">{{ task.title }} Test</span>
+        <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" v-if="!isTaskVerified" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand">Verify</v-btn>
-        <v-icon v-if="showExpand" color="white" class="cursor-pointer">mdi-close</v-icon>
-      </div>
-      <div class="task__action" v-if="isTaskVerified">
-        <v-btn variant="outlined">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
-          Verified</v-btn
+      <div class="task__action" @click="showExpand = !showExpand">
+        <v-btn
+          v-if="
+            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+          "
         >
+          Verify
+        </v-btn>
+        <v-btn
+          variant="outlined"
+          v-else-if="
+            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+          "
+        >
+          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          Verified
+        </v-btn>
+        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input"></div>
       <div class="task__submit">
         <v-btn
+          class="me-2"
           @click="(options.showBwModal = true), (isCollecting = true)"
           :loading="isCollecting"
-          :disabled="walletAddress"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
           >Collect Wallet Address</v-btn
         >
-        <v-btn @click="submit" :loading="loading">Verify Task</v-btn>
+        <v-btn
+          @click="submit"
+          :loading="loading"
+          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          >Verify Task</v-btn
+        >
       </div>
     </div>
   </div>
-  <BlockChainWallet :options="options" @getSignedData="collectSignedData" />
+  <BlockChainWallet
+    :options="options"
+    @getWalletAddress="collectWalletAddress"
+    @getSignedData="collectSignedData"
+  />
 </template>
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
@@ -46,16 +65,24 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 
 import { getImage } from '@/composables/event.ts'
 
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 
-const props = defineProps<{
-  task: Task
-  communityId
-}>()
 const showExpand = ref(false)
 const loading = ref(false)
 const isCollecting = ref(false)
@@ -65,21 +92,26 @@ const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
-const wAddress = ref(null)
-const sProof = ref(null)
+const formData = reactive({
+  walletAddress: null,
+  signedDidDoc: null
+})
 
 const options = reactive({
   showBwModal: false,
   providers: ['interchain'],
-  chains: ['cosmos'],
+  chains: [''],
   isRequiredDID: false,
   isPerformAction: true
 })
 
+const collectWalletAddress = async (data) => {
+  formData.walletAddress = data
+}
+
 const collectSignedData = async (data) => {
-  console.log(data)
-  wAddress.value = data.walletAddress
-  sProof.value = data.signProof
+  formData.signedDidDoc = data.signProof
+  console.log(formData)
 }
 
 watch(
@@ -97,8 +129,7 @@ watch(
 )
 
 const submit = async () => {
-  console.log(wAddress.value)
-  console.log(sProof.value)
+  console.log(formData)
 
   loading.value = true
   await store.PERFORM_EVENT_TASK({
@@ -107,8 +138,8 @@ const submit = async () => {
     task: {
       id: props.task._id,
       proof: {
-        walletAddress: wAddress.value,
-        signedDidDocument: sProof.value
+        walletAddress: formData.walletAddress,
+        signedDidDocument: formData.signedDidDoc
       }
     }
   })

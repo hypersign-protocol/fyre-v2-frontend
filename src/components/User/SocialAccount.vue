@@ -14,13 +14,53 @@
             </div>
           </div>
           <div class="wallet__footer">
-            <v-btn v-if="!item.handle" color="secondary" variant="flat" @click="socialConnect(item)"
-              >Connect</v-btn
-            >
-            <v-btn v-if="item.handle" color="white" variant="text" class="btn-copy">
-              {{ item.handle }}
-              <img src="@/assets/images/content-copy.svg" class="ml-2" />
-            </v-btn>
+            <template v-if="item.title === 'Twitter'">
+              <v-btn
+                v-if="!user.socials?.twitterHandle"
+                color="secondary"
+                variant="flat"
+                @click="socialConnect(item)"
+                >Connect</v-btn
+              >
+              <template v-if="user.socials?.twitterHandle">
+                <v-btn color="white" variant="text" class="btn-copy">
+                  {{ user.socials?.twitterHandle }}
+                  <img src="@/assets/images/content-copy.svg" class="ml-2" />
+                </v-btn>
+              </template>
+            </template>
+
+            <template v-if="item.title === 'Discord'">
+              <v-btn
+                v-if="!user.socials?.discordHandle"
+                color="secondary"
+                variant="flat"
+                @click="socialConnect(item)"
+                >Connect</v-btn
+              >
+              <template v-if="user.socials?.discordHandle">
+                <v-btn color="white" variant="text" class="btn-copy">
+                  {{ user.socials?.discordHandle }}
+                  <img src="@/assets/images/content-copy.svg" class="ml-2" />
+                </v-btn>
+              </template>
+            </template>
+
+            <template v-if="item.title === 'Telegram'">
+              <v-btn
+                v-if="!user.socials?.telegramHandle"
+                color="secondary"
+                variant="flat"
+                @click="socialConnect(item)"
+                >Connect</v-btn
+              >
+              <template v-if="user.socials?.telegramHandle">
+                <v-btn color="white" variant="text" class="btn-copy">
+                  {{ user.socials?.telegramHandle }}
+                  <img src="@/assets/images/content-copy.svg" class="ml-2" />
+                </v-btn>
+              </template>
+            </template>
           </div>
         </div>
       </v-col>
@@ -43,6 +83,10 @@ import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 
 const store = useAuthStore()
+
+const user = computed(() => {
+  return getUser()
+})
 
 const formData = reactive({
   socialType: null,
@@ -106,6 +150,7 @@ const twitterConnection = () => {
       if (response) {
         formData.socialAccessToken = response.accessToken
       } else {
+        console.error(err)
         console.log('Something went wrong')
       }
     }
@@ -116,7 +161,7 @@ watch(
   () => formData.socialAccessToken,
   (value: any) => {
     console.log(value)
-    updateWallet()
+    updateSocialProfile()
   },
   { deep: true }
 )
@@ -125,7 +170,7 @@ watch(
   () => formData.tgUserId,
   (value: any) => {
     console.log(value)
-    updateWallet()
+    updateSocialProfile()
   },
   { deep: true }
 )
@@ -140,18 +185,19 @@ watch(
   { deep: true }
 )
 
-const updateWallet = () => {
+const updateSocialProfile = () => {
   setTimeout(async () => {
+    delete formData.selectedSocial
     await store.UPDATE_USER_PROFILE(formData)
   }, 100)
 }
 
 const items = ref([
-  {
-    title: 'Mail',
-    image: new URL(`@/assets/images/email-filled.png`, import.meta.url).href,
-    handle: 'jhon@xyz.com'
-  },
+  // {
+  //   title: 'Mail',
+  //   image: new URL(`@/assets/images/email-filled.png`, import.meta.url).href,
+  //   handle: 'jhon@xyz.com'
+  // },
   {
     title: 'Discord',
     address: null,

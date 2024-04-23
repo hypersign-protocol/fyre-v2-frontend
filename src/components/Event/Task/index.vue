@@ -1,20 +1,33 @@
 <template>
   <!-- <p class="text-right">{{ task.type }}</p> -->
-  <component :task="task" :communityId="communityId" :is="checkComponent" class="mb-10" />
+  <component
+    :task="task"
+    :communityId="communityId"
+    :is="checkComponent"
+    :eventParticipants="eventParticipants"
+    class="mb-10"
+  />
 </template>
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/event/Actions.ts'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-interface Task {
-  _id: string
-  type: string
-  year: number
-}
-
-const props = defineProps<{
-  task: Task
-  communityId: string
-}>()
+const props = defineProps({
+  communityId: { type: String, required: true },
+  task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const componentName = ref(null)
