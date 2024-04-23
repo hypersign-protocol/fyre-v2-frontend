@@ -67,4 +67,8 @@ export default defineConfig({
   server: {
     port: 9002,
   },
+  build:{
+    commonjsOptions: { transformMixedEsModules: true } 
+
+  },
 })
