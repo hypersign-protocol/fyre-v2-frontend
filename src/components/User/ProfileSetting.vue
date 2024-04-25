@@ -108,6 +108,7 @@ watch(
 
 const updateProfile = () => {
   loading.value = true
+  user.value.didDocument.alsoKnownAs.push(user.value.userName)
   setTimeout(async () => {
     await store.UPDATE_USER_PROFILE({
       editMode: 'profile',
