@@ -187,15 +187,23 @@ watch(
     }
   }
 )
+watch(
+  () => store.options,
+  (value) => {
+    console.log(value);
+    
+  }
+)
 
 watch(
   () => evmResultObject.value.walletAddress,
   (value) => {
     if (value) {
-      emit('getWalletAddress', evmResultObject.value.walletAddress)
+      console.log(props)
 
+      emit('getWalletAddress', evmResultObject.value.walletAddress)
       if (props.options.isPerformAction) {
-        signArbitrary()
+        signArbitrary(props.options.params, props.options.addVm)
       } else {
         getSignature()
       }
@@ -209,74 +217,105 @@ wagmiConfig.subscribe((value) => {
   }
 })
 
-const signArbitrary = async () => {
+const signArbitrary = async (params?, addVm?) => {
+  console.log(props.options);
+  
   const hsSDK = initializeDidSDK()
 
-  const chainId = getAccount(wagmiConfig).chainId
-  const address = getAccount(wagmiConfig).address
-
-  console.log(address)
-
-  const didDoc = await hsSDK.createByClientSpec({
-    address,
-    methodSpecificId: address,
-    chainId,
-    clientSpec: 'eth-personalSign'
-  })
-
-  didDocResult.value = didDoc
-
-  const addVerification = await hsSDK.addVerificationMethod({
-    didDocument: didDoc,
-    type: 'EcdsaSecp256k1RecoveryMethod2020',
-    id: `${didDoc.id}#key-2`,
-    controller: didDoc.controller,
-    blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
-  })
-
-  delete didDoc.keyAgreement
-
   const provider = await reactiveConnector.connector.connector.getProvider()
-
   const eth = new EthereumEip712Signature2021({}, { _provider: provider })
 
-  const proof = await jsSig.sign(didDoc, {
-    suite: eth,
-    purpose: new purposes.AssertionProofPurpose({
-      controller: {
-        '@context': ['https://w3id.org/security/v2'],
-        id: didDoc.id,
-        assertionMethod: didDoc.authentication
-      }
-    }),
-    verificationMethod: didDoc.verificationMethod[0].id,
-    domain: {},
-    documentLoader: docloader
-  })
-  console.log(proof)
+  if (params.didDocument) {
+    const didDoc = params.didDocument
+    delete params.didDocument.proof
+    let length = didDoc.verificationMethod.length
+    const chainId = params.didDocument.verificationMethod[0].blockchainAccountId.split(':')[1]
+    const address = params.didDocument.verificationMethod[0].blockchainAccountId.split(':')[2]
+    if (addVm) {
+      await hsSDK.addVerificationMethod({
+        didDocument: didDoc,
+        type: 'EcdsaSecp256k1RecoveryMethod2020',
+        id: `${didDoc.id}#key-${length++}`,
+        controller: didDoc.controller,
+        blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
+      })
+    }
+    const proof = await jsSig.sign(didDoc, {
+      suite: eth,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: didDoc.id,
+          assertionMethod: didDoc.authentication
+        }
+      }),
+      verificationMethod: didDoc.verificationMethod[0].id,
+      domain: {},
+      documentLoader: docloader
+    })
+    evmResultObject.value.signProof = proof
+    emit('getSignedData', evmResultObject.value)
+  } else {
+    const chainId = getAccount(wagmiConfig).chainId
+    const address = getAccount(wagmiConfig).address
 
-  evmResultObject.value.signProof = proof
+    const didDoc = await hsSDK.createByClientSpec({
+      address,
+      methodSpecificId: address,
+      chainId,
+      clientSpec: 'eth-personalSign'
+    })
 
-  const verifed = await jsSig.verify(proof, {
-    suite: new EthereumEip712Signature2021({}),
-    purpose: new purposes.AssertionProofPurpose({
-      controller: {
-        '@context': ['https://w3id.org/security/v2'],
-        id: didDoc.id,
-        assertionMethod: didDoc.authentication
-      },
-      challenge: challenge,
-      domain: 'http://example.com'
-    }),
-    verificationMethod: didDoc.verificationMethod[0].id,
-    domain: {},
-    documentLoader: docloader
-  })
-  console.log(verifed)
-  console.log(verifed)
-  evmResultObject.value.isSignedVerified = verifed
+    didDocResult.value = didDoc
 
-  emit('getSignedData', evmResultObject.value)
+    const addVerification = await hsSDK.addVerificationMethod({
+      didDocument: didDoc,
+      type: 'EcdsaSecp256k1RecoveryMethod2020',
+      id: `${didDoc.id}#key-2`,
+      controller: didDoc.controller,
+      blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
+    })
+
+    delete didDoc.keyAgreement
+
+    const proof = await jsSig.sign(didDoc, {
+      suite: eth,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: didDoc.id,
+          assertionMethod: didDoc.authentication
+        }
+      }),
+      verificationMethod: didDoc.verificationMethod[0].id,
+      domain: {},
+      documentLoader: docloader
+    })
+    console.log(proof)
+
+    evmResultObject.value.signProof = proof
+
+    const verifed = await jsSig.verify(proof, {
+      suite: new EthereumEip712Signature2021({}),
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: didDoc.id,
+          assertionMethod: didDoc.authentication
+        },
+        challenge: challenge,
+        domain: 'http://example.com'
+      }),
+      verificationMethod: didDoc.verificationMethod[0].id,
+      domain: {},
+      documentLoader: docloader
+    })
+    console.log(verifed)
+    console.log(verifed)
+    evmResultObject.value.isSignedVerified = verifed
+
+    emit('getSignedData', evmResultObject.value)
+  }
   props.options.showBwModal = false
 }
 
@@ -285,7 +324,6 @@ const getSignature = async () => {
 
   const chainId = getAccount(wagmiConfig).chainId
   const address = getAccount(wagmiConfig).address
-  console.log(address)
 
   const didDoc = await hsSDK.createByClientSpec({
     address,

@@ -153,7 +153,7 @@ watch(
       console.log(`Wallet Address: ${value}`)
       emit('getWalletAddress', value)
       if (props.options.isPerformAction) {
-        signArbitrary()
+        signArbitrary(props.options.params)
       } else {
         getSignature()
       }
@@ -195,81 +195,136 @@ const CONTROLLERS = {
   // [WalletName.NINJI]: new NinjiController()
 }
 
-const signArbitrary = async () => {
+const signArbitrary = async (params?, addVm) => {
   loading.value = true
   const wallet = Object.fromEntries(interChainResultObject.walletObj)[
     store.interChainObject.selectedChain
   ]
-  const publicKey = base58btc.encode(wallet.pubKey.data.key)
-  const chainId = wallet.pubKey.data.chainId
-  const address = wallet.address
-  const hsSDK = initializeDidSDK()
 
-  const didDoc = await hsSDK.createByClientSpec({
-    address,
-    publicKey,
-    methodSpecificId: address,
-    chainId,
-    clientSpec: 'cosmos-ADR036'
-  })
+  if (params?.didDocument) {
+    delete params.didDocument.proof
 
-  console.log(didDoc)
+    const didDoc = params.didDocument
 
-  const addVerification = await hsSDK.addVerificationMethod({
-    didDocument: didDoc,
-    type: 'EcdsaSecp256k1VerificationKey2019',
-    id: `${didDoc.id}#key-2`,
-    controller: didDoc.controller,
-    blockchainAccountId: `cosmos:${chainId}:${interChainResultObject.walletAddress}`,
-    publicKeyMultibase: publicKey
-  })
+    const verificationMethod = params.didDocument.verificationMethod[0]
+    const publicKey = verificationMethod.publicKeyMultibase
+    const chainId = verificationMethod.blockchainAccountId.split(':')[1]
+    const address = verificationMethod.blockchainAccountId.split(':')[2]
+    const hsSDK = initializeDidSDK()
+    const prefix = address.split('1')[0]
 
-  const prefix = address.split('1')[0]
-  try {
-    const address = wallet.address
-
-    const eds = new EcdsaSecp256k1Signature2019({
-      chainId,
-      provider: wallet.ext ? wallet.ext : wallet.wc,
-      bech32AddressPrefix: prefix
-    })
-
-    const signed = await jsSig.sign(didDoc, {
-      suite: eds,
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: `${didDoc.id}#key-2`,
-          assertionMethod: didDoc.authentication
-        }
-      }),
-      documentLoader: docloader
-    })
-    console.log(signed)
-    interChainResultObject.signProof = signed
-
-    const verify = await jsSig.verify(signed, {
-      suite: new EcdsaSecp256k1Signature2019({
+    try {
+      const eds = new EcdsaSecp256k1Signature2019({
         chainId,
-        bech32AddressPrefix: prefix,
-        provider: wallet.ext ? wallet.ext : wallet.wc
-      }),
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: `${didDoc.id}#key-2`,
-          assertionMethod: didDoc.authentication
-        }
-      }),
-      documentLoader: docloader
+        provider: wallet.ext ? wallet.ext : wallet.wc,
+        bech32AddressPrefix: prefix
+      })
+      if(addVm){
+       await hsSDK.addVerificationMethod({
+      didDocument: didDoc,
+      type: 'EcdsaSecp256k1VerificationKey2019',
+      id: `${didDoc.id}#key-2`,
+      controller: didDoc.controller,
+      blockchainAccountId: `cosmos:${chainId}:${interChainResultObject.walletAddress}`,
+      publicKeyMultibase: publicKey
     })
-    console.log(verify)
-    interChainResultObject.isSignedVerified = verify
+      }
 
-    emit('getSignedData', interChainResultObject)
-  } catch (err) {
-    console.log(err)
-    alert(err.message)
+      const signed = await jsSig.sign(didDoc, {
+        suite: eds,
+        purpose: new purposes.AssertionProofPurpose({
+          controller: {
+            '@context': ['https://w3id.org/security/v2'],
+            id: `${didDoc.id}#key-1`,
+            assertionMethod: didDoc.authentication
+          }
+        }),
+        documentLoader: docloader
+      })
+      
+      props.options.showBwModal = false
+      interChainResultObject.signProof = signed
+      emit('getSignedData', interChainResultObject)
+    } catch (err) {
+      console.log(err)
+      props.options.showBwModal = false
+
+      alert(err.message)
+    }
+  } else {
+    const publicKey = base58btc.encode(wallet.pubKey.data.key)
+    const chainId = wallet.pubKey.data.chainId
+    const address = wallet.address
+    const hsSDK = initializeDidSDK()
+
+    const didDoc = await hsSDK.createByClientSpec({
+      address,
+      publicKey,
+      methodSpecificId: address,
+      chainId,
+      clientSpec: 'cosmos-ADR036'
+    })
+
+    console.log(didDoc)
+
+    const addVerification = await hsSDK.addVerificationMethod({
+      didDocument: didDoc,
+      type: 'EcdsaSecp256k1VerificationKey2019',
+      id: `${didDoc.id}#key-2`,
+      controller: didDoc.controller,
+      blockchainAccountId: `cosmos:${chainId}:${interChainResultObject.walletAddress}`,
+      publicKeyMultibase: publicKey
+    })
+
+    const prefix = address.split('1')[0]
+    try {
+      const address = wallet.address
+
+      const eds = new EcdsaSecp256k1Signature2019({
+        chainId,
+        provider: wallet.ext ? wallet.ext : wallet.wc,
+        bech32AddressPrefix: prefix
+      })
+
+      const signed = await jsSig.sign(didDoc, {
+        suite: eds,
+        purpose: new purposes.AssertionProofPurpose({
+          controller: {
+            '@context': ['https://w3id.org/security/v2'],
+            id: `${didDoc.id}#key-2`,
+            assertionMethod: didDoc.authentication
+          }
+        }),
+        documentLoader: docloader
+      })
+      console.log(signed)
+      interChainResultObject.signProof = signed
+
+      const verify = await jsSig.verify(signed, {
+        suite: new EcdsaSecp256k1Signature2019({
+          chainId,
+          bech32AddressPrefix: prefix,
+          provider: wallet.ext ? wallet.ext : wallet.wc
+        }),
+        purpose: new purposes.AssertionProofPurpose({
+          controller: {
+            '@context': ['https://w3id.org/security/v2'],
+            id: `${didDoc.id}#key-2`,
+            assertionMethod: didDoc.authentication
+          }
+        }),
+        documentLoader: docloader
+      })
+      console.log(verify)
+      interChainResultObject.isSignedVerified = verify
+      emit('getSignedData', interChainResultObject)
+      loading.value = false
+    } catch (err) {
+      console.log(err)
+      loading.value = false
+
+      alert(err.message)
+    }
   }
 }
 

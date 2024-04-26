@@ -37,6 +37,7 @@
     @getWalletAddress="collectWalletAddress"
     @getSignedData="collectSignedData"
   />
+  <a id="updateOptions" @click="updateOptions"> </a>
 </template>
 <script lang="ts" setup>
 import {
@@ -60,7 +61,9 @@ const options = reactive({
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true
+  isPerformAction: true,
+  addVm: true,
+  params: { didDocument: null }
 })
 
 const formData = reactive({
@@ -92,10 +95,12 @@ const collectSignedData = async (data) => {
 }
 
 watch(
-  () => formData.signedDidDoc,
+  () => formData.walletAddress,
   (value) => {
+    console.log(value)
+
     if (value) {
-      checkIfWalletExists()
+      // checkIfWalletExists()
     }
   }
 )
@@ -117,6 +122,9 @@ const updateWallet = () => {
 }
 
 const connectWallet = async (item) => {
+
+  options.params.didDocument = user.value.didDocument
+
   options.showBwModal = true
   formData.selectedWallet = item
   formData.walletPrefix = item.title
@@ -170,7 +178,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/polygon.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:1',
+    chainId: '137',
     provider: 'eip155'
   },
   {
@@ -178,7 +186,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:56',
+    chainId: '1',
     provider: 'eip155'
   },
   {
@@ -186,7 +194,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/binance.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:137',
+    chainId: '56',
     provider: 'eip155'
   },
   {
