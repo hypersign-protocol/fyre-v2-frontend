@@ -74,7 +74,7 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row class="pt-8">
+            <!-- <v-row class="pt-8">
               <v-col><h1>Scratch Cards</h1></v-col>
             </v-row>
             <v-row class="pt-8 scratch-wrap">
@@ -116,7 +116,7 @@
                   <img src="@/assets/images/scratch.png" />
                 </div>
               </v-col>
-            </v-row>
+            </v-row> -->
           </v-container>
           <v-container>
             <RewardTab :eventTab="eventTab" />
@@ -165,14 +165,6 @@ const tabs = ref([
   {
     title: 'XP',
     slug: 'XP'
-  },
-  {
-    title: 'NFTs',
-    slug: 'NFT'
-  },
-  {
-    title: 'Other',
-    slug: 'OTHER'
   }
 ])
 const user = computed(() => {

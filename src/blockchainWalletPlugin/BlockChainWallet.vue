@@ -108,7 +108,7 @@ if (!projectId) {
 }
 
 // 2. Create wagmiConfig
-let chains = reactive([mainnet, bsc, polygon])
+const chains = reactive([mainnet, bsc, polygon])
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
@@ -147,6 +147,7 @@ const evmResultObject = ref({
   isSignedVerified: false
 })
 
+
 const closeModal = () => {
   interchainModal.value = false
 }
@@ -176,6 +177,14 @@ watch(
   () => props.options,
   (value) => {
     console.log(value)
+  }
+)
+
+watch(
+  () => store.walletOptions,
+  (value) => {
+    console.log(value)
+    // chains = valu
   }
 )
 

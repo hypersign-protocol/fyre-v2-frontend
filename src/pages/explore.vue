@@ -138,7 +138,7 @@
           <div class="section-content">
             <h2 class="text-center font-48">All Communities</h2>
             <v-row class="py-4">
-              <v-col>
+              <v-col md="4">
                 <v-text-field
                   hide-details
                   density="compact"
@@ -155,7 +155,7 @@
 
               <v-spacer></v-spacer>
 
-              <v-col>
+              <!-- <v-col>
                 <div class="d-flex align-center justify-end">
                   <v-btn
                     variant="outlined"
@@ -166,7 +166,7 @@
                     >Create Your Community</v-btn
                   >
                 </div>
-              </v-col>
+              </v-col> -->
             </v-row>
             <v-row>
               <v-col

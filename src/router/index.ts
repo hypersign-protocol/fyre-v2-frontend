@@ -24,11 +24,19 @@ function isAuthenticated(): boolean {
 }
 
 router.beforeEach((to, from, next) => {
-  if (to.path === 'rewards' && !isAuthenticated()) {
-    console.log('hhhh')
+  console.log(to.path);
+  if (
+    (to.path !== "/" && to.path !== "/explore" && !to.path.startsWith("/event/")) &&
+    !isAuthenticated()
+  ) {
+    // If the route is neither '/', '/explore', nor starts with '/event/' and user is not authenticated, redirect to '/'
+    next("/");
   } else {
-    next()
+    // Otherwise, allow navigation
+    next();
   }
-})
+});
+
+
 
 export default router

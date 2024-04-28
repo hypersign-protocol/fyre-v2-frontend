@@ -1,7 +1,7 @@
 import { defineAsyncComponent } from 'vue'
 import { defu } from 'defu'
 export const walletOptionsInject = Symbol()
-import { updateChallenge } from './blockChainWallet.ts'
+import { updateChallenge, receiveOptions} from './blockChainWallet.ts'
 import './assets/style.scss'
 
 type PluginOptions = Partial<Props>
@@ -13,6 +13,7 @@ export function blockChainWalletPlugin(options: PluginOptions) {
     })
 
     app.config.globalProperties.postChallenge = updateChallenge
+    app.config.globalProperties.emitOptions = receiveOptions
 
     app.provide(walletOptionsInject, options)
     app.component(

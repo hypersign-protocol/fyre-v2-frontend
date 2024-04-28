@@ -5,7 +5,8 @@ export const useInterChainStore = defineStore('interchain', {
   state: () => ({
     interChainObject: {},
     interChainActiveStep: 'chain',
-    challenge: null
+    challenge: null,
+    walletOptions: {}
   }),
   actions: {
     RESET_STORE() {

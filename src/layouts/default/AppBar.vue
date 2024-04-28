@@ -45,7 +45,7 @@
 
       <template v-if="isUserLoggedIn">
         <v-avatar id="menu-activator" class="cursor-pointer">
-          <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
+          <v-img alt="John" src="@/assets/images/user-profile.png"></v-img>
         </v-avatar>
 
         <v-menu activator="#menu-activator">

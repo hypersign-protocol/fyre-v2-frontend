@@ -42,14 +42,6 @@ const tabs = ref([
   {
     title: 'XP',
     slug: 'XP'
-  },
-  {
-    title: 'NFTs',
-    slug: 'NFT'
-  },
-  {
-    title: 'Other',
-    slug: 'OTHER'
   }
 ])
 </script>

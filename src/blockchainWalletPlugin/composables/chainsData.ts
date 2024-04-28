@@ -8,14 +8,6 @@ interface ChainData {
 }
 
 const chains: ChainData[] = [
-  {
-    type: 'osmosis-1',
-    name: 'Osmosis',
-    image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
-    showOption: true,
-    rpc: 'https://rpc.osmosis.zone',
-    gasPrice: { amount: '0.0025', denom: 'uosmo' }
-  },
 
   {
     type: 'cosmoshub-4',

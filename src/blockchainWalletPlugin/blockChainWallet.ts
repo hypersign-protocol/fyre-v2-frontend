@@ -6,3 +6,12 @@ export const updateChallenge = (data) => {
     challenge: data.challenge
   })
 }
+
+export const receiveOptions = (data) => {
+  console.log(data)
+  const store = useInterChainStore()
+  store.$patch({
+    walletOptions: data
+  })
+}
+

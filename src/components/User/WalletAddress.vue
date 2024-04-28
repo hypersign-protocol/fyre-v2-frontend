@@ -3,14 +3,14 @@
     <p class="title">Network Lists</p>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
-        <div class="wallet__address__container" :class="item.isAddress ? 'address' : ''">
-          <div class="tag">{{ item.tag }}</div>
+        <div class="wallet__address__container" :class="checkIfExists(item) ? 'address' : ''">
+          <div class="tag" v-if="checkIfExists(item)">Controller</div>
           <div class="wallet__header">
             <div class="wallet__meta">
               <img :src="item.image" />
               <p>{{ item.title }}</p>
             </div>
-            <div class="wallet__action" v-if="!item.isAddress">
+            <div class="wallet__action" v-if="!checkIfExists(item)">
               <v-icon>mdi-dots-vertical</v-icon>
             </div>
           </div>
@@ -37,6 +37,7 @@
     @getWalletAddress="collectWalletAddress"
     @getSignedData="collectSignedData"
   />
+  <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import {
@@ -117,7 +118,10 @@ const updateWallet = () => {
 }
 
 const connectWallet = async (item) => {
+  document.getElementById('emit-options').click()
   options.showBwModal = true
+  options.providers = item.provider === 'cosmos' ? ['interchain'] : ['evm']
+  options.chains = [item.title]
   formData.selectedWallet = item
   formData.walletPrefix = item.title
   formData.chainId = item.chainId
@@ -170,7 +174,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/polygon.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:1',
+    chainId: '1',
     provider: 'eip155'
   },
   {
@@ -178,7 +182,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:56',
+    chainId: '56',
     provider: 'eip155'
   },
   {
@@ -186,7 +190,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/binance.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'eip155:137',
+    chainId: '137',
     provider: 'eip155'
   },
   {
