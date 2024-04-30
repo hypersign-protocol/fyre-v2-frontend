@@ -3,20 +3,6 @@
     <!-- <div class="homepage-section padding-global-y background-center"> -->
     <div class="homepage-section background-center">
       <div class="section-content">
-        <!-- <v-card color="transparent" class="mx-auto explore-search">
-          <v-text-field
-            hide-details
-            class="rounded-pill is-border-radius mb-8 bg-light-100"
-            placeholder="Search communities and events"
-            variant="solo"
-            bg-color="transparent"
-            height="70"
-          >
-            <template v-slot:append-inner>
-              <v-icon icon="mdi-magnify" />
-            </template>
-          </v-text-field>
-        </v-card> -->
         <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
           <v-tabs
             selected-class="tab--active"
@@ -38,32 +24,7 @@
           <h2 class="homepage__section__title">Popular Events</h2>
           <div class="homepage-section">
             <div class="section-content">
-              <el-carousel
-                class="event__slider"
-                :interval="5000"
-                arrow="never"
-                indicator-position="outside"
-              >
-                <el-carousel-item
-                  class="home-slider-item--wrap cursor-pointer"
-                  v-for="(popular, i) in paginatedPopular"
-                  :key="i"
-                >
-                  <v-row>
-                    <v-col
-                      v-for="(event, index) in popular"
-                      :key="index"
-                      cols="4"
-                      sm="4"
-                      md="4"
-                      xl="4"
-                      lg="4"
-                    >
-                      <ExploreCard :eventData="event" />
-                    </v-col>
-                  </v-row>
-                </el-carousel-item>
-              </el-carousel>
+              <PopularEvents />
             </div>
           </div>
         </v-container>
@@ -84,7 +45,7 @@
                 md="4"
                 xl="4"
                 lg="4"
-                v-for="(event, index) in communities.slice(0, 3)"
+                v-for="(event, index) in communities?.data.slice(0, 3)"
                 :key="index"
               >
                 <v-card
@@ -146,6 +107,7 @@
                   placeholder="Search communities"
                   variant="solo"
                   height="53"
+                  v-model="options.search"
                 >
                   <template v-slot:prepend-inner>
                     <v-icon icon="mdi-magnify" />
@@ -168,19 +130,31 @@
                 </div>
               </v-col> -->
             </v-row>
-            <v-row>
+            <Loader v-if="loading" />
+            <v-row v-if="!loading && communities?.data?.length">
               <v-col
                 cols="12"
                 sm="4"
                 md="4"
                 xl="3"
                 lg="3"
-                v-for="(community, index) in communities"
+                v-for="(community, index) in communities?.data"
                 :key="index"
               >
                 <CommunityCard :communityData="community" />
               </v-col>
             </v-row>
+            <div
+              class="text-center d-flex align-center justify-center my-6"
+              v-if="communities.total > 8"
+            >
+              <Pagination
+                :page="options.page"
+                :limit="options.limit"
+                :total="communities.total"
+                @pageChange="pageChange"
+              />
+            </div>
           </div>
         </div>
       </v-window-item>
@@ -189,9 +163,13 @@
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-const activeTab = ref('events')
+
+import _ from 'lodash'
 import { isEventHappening } from '@/composables/event.ts'
 import paginate from '@/utils/paginate'
+
+import { useEventStore } from '@/store/event.ts'
+import { useCommunityStore } from '@/store/community.ts'
 
 const tabs = ref([
   {
@@ -203,8 +181,16 @@ const tabs = ref([
     slug: 'communities'
   }
 ])
-import { useEventStore } from '@/store/event.ts'
-import { useCommunityStore } from '@/store/community.ts'
+
+const activeTab = ref('events')
+const search = ref(null)
+
+const options = reactive({
+  page: 1,
+  limit: 8,
+  search: '',
+  filter: ''
+})
 
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
@@ -213,19 +199,7 @@ const router = useRouter()
 
 const loading = ref(false)
 
-const popularRaw = computed(() => eventStore.getPopularEvents)
 const communities = computed(() => communityStore.getPopularCommunities)
-let paginatedPopular = paginate(popularRaw.value, 3)
-
-watch(
-  () => popularRaw.value,
-  (value: any) => {
-    setTimeout(() => {
-      loading.value = false
-      paginatedPopular = paginate(popularRaw.value, 3)
-    }, 1000)
-  }
-)
 
 watch(
   () => communities.value,
@@ -236,17 +210,44 @@ watch(
   }
 )
 
+const pageChange = (page) => {
+  options.page = page
+}
+
+const searchKey = _.debounce(() => {
+  setTimeout(async () => {
+    getPopularCommunities()
+  })
+}, 500)
+
+watch(() => options.search, searchKey)
+
+watch(
+  () => options.page,
+  (value: any) => {
+    console.log(value)
+    setTimeout(async () => {
+      getPopularCommunities()
+    }, 100)
+  }
+)
+
 const viewCommunity = (event) => {
   router.push({ path: `/community/${event._id}` })
 }
 
-const viewEvent = (event) => {
-  router.push({ path: `/event/${event._id}` })
+const getPopularCommunities = async () => {
+  loading.value = true
+  let params = `?page=${options.page}&limit=${options.limit}&filter=${options.filter}`
+
+  if (options.search) {
+    params += `&searchString=${options.search}`
+  }
+
+  await communityStore.POPULAR_COMMUNITIES(params)
 }
 
 onMounted(async () => {
-  loading.value = true
-  await eventStore.POPULAR_EVENTS(`?filter=popular&page=2&limit=10`)
-  await communityStore.POPULAR_COMMUNITIES(`?filter=popular&page=1&limit=10`)
+  getPopularCommunities()
 })
 </script>

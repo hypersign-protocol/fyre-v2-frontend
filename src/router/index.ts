@@ -23,20 +23,27 @@ function isAuthenticated(): boolean {
   return !!token
 }
 
-router.beforeEach((to, from, next) => {
-  console.log(to.path);
+// Define a function to check if auth required
+function isAuthRequired(routeName): boolean {
   if (
-    (to.path !== "/" && to.path !== "/explore" && !to.path.startsWith("/event/")) &&
-    !isAuthenticated()
+    routeName === '/' ||
+    routeName === '/explore' ||
+    routeName === '/rewards' ||
+    routeName.startsWith('/community/') ||
+    routeName.startsWith('/event/')
   ) {
-    // If the route is neither '/', '/explore', nor starts with '/event/' and user is not authenticated, redirect to '/'
-    next("/");
-  } else {
-    // Otherwise, allow navigation
-    next();
+    return false
   }
-});
+  return true
+}
 
-
+router.beforeEach((to, from, next) => {
+  console.log(to.path)
+  if (isAuthRequired(to.path) && !isAuthenticated()) {
+    next('/')
+  } else {
+    next()
+  }
+})
 
 export default router

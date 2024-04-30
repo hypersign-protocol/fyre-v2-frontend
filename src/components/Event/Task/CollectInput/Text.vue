@@ -95,7 +95,7 @@ watch(
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
-    communityId: '65e43eca9a3b5d2bd597e43b',
+    communityId: props.communityId,
     task: {
       id: props.task._id,
       proof: {

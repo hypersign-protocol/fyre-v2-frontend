@@ -6,6 +6,9 @@ import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 import type { EventType } from '@/data/types/event/eventType'
 import type { EventTaskType } from '@/data/types/event/eventTask'
 
+import { useNotificationStore } from './notification.ts'
+const notificationStore = useNotificationStore()
+
 interface eventType {
   popularEvents: EventType[]
   tabEvents: EventType[]
@@ -29,13 +32,22 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.popularEvents = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     },
@@ -44,14 +56,23 @@ export const useEventStore = defineStore('event', {
         const response: AxiosResponse<EventType[]> = await axios.get(`/event${filter}`)
 
         if (response.success) {
-          this.tabEvents = response.data
+          this.tabEvents = response
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     },
@@ -62,13 +83,22 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.eventById = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return null
         }
       } catch (error) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         this.errors = error
         return null
       }
@@ -79,13 +109,22 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.eventTasks = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return null
         }
       } catch (error) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return null
       }
     }

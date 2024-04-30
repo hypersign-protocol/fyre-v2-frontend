@@ -10,13 +10,16 @@
       <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{ item.name }}</v-tab>
     </v-tabs>
     <v-window v-model="activeTab">
-      <v-window-item :eager="true" :value="item.slug" v-for="(item, index) in tabs" :key="index">
+      <v-window-item :value="item.slug" v-for="(item, index) in tabs" :key="index">
         <v-row class="py-5" no-gutters>
           <v-col cols="2">
             <v-select
               hide-details
+              v-model="rewardFilter"
               density="compact"
-              :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+              :items="rewards"
+              item-title="name"
+              item-value="slug"
               variant="solo"
               placeholder="All Rewards"
             >
@@ -29,6 +32,7 @@
               class="rounded-pill is-border-radius"
               placeholder="Search events by name or tags"
               variant="solo"
+              v-model="options.search"
             >
               <template v-slot:prepend-inner>
                 <v-icon icon="mdi-magnify" />
@@ -37,12 +41,12 @@
           </v-col>
         </v-row>
         <Loader v-if="loading" />
-        <v-row class="mt-5" v-if="!loading && events.length > 0">
-          <v-col v-for="(event, index) in events.slice(0, 8)" cols="12" sm="6" md="4" lg="3">
+        <v-row class="mt-5" v-if="!loading && events?.data?.length > 0">
+          <v-col v-for="(event, index) in events?.data" cols="12" sm="6" md="4" lg="3">
             <Card :eventData="event" />
           </v-col>
         </v-row>
-        <v-row class="mt-5" v-if="!loading && events.length === 0">
+        <v-row class="mt-5" v-if="!loading && events?.data?.length === 0">
           <v-col cols="12">
             <div class="d-flex align-center justify-center height-200">
               <p class="font-25 lh-26 mx-5 purple-linear-gradient-text font-weight-medium">
@@ -51,6 +55,14 @@
             </div>
           </v-col>
         </v-row>
+        <div class="text-center d-flex align-center justify-center my-6" v-if="events.total > 8">
+          <Pagination
+            :page="options.page"
+            :limit="options.limit"
+            :total="events.total"
+            @pageChange="pageChange"
+          />
+        </div>
       </v-window-item>
     </v-window>
   </v-card>
@@ -58,8 +70,10 @@
 
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import _ from 'lodash'
 const loading = ref(false)
 const activeTab = ref('coming_soon')
+const rewardFilter = ref(null)
 const tabs = ref([
   {
     name: 'Coming Soon',
@@ -70,11 +84,37 @@ const tabs = ref([
     slug: 'ends_in_24h'
   }
 ])
+
+const rewards = ref([
+  {
+    name: 'Token',
+    slug: 'token'
+  },
+  {
+    name: 'NFT',
+    slug: 'nft'
+  },
+  {
+    name: 'Assured Reward',
+    slug: 'assured_reward'
+  },
+  {
+    name: 'Pending Reward',
+    slug: 'pending_reward'
+  }
+])
 import { useEventStore } from '@/store/event.ts'
 
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
 const router = useRouter()
+
+const options = reactive({
+  page: 1,
+  limit: 8,
+  search: '',
+  filter: 'coming_soon'
+})
 
 const events = computed(() => eventStore.getTabEvents)
 
@@ -82,10 +122,42 @@ onMounted(async () => {
   loadEvents()
 })
 
+const pageChange = (page) => {
+  options.page = page
+}
+
+const searchKey = _.debounce(() => {
+  setTimeout(async () => {
+    loadEvents()
+  })
+}, 500)
+
+watch(() => options.search, searchKey)
+
 watch(
   () => activeTab.value,
   (value: any) => {
+    options.search = ''
+    options.filter = value
     loadEvents()
+  }
+)
+
+watch(
+  () => rewardFilter.value,
+  (value: any) => {
+    options.filter = value
+    loadEvents()
+  }
+)
+
+watch(
+  () => options.page,
+  (value: any) => {
+    console.log(value)
+    setTimeout(async () => {
+      loadEvents()
+    }, 100)
   }
 )
 
@@ -104,6 +176,11 @@ const viewEvent = (event) => {
 
 const loadEvents = async () => {
   loading.value = true
-  await eventStore.TAB_EVENTS(`?page=2&limit=10`)
+  let params = `?page=${options.page}&limit=${options.limit}&filter=${options.filter}`
+
+  if (options.search) {
+    params += `&searchString=${options.search}`
+  }
+  await eventStore.TAB_EVENTS(params)
 }
 </script>

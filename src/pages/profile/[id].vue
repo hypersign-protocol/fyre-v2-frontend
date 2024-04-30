@@ -1,12 +1,5 @@
 <template>
-  <div v-if="loading" class="height-500 d-flex align-center justify-center fill-height">
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading" />
   <template v-if="!loading">
     <v-container fluid class="background-left pt-8">
       <div class="homepage-section">

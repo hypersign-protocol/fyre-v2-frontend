@@ -1,12 +1,5 @@
 <template>
-  <div v-if="loading" class="height-500 d-flex align-center justify-center fill-height">
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading" />
   <v-card color="transparent" class="bg__card" v-if="!loading">
     <v-card-text class="profile__container">
       <div class="profile__section">
@@ -151,7 +144,7 @@
         <v-col cols="12" md="6">
           <div class="level__sec">
             <p>Level {{ user.levelReached }}</p>
-            <v-progress-linear model-value="20" :height="12"></v-progress-linear>
+            <v-progress-linear :model-value="user.levelReached" :height="12"></v-progress-linear>
             <p>Need {{ user.xpRequiredForNextLevel }} points to reach the next level</p>
           </div>
         </v-col>

@@ -33,6 +33,13 @@ const props = defineProps({
   }
 })
 
+watch(
+  () => store.walletOptions,
+  (value) => {
+    console.log(value)
+  }
+)
+
 const monitorChanges = (component, selectedValue) => {
   store.$patch({
     interChainActiveStep: component

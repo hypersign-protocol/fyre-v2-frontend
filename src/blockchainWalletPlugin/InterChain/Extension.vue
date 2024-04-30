@@ -23,7 +23,7 @@ import jsSig from 'jsonld-signatures'
 import { base58btc } from 'multiformats/bases/base58'
 import { EcdsaSecp256k1Signature2019 } from 'keplr-ecdsasecp256k1signature2019'
 
-import { docloader, initializeDidSDK } from '../utils'
+import { docloader, initializeDidSDK, signData } from '../utils'
 import { getImageUrl } from '../composables/general.ts'
 import { getGasPrice } from '../composables/gasUtils.ts'
 import { getRpc } from '../composables/rpcUtils.ts'
@@ -162,6 +162,13 @@ watch(
 )
 
 watch(
+  () => store.walletOptions,
+  (value) => {
+    console.log(value)
+  }
+)
+
+watch(
   () => interChainResultObject.signProof,
   (value) => {
     console.log(value)
@@ -195,74 +202,138 @@ const CONTROLLERS = {
   // [WalletName.NINJI]: new NinjiController()
 }
 
+const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
+  const verificationMethods = didDoc.verificationMethod
+
+  for (const method of verificationMethods) {
+    if (
+      method.blockchainAccountId &&
+      method.blockchainAccountId.startsWith(`${provider}:${chainId}:${chainAddress}`)
+    ) {
+      return true // Found matching blockchainAccountId
+    }
+  }
+
+  return false // Not found
+}
+
+// Example usage:
+// const didDoc = JSON.parse(localStorage.getItem("user")).didDocument;
+// const chainId = 'cosmoshub-4';
+// const chainAddress = 'cosmos1exvdggfhft0vr3x5qlmq025j6zf2qzl4rrgwjj';
+
+// const isBlockchainAccountIdVerified = verifyBlockchainAccountId(didDoc, provider, chainId, chainAddress);
+// console.log(isBlockchainAccountIdVerified);
+
 const signArbitrary = async () => {
-  loading.value = true
-  const wallet = Object.fromEntries(interChainResultObject.walletObj)[
-    store.interChainObject.selectedChain
-  ]
-  const publicKey = base58btc.encode(wallet.pubKey.data.key)
-  const chainId = wallet.pubKey.data.chainId
-  const address = wallet.address
-  const hsSDK = initializeDidSDK()
-
-  const didDoc = await hsSDK.createByClientSpec({
-    address,
-    publicKey,
-    methodSpecificId: address,
-    chainId,
-    clientSpec: 'cosmos-ADR036'
-  })
-
-  console.log(didDoc)
-
-  const addVerification = await hsSDK.addVerificationMethod({
-    didDocument: didDoc,
-    type: 'EcdsaSecp256k1VerificationKey2019',
-    id: `${didDoc.id}#key-2`,
-    controller: didDoc.controller,
-    blockchainAccountId: `cosmos:${chainId}:${interChainResultObject.walletAddress}`,
-    publicKeyMultibase: publicKey
-  })
-
-  const prefix = address.split('1')[0]
   try {
-    const address = wallet.address
+    loading.value = true
 
-    const eds = new EcdsaSecp256k1Signature2019({
+    const wallet = Object.fromEntries(interChainResultObject.walletObj)[
+      store.interChainObject.selectedChain
+    ]
+
+    console.log(wallet)
+
+    let chainId, address, publicKey, blockchainAccountId, provider, suite
+
+    if (wallet.pubKey) {
+      // Assuming wallet.pubKey exists for Cosmos
+
+      chainId = wallet.pubKey.data.chainId
+      address = wallet.address
+      publicKey = base58btc.encode(wallet.pubKey.data.key)
+      blockchainAccountId = `cosmos:${chainId}:${interChainResultObject.walletAddress}`
+      const prefix = address.split('1')[0]
+      suite = new EcdsaSecp256k1Signature2019({
+        chainId,
+        provider: wallet.ext ? wallet.ext : wallet.wc,
+        bech32AddressPrefix: prefix
+      })
+    } else {
+      chainId = getAccount(wagmiConfig).chainId
+      address = getAccount(wagmiConfig).address
+      // publicKey = base58btc.encode(wallet.pubKey.data.key);
+      blockchainAccountId = `eip155:${chainId}:${interChainResultObject.walletAddress}`
+      provider = await reactiveConnector.connector.connector.getProvider()
+      suite = new EthereumEip712Signature2021({}, { _provider: provider })
+    }
+
+    console.log(chainId)
+
+    const hsSDK = initializeDidSDK()
+
+    // const didDoc = await hsSDK.createByClientSpec({
+    //   address,
+    //   publicKey,
+    //   methodSpecificId: address,
+    //   chainId,
+    //   clientSpec: wallet.pubKey ? 'cosmos-ADR036' : 'eth-personalSign'
+    // });
+
+    const localDidDoc = JSON.parse(localStorage.getItem('user')).didDocument
+
+    const isBlockchainAccountIdVerified = verifyBlockchainAccountId(
+      localDidDoc,
+      'cosmos',
       chainId,
-      provider: wallet.ext ? wallet.ext : wallet.wc,
-      bech32AddressPrefix: prefix
+      wallet.address
+    )
+    console.log(isBlockchainAccountIdVerified)
+
+    console.log({
+      didDocument: localDidDoc,
+      type: wallet.pubKey
+        ? 'EcdsaSecp256k1VerificationKey2019'
+        : 'EcdsaSecp256k1RecoveryMethod2020',
+      id: `${localDidDoc.id}#key-2`,
+      controller: localDidDoc.controller,
+      blockchainAccountId,
+      publicKeyMultibase: wallet.pubKey ? base58btc.encode(wallet.pubKey.data.key) : undefined
     })
 
-    const signed = await jsSig.sign(didDoc, {
-      suite: eds,
+    if (!isBlockchainAccountIdVerified) {
+      const addVerification = await hsSDK.addVerificationMethod({
+        didDocument: localDidDoc,
+        type: wallet.pubKey
+          ? 'EcdsaSecp256k1VerificationKey2019'
+          : 'EcdsaSecp256k1RecoveryMethod2020',
+        id: `${localDidDoc.id}#key-2`,
+        controller: localDidDoc.controller,
+        blockchainAccountId,
+        publicKeyMultibase: wallet.pubKey ? base58btc.encode(wallet.pubKey.data.key) : undefined
+      })
+    }
+
+    console.log(localDidDoc)
+
+    const signed = await jsSig.sign(localDidDoc, {
+      suite,
       purpose: new purposes.AssertionProofPurpose({
         controller: {
           '@context': ['https://w3id.org/security/v2'],
-          id: `${didDoc.id}#key-2`,
-          assertionMethod: didDoc.authentication
+          id: `${localDidDoc.id}#key-2`,
+          assertionMethod: localDidDoc.authentication
         }
       }),
       documentLoader: docloader
     })
+
     console.log(signed)
     interChainResultObject.signProof = signed
 
     const verify = await jsSig.verify(signed, {
-      suite: new EcdsaSecp256k1Signature2019({
-        chainId,
-        bech32AddressPrefix: prefix,
-        provider: wallet.ext ? wallet.ext : wallet.wc
-      }),
+      suite,
       purpose: new purposes.AssertionProofPurpose({
         controller: {
           '@context': ['https://w3id.org/security/v2'],
-          id: `${didDoc.id}#key-2`,
-          assertionMethod: didDoc.authentication
+          id: `${localDidDoc.id}#key-2`,
+          assertionMethod: localDidDoc.authentication
         }
       }),
       documentLoader: docloader
     })
+
     console.log(verify)
     interChainResultObject.isSignedVerified = verify
 
@@ -270,78 +341,30 @@ const signArbitrary = async () => {
   } catch (err) {
     console.log(err)
     alert(err.message)
+  } finally {
+    loading.value = false
+    props.options.showBwModal = false
   }
 }
 
 const getSignature = async () => {
-  loading.value = true
-  console.log(store.challenge)
-
   const wallet = Object.fromEntries(interChainResultObject.walletObj)[
     store.interChainObject.selectedChain
   ]
-  const publicKey = base58btc.encode(wallet.pubKey.data.key)
-  const chainId = wallet.pubKey.data.chainId
-  const address = wallet.address
-  const hsSDK = initializeDidSDK()
-  const didDoc = await hsSDK.createByClientSpec({
-    address,
-    publicKey,
-    methodSpecificId: address,
-    chainId,
-    clientSpec: 'cosmos-ADR036'
-  })
 
-  const prefix = address.split('1')[0]
-  try {
-    const address = wallet.address
-
-    const eds = new EcdsaSecp256k1Signature2019({
-      chainId,
-      provider: wallet.ext ? wallet.ext : wallet.wc,
-      bech32AddressPrefix: prefix
-    })
-    const signed = await jsSig.sign(didDoc, {
-      suite: eds,
-      purpose: new purposes.AuthenticationProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: didDoc.verificationMethod[0].id,
-          authentication: didDoc.authentication[0]
-        },
-        challenge: store.challenge,
-        domain: 'https://example.com'
-      }),
-      documentLoader: docloader
-    })
-    console.log(signed)
-    interChainResultObject.signProof = signed
-
-    // emit('getSignedData', interChainResultObject.signProof)
-
-    const verify = await jsSig.verify(signed, {
-      suite: new EcdsaSecp256k1Signature2019({
-        chainId,
-        bech32AddressPrefix: prefix
-      }),
-      purpose: new purposes.AuthenticationProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: didDoc.verificationMethod[0].id,
-          authentication: didDoc.authentication[0]
-        },
-        challenge: store.challenge,
-        domain: 'https://example.com'
-      }),
-      documentLoader: docloader
-    })
-    console.log(verify)
-    interChainResultObject.isSignedVerified = verify
-
-    emit('getSignedData', interChainResultObject)
-  } catch (err) {
-    console.log(err)
-    alert(err.message)
+  const payload = {
+    chainId: wallet.pubKey.data.chainId,
+    address: wallet.address,
+    clientSpec: 'cosmos-ADR036',
+    suiteType: 'cosmos',
+    wallet: wallet
   }
+
+  const { proof, verifed } = await signData(payload)
+
+  interChainResultObject.signProof = proof
+  interChainResultObject.isSignedVerified = verifed
+
+  emit('getSignedData', interChainResultObject)
 }
 </script>

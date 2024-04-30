@@ -13,16 +13,16 @@
       </v-tab>
     </v-tabs>
     <v-window v-model="activeTab">
-      <v-window-item :eager="true" :eventId="eventId" value="TOKEN">
+      <v-window-item :eventId="eventId" value="TOKEN">
         <TokenType />
       </v-window-item>
-      <v-window-item :eager="true" :eventId="eventId" value="XP">
+      <v-window-item :eventId="eventId" value="XP">
         <XpType />
       </v-window-item>
-      <v-window-item :eager="true" :eventId="eventId" value="NFT">
+      <v-window-item :eventId="eventId" value="NFT">
         <NftType />
       </v-window-item>
-      <v-window-item :eager="true" :eventId="eventId" value="OTHER">
+      <v-window-item :eventId="eventId" value="OTHER">
         <OtherType />
       </v-window-item>
     </v-window>

@@ -18,7 +18,7 @@
         color="secondary"
         variant="flat"
         class="cursor-pointer login-button"
-        @click="options.showBwModal = true"
+        @click="showLogin"
         v-if="!isUserLoggedIn"
       >
         Login
@@ -77,6 +77,7 @@
       @getSignedData="collectSignedData"
     />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
+    <div id="emit-options" @click="emitOptions(options)"></div>
   </template>
 </template>
 
@@ -164,13 +165,17 @@ watch(
 )
 
 const navigate = (item) => {
-  console.log(item)
   if (item.title === 'Log Out') {
     localStorage.removeItem('accessToken')
     location.reload()
   } else {
     window.location.href = `${item.link}`
   }
+}
+
+const showLogin = () => {
+  options.showBwModal = true
+  document.getElementById('update-challenge').click()
 }
 
 const getProvider = async (data) => {

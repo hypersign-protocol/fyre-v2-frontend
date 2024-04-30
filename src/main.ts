@@ -21,14 +21,13 @@ import { createApp } from 'vue'
 
 const app = createApp(App)
 
-
 app.config.errorHandler = (error, vm, info) => {
-  console.error('An error occurred:', error);
+  console.error('An error occurred:', error)
   // Optionally, log additional info about the component
-  console.error('Component:', vm);
-  console.error('Info:', info);
+  console.error('Component:', vm)
+  console.error('Info:', info)
   // Handle the error, e.g., show a message to the user
-};
+}
 
 app.use(ElementPlus)
 app.use(blockChainWalletPlugin())

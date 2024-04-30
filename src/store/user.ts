@@ -6,6 +6,9 @@ import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 import type { EventType } from '@/data/types/event/eventType'
 import type { CommunityType } from '@/data/types/community/CommunityType.ts'
 
+import { useNotificationStore } from './notification.ts'
+const notificationStore = useNotificationStore()
+
 interface UserMeta {
   _id: string
   userName: string
@@ -38,13 +41,22 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.events = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     },
@@ -54,13 +66,22 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.communities = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     },
@@ -70,13 +91,22 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.userRewards = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     }

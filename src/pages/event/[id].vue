@@ -1,15 +1,5 @@
 <template>
-  <div
-    v-if="loading && !errorMessage"
-    class="height-500 d-flex align-center justify-center fill-height"
-  >
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading && !errorMessage" />
 
   <template v-else-if="errorMessage">
     <v-container fluid class="background-left">

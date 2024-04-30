@@ -6,6 +6,9 @@ import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 import type { CommunityType } from '@/data/types/community/CommunityType.ts'
 import type { EventType } from '@/data/types/event/eventType.ts'
 
+import { useNotificationStore } from './notification.ts'
+const notificationStore = useNotificationStore()
+
 interface communityType {
   popularCommunities: CommunityType[]
   communityId: CommunityType
@@ -27,7 +30,12 @@ export const useCommunityStore = defineStore('community', {
         const response: AxiosResponse<CommunityType[]> = await axios.get(`/community${filter}`)
 
         if (response.success) {
-          this.popularCommunities = response.data
+          this.popularCommunities = response
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
           console.error('Error fetching community:', response)
@@ -44,13 +52,22 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.success) {
           this.communityId = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return null
         }
       } catch (error) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return null
       }
     },
@@ -62,13 +79,22 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.success) {
           this.communityEvents = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     },
@@ -82,11 +108,15 @@ export const useCommunityStore = defineStore('community', {
           this.communityFollow = true
           return response
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     }

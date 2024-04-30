@@ -56,12 +56,18 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const store = useAuthStore()
 
+const user = computed(() => {
+  return getUser()
+})
+
 const options = reactive({
   showBwModal: false,
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true
+  isPerformAction: true,
+  didDocument: user.value.didDocument,
+  addVerificationMethod: true
 })
 
 const formData = reactive({
@@ -75,10 +81,6 @@ const formData = reactive({
 
 const loading = ref(false)
 
-const user = computed(() => {
-  return getUser()
-})
-
 const getProvider = async (data) => {
   formData.chainName = data === 'evm' ? 'EVM' : 'COSMOS'
 }
@@ -90,13 +92,16 @@ const collectWalletAddress = async (data) => {
 const collectSignedData = async (data) => {
   formData.signedDidDoc = data.signProof
   console.log(formData)
+  updateWallet()
 }
 
 watch(
-  () => formData.signedDidDoc,
+  () => formData.walletAddress,
   (value) => {
+    console.log(value)
+
     if (value) {
-      checkIfWalletExists()
+      // checkIfWalletExists()
     }
   }
 )
@@ -118,13 +123,17 @@ const updateWallet = () => {
 }
 
 const connectWallet = async (item) => {
-  document.getElementById('emit-options').click()
-  options.showBwModal = true
   options.providers = item.provider === 'cosmos' ? ['interchain'] : ['evm']
   options.chains = [item.title]
+
+  setTimeout(async () => {
+    document.getElementById('emit-options').click()
+  }, 100)
+
   formData.selectedWallet = item
   formData.walletPrefix = item.title
   formData.chainId = item.chainId
+  formData.chainName = item.provider === 'cosmos' ? 'cosmos' : 'evm'
 }
 
 const checkIfWalletExists = async (item) => {
@@ -174,7 +183,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/polygon.png`, import.meta.url).href,
     isAddress: false,
-    chainId: '1',
+    chainId: '137',
     provider: 'eip155'
   },
   {
@@ -182,7 +191,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
     isAddress: false,
-    chainId: '56',
+    chainId: '1',
     provider: 'eip155'
   },
   {
@@ -190,7 +199,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/binance.png`, import.meta.url).href,
     isAddress: false,
-    chainId: '137',
+    chainId: '56',
     provider: 'eip155'
   },
   {

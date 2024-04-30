@@ -8,7 +8,6 @@ interface ChainData {
 }
 
 const chains: ChainData[] = [
-
   {
     type: 'cosmoshub-4',
     name: 'Cosmos',

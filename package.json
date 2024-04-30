@@ -28,6 +28,7 @@
     "jsonld": "^8.3.2",
     "jsonld-signatures": "^11.2.1",
     "keplr-ecdsasecp256k1signature2019": "github:hypersign-protocol/KeplrEcdsaSecp256k1Signature2019",
+    "lodash": "^4.17.21",
     "multiformats": "^13.1.0",
     "roboto-fontface": "*",
     "swiper": "^11.0.7",
@@ -35,6 +36,7 @@
     "vue": "^3.4.21",
     "vue-axios": "^3.5.2",
     "vue-toast-notification": "^3.1.2",
+    "vue3-toastify": "^0.2.1",
     "vuetify": "^3.0.0"
   },
   "devDependencies": {

@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 
+import { useNotificationStore } from './notification.ts'
+const notificationStore = useNotificationStore()
+
 interface Proof {
   userTextInput: string
 }
@@ -48,13 +51,22 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.performResult = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return null
         }
       } catch (error) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return null
       }
     },
@@ -70,13 +82,22 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.leaderBoard = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return null
         }
       } catch (error) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return null
       }
     },
@@ -87,13 +108,22 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.eventParticipants = response.data
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'success',
+            message: 'Data fetched successfully'
+          })
           return response.data
         } else {
-          console.error('Error fetching data:', response)
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
           return []
         }
       } catch (error: AxiosError) {
-        console.error('Error fetching data:', error)
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
     }

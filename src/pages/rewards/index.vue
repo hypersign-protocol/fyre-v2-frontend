@@ -1,12 +1,5 @@
 <template>
-  <div v-if="loading" class="height-500 d-flex align-center justify-center fill-height">
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading" />
   <template v-if="!loading">
     <v-container fluid class="background-left reward__background">
       <div class="homepage-section">
@@ -18,7 +11,10 @@
                   <p class="title">Your total experience points</p>
                   <p class="xp">{{ user.totalXps }} XP</p>
                   <p class="level">Level {{ user.levelReached }}</p>
-                  <v-progress-linear model-value="20" :height="12"></v-progress-linear>
+                  <v-progress-linear
+                    :model-value="user.levelReached"
+                    :height="12"
+                  ></v-progress-linear>
                   <p class="points">
                     Need {{ user.xpRequiredForNextLevel }} points to reach the next level
                   </p>

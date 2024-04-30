@@ -1,12 +1,5 @@
 <template>
-  <div v-if="loading" class="height-500 d-flex align-center justify-center fill-height">
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading" />
   <div class="profile__setting__container" v-if="!loading">
     <p class="title">Avatar</p>
     <v-hover v-slot="{ isHovering, props }" v-if="avatar">
@@ -51,6 +44,7 @@
       </div>
       <div class="button__wrapper">
         <v-btn variant="outlined" color="secondary">Cancel</v-btn>
+
         <v-btn
           color="secondary"
           variant="flat"
@@ -67,22 +61,77 @@
     </v-form>
   </div>
   <DeleteModal @close="deletePopup = false" v-model="deletePopup" />
+  <BlockChainWallet
+    :options="options"
+    @getWalletAddress="collectWalletAddress"
+    @getSignedData="collectSignedData"
+  />
 </template>
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  computed,
+  watch,
+  shallowReactive,
+  reactive
+} from 'vue'
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
+
 const router = useRouter()
 const store = useAuthStore()
 const deletePopup = ref(false)
 const loading = ref(false)
 const avatar = ref(null)
 
+const formData = reactive({
+  walletAddress: null,
+  signedDidDoc: null
+})
+
+const getProvider = async (data) => {
+  if (data) {
+    await store.USER_LOGIN(`?provider=${data}-wallet`)
+  } else {
+    console.log('Please select the provider before you proceed')
+  }
+}
+
+const collectWalletAddress = async (data) => {
+  formData.walletAddress = data
+}
+const collectSignedData = async (data) => {
+  formData.signedDidDoc = data.signProof
+  formData.signedDidDoc.alsoKnownAs.push(user.value.userName)
+  console.log(formData)
+}
+
 const user = computed(() => {
   const res = getUser()
   avatar.value = res.avatar
   return res
+})
+
+watch(
+  () => user.value,
+  (value: any) => {
+    console.log(value)
+  },
+  { deep: true }
+)
+
+const options = reactive({
+  showBwModal: false,
+  providers: ['evm', 'interchain'],
+  chains: ['mainnet', 'bsc', 'polygon', 'cosmos', 'osmosis'],
+  isRequiredDID: true,
+  isPerformAction: true,
+  didDocument: user.value.didDocument,
+  addVerificationMethod: false
 })
 
 const { userMeta, fileUpload } = storeToRefs(useAuthStore())
@@ -99,22 +148,43 @@ watch(
 watch(
   () => store.userProfileResponse,
   (value: any) => {
-    console.log(value)
     loading.value = false
     saveUser(value)
   },
   { deep: true }
 )
 
+watch(
+  () => formData,
+  (value: any) => {
+    console.log(value)
+    if (value.walletAddress !== null && value.signedDidDoc !== null) {
+      updateProfileSendRequest()
+    }
+  },
+  { deep: true }
+)
+
 const updateProfile = () => {
+  options.didDocument = user.value.didDocument
+  const vm = user.value.didDocument.verificationMethod[0]
+  const chainId = vm.blockchainAccountId.split(':')[1]
+  if (vm.blockchainAccountId.includes('eip')) {
+    options.providers = ['evm']
+  } else {
+    options.providers = ['interchain']
+  }
+  options.showBwModal = true
   loading.value = true
-  user.value.didDocument.alsoKnownAs.push(user.value.userName)
+}
+
+const updateProfileSendRequest = () => {
   setTimeout(async () => {
     await store.UPDATE_USER_PROFILE({
       editMode: 'profile',
       userName: user.value.userName,
       avatar: avatar.value,
-      signedDidDoc: user.value.didDocument
+      signedDidDoc: formData.signedDidDoc
     })
   }, 100)
 }
