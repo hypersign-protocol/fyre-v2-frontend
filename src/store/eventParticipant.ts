@@ -4,6 +4,9 @@ import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
 import { useNotificationStore } from './notification.ts'
 const notificationStore = useNotificationStore()
 
+import { useAuthStore } from './auth.ts'
+const authStore = useAuthStore()
+
 interface Proof {
   userTextInput: string
 }
@@ -51,11 +54,7 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.performResult = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+          authStore.USER_DETAILS()
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -82,11 +81,7 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.leaderBoard = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -108,11 +103,7 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.eventParticipants = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({

@@ -33,12 +33,9 @@ const props = defineProps({
   }
 })
 
-watch(
-  () => store.walletOptions,
-  (value) => {
-    console.log(value)
-  }
-)
+store.$subscribe((mutation, state) => {
+  console.log(mutation.payload)
+})
 
 const monitorChanges = (component, selectedValue) => {
   store.$patch({

@@ -24,7 +24,7 @@
             <div
               class="explore-community-card"
               style="cursor: pointer"
-              v-for="(item, index) in communities"
+              v-for="(item, index) in communities?.data"
               @click="viewCommunity(item._id)"
             >
               <img :src="item.avatar" />

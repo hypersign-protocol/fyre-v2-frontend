@@ -31,11 +31,7 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.success) {
           this.popularCommunities = response
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           console.error('Error fetching community:', response)
@@ -52,11 +48,7 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.success) {
           this.communityId = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -79,11 +71,7 @@ export const useCommunityStore = defineStore('community', {
 
         if (response.success) {
           this.communityEvents = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({

@@ -66,6 +66,7 @@
     @getWalletAddress="collectWalletAddress"
     @getSignedData="collectSignedData"
   />
+  <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import {
@@ -102,9 +103,11 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
-  formData.walletAddress = data
+  formData.walletAddress = data.walletAddress
 }
+
 const collectSignedData = async (data) => {
+  formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
   formData.signedDidDoc.alsoKnownAs.push(user.value.userName)
   console.log(formData)
@@ -166,7 +169,6 @@ watch(
 )
 
 const updateProfile = () => {
-  options.didDocument = user.value.didDocument
   const vm = user.value.didDocument.verificationMethod[0]
   const chainId = vm.blockchainAccountId.split(':')[1]
   if (vm.blockchainAccountId.includes('eip')) {
@@ -174,7 +176,9 @@ const updateProfile = () => {
   } else {
     options.providers = ['interchain']
   }
-  options.showBwModal = true
+  setTimeout(async () => {
+    document.getElementById('emit-options').click()
+  }, 100)
   loading.value = true
 }
 

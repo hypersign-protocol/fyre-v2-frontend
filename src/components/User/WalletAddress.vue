@@ -4,7 +4,7 @@
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
         <div class="wallet__address__container" :class="checkIfExists(item) ? 'address' : ''">
-          <div class="tag" v-if="checkIfExists(item)">Controller</div>
+          <div class="tag" v-if="item.address">Controller</div>
           <div class="wallet__header">
             <div class="wallet__meta">
               <img :src="item.image" />
@@ -16,15 +16,17 @@
           </div>
           <div class="wallet__footer">
             <v-btn
-              v-if="!checkIfExists(item)"
+              v-if="!item.address"
               color="secondary"
               variant="flat"
               @click="connectWallet(item)"
               >Connect Wallet</v-btn
             >
-            <v-btn v-if="checkIfExists(item)" color="white" variant="text" class="btn-copy">
-              {{ item.address }}
-              <img src="@/assets/images/content-copy.svg" class="ml-2" />
+            <v-btn v-if="item.address" color="white" variant="text" class="btn-copy">
+              {{ getAddress(item.address) }}
+              <v-icon @click="copyContent(item.address)" class="ml-2" size="15"
+                >mdi-content-copy</v-icon
+              >
             </v-btn>
           </div>
         </div>
@@ -52,6 +54,7 @@ import {
 
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
+import { copyContent } from '@/composables/general.ts'
 import { storeToRefs } from 'pinia'
 const router = useRouter()
 const store = useAuthStore()
@@ -86,24 +89,26 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
-  formData.walletAddress = data
+  console.log(data)
+  formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
+  console.log(data)
+  formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
   console.log(formData)
-  updateWallet()
 }
 
 watch(
-  () => formData.walletAddress,
-  (value) => {
+  () => formData,
+  (value: any) => {
     console.log(value)
-
-    if (value) {
-      // checkIfWalletExists()
+    if (value.walletAddress !== null && value.signedDidDoc !== null) {
+      updateWallet()
     }
-  }
+  },
+  { deep: true }
 )
 
 watch(
@@ -112,6 +117,9 @@ watch(
     console.log(value)
     loading.value = false
     saveUser(value)
+    setTimeout(async () => {
+      checkWalletStatus()
+    }, 100)
   },
   { deep: true }
 )
@@ -124,7 +132,7 @@ const updateWallet = () => {
 
 const connectWallet = async (item) => {
   options.providers = item.provider === 'cosmos' ? ['interchain'] : ['evm']
-  options.chains = [item.title]
+  options.chains = [item.chainId]
 
   setTimeout(async () => {
     document.getElementById('emit-options').click()
@@ -133,7 +141,7 @@ const connectWallet = async (item) => {
   formData.selectedWallet = item
   formData.walletPrefix = item.title
   formData.chainId = item.chainId
-  formData.chainName = item.provider === 'cosmos' ? 'cosmos' : 'evm'
+  formData.chainName = item.provider === 'cosmos' ? 'COSMOS' : 'EVM'
 }
 
 const checkIfWalletExists = async (item) => {
@@ -151,8 +159,13 @@ const checkIfWalletExists = async (item) => {
 const checkIfExists = (item) => {
   const searchString = `${item.provider}:${item.chainId}`
   const addresses = user.value.didDocument.verificationMethod
-  const IfExists = hasBlockchainAccountId(addresses, searchString)
-  return IfExists
+  let itemFound = null
+  for (const item of addresses) {
+    if (item.blockchainAccountId.includes(searchString)) {
+      itemFound = item
+    }
+  }
+  return itemFound
 }
 
 function hasBlockchainAccountId(data, searchString) {
@@ -168,13 +181,46 @@ const accountIdExists = (dataArray, accountId) => {
   return false
 }
 
+const getAddress = (accountId) => {
+  const segments = accountId.split(':')
+  const lastSegment = segments[segments.length - 1]
+  const firstFour = lastSegment.substring(0, 7)
+  const lastFour = lastSegment.substring(lastSegment.length - 7)
+  const result = `${firstFour}....${lastFour}`
+  return result
+}
+
+onMounted(() => {
+  checkWalletStatus()
+})
+
+const checkWalletStatus = () => {
+  // Ensure that items.value is an array
+  if (!Array.isArray(items.value)) {
+    console.error('items.value is not an array.')
+    return
+  }
+
+  for (const item of items.value) {
+    const foundItem = checkIfExists(item)
+    // Ensure that checkIfExists returns the correct result
+    if (foundItem !== null && typeof foundItem === 'object') {
+      item.address = foundItem.blockchainAccountId
+      item.isAddress = true
+    } else {
+      item.address = null
+      item.isAddress = false
+    }
+  }
+}
+
 const items = ref([
   {
     title: 'Cosmos',
-    address: '0xd42dc40cc6...7814a0da',
+    address: null,
     tag: 'CONTROLLER',
     image: new URL(`@/assets/images/task/cosmos.png`, import.meta.url).href,
-    isAddress: true,
+    isAddress: false,
     chainId: 'cosmoshub-4',
     provider: 'cosmos'
   },

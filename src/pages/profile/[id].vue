@@ -6,7 +6,7 @@
         <div class="section-content">
           <v-container class="padding-global-y">
             <v-row>
-              <v-col cols="12" sm="6" md="6" lg="3" xl="3">
+              <v-col cols="12" sm="4" md="4" lg="3" xl="3">
                 <div class="edit__profile__menu">
                   <ul>
                     <li class="cursor-pointer" @click="router.push({ path: `/profile` })">
@@ -24,7 +24,7 @@
                   </ul>
                 </div>
               </v-col>
-              <v-col cols="12" sm="6" md="6" lg="9" xl="9">
+              <v-col cols="12" sm="8" md="8" lg="9" xl="9">
                 <component v-if="defaultComp.active" :is="defaultComp.active" />
               </v-col>
             </v-row>
