@@ -13,19 +13,8 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn
-          v-if="
-            !showExpand && !isTaskVerified
-          "
-        >
-          Verify
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          v-else-if="
-            !showExpand && isTaskVerified
-          "
-        >
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -77,13 +66,12 @@ onMounted(() => {
 })
 
 const fetchResult = () => {
-  if(props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)){
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
-    const result = props.eventParticipants?.tasks[props.task?._id];
+    const result = props.eventParticipants?.tasks[props.task?._id]
     inputText.value = result.proof.userUrlInput
   }
 }
-
 
 watch(
   () => performResult.value,
