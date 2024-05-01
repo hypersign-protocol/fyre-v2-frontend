@@ -1,5 +1,5 @@
 <template>
-  <p class="text-right">{{ task.type }}</p>
+  <!-- <p class="text-right">{{ task.type }}</p> -->
   <component
     :task="task"
     :communityId="communityId"
