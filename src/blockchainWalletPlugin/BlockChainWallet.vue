@@ -111,7 +111,22 @@ import InterChainModal from './InterChain/index.vue'
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from './stores/interchain'
 const store = useInterChainStore()
-import { docloader, initializeDidSDK, signData } from './utils'
+import { docloader, initializeDidSDK, signData, addWallet } from './utils'
+
+import { mainnet, bsc, polygon } from '@wagmi/core/chains'
+import { Connection, getAccount, signTypedData } from '@wagmi/core'
+
+import {
+  createWeb3Modal,
+  defaultWagmiConfig,
+  useWeb3Modal,
+  useWeb3ModalEvents,
+  useWeb3ModalState,
+  useWeb3ModalTheme
+} from '@web3modal/wagmi/vue'
+import { reconnect } from '@wagmi/core'
+import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
+import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
 
 const { challenge } = storeToRefs(store)
 
@@ -138,24 +153,9 @@ const props = defineProps({
 const interchainModal = ref(false)
 const showEvmModal = ref(false)
 
-let reactiveConnector = ref({
+let reactiveConnector = reactive({
   connector: {} as any as Connection
 })
-
-import { mainnet, bsc, polygon } from '@wagmi/core/chains'
-import { Connection, getAccount, signTypedData } from '@wagmi/core'
-
-import {
-  createWeb3Modal,
-  defaultWagmiConfig,
-  useWeb3Modal,
-  useWeb3ModalEvents,
-  useWeb3ModalState,
-  useWeb3ModalTheme
-} from '@web3modal/wagmi/vue'
-import { reconnect } from '@wagmi/core'
-import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
-import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
 
 // @ts-expect-error 1. Get projectId
 const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
@@ -196,11 +196,12 @@ const state = useWeb3ModalState()
 const { setThemeMode, themeMode, themeVariables } = useWeb3ModalTheme()
 const events = useWeb3ModalEvents()
 
-const evmResultObject = ref({
+const evmResultObject = reactive({
   provider: null,
   walletAddress: null,
   signProof: null,
-  isSignedVerified: false
+  isSignedVerified: false,
+  wagmiConfig: null
 })
 
 const closeModal = () => {
@@ -228,170 +229,144 @@ const chooseProvider = (data) => {
   }
 }
 
-watch(
-  () => store.walletOptions,
-  (value) => {
-    console.log(value)
-    const onlyEvm = value.providers.every((element) => element === 'evm')
-    console.log(onlyEvm)
-    if (onlyEvm) {
-      props.options.showBwModal = false
-      modal.open({ view: 'Networks' })
-    } else {
-      interchainModal.value = true
+store.$subscribe((mutation, state) => {
+  if (mutation.payload) {
+    let obj = mutation.payload?.walletOptions
+    if (store.walletOptions?.isPerformAction) {
+      const onlyEvm = obj?.providers.every((element) => element === 'evm')
+      if (onlyEvm) {
+        props.options.showBwModal = false
+        modal.open({ view: 'Networks' })
+      } else {
+        interchainModal.value = true
+        // store.$patch({
+        //   interChainActiveStep: 'wallet'
+        // })
+      }
     }
   }
-)
+})
 
 watch(
   () => events.data,
   (value) => {
-    if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected === true) {
-      evmResultObject.value.walletAddress = getAccount(wagmiConfig).address
+    console.log(value)
+    if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected) {
+      // getConfigConnection()
     }
   }
 )
 
+// const getConfigConnection = async () => {
+
+//   console.log(wagmiConfig.connectors)
+
+//   const current = JSON.parse(localStorage.getItem("wagmi.store")).state.current;
+//   console.log(current)
+//   const conn = wagmiConfig.connectors.find((c) => c.uid === current);
+//   console.log(conn)
+//   const provider = await conn.getProvider();
+//   console.log(provider)
+
+//   const { chainId, address } = getAccount(wagmiConfig)
+//   console.log(chainId, address)
+//   evmResultObject.provider = provider
+
+//   if(store.walletOptions.isPerformAction){
+//     signArbitrary()
+//   }else{
+//     getSignature()
+//   }
+
+// }
+
 watch(
-  () => evmResultObject.value.walletAddress,
-  (value) => {
-    if (value) {
-      console.log(props)
-      emit('getWalletAddress', evmResultObject.value.walletAddress)
-      if (props.options.isPerformAction) {
-        signArbitrary()
-      } else {
-        getSignature()
-      }
-    }
-  }
+  () => evmResultObject,
+  (value: any) => {
+    console.log(value)
+    emit('getSignedData', value)
+  },
+  { deep: true }
 )
 
 wagmiConfig.subscribe((value) => {
   if (value.status === 'connected') {
-    reactiveConnector = { connector: value.connections.get(value.current) }
+    const connectionValue = value.connections.get(value.current)
+    collectProvider(connectionValue)
   }
 })
 
-const signArbitrary = async (params?, addVm?) => {
-  console.log(props.options)
+const collectProvider = async (connectionValue) => {
+  const provider = await connectionValue.connector.getProvider()
+  console.log(provider)
+  evmResultObject.provider = provider
 
-  const hsSDK = initializeDidSDK()
+  const { chainId, address } = getAccount(wagmiConfig)
+  console.log(chainId, address)
 
-  const provider = await reactiveConnector.connector.connector.getProvider()
-  const eth = new EthereumEip712Signature2021({}, { _provider: provider })
-
-  if (props.didDocument) {
-    const didDoc = props.didDocument
-    delete props.didDocument.proof
-    let length = didDoc.verificationMethod.length
-    const chainId = props.didDocument.verificationMethod[0].blockchainAccountId.split(':')[1]
-    const address = props.didDocument.verificationMethod[0].blockchainAccountId.split(':')[2]
-    if (addVm) {
-      await hsSDK.addVerificationMethod({
-        didDocument: didDoc,
-        type: 'EcdsaSecp256k1RecoveryMethod2020',
-        id: `${didDoc.id}#key-${length++}`,
-        controller: didDoc.controller,
-        blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
-      })
-    }
-    const proof = await jsSig.sign(didDoc, {
-      suite: eth,
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: didDoc.id,
-          assertionMethod: didDoc.authentication
-        }
-      }),
-      verificationMethod: didDoc.verificationMethod[0].id,
-      domain: {},
-      documentLoader: docloader
-    })
-    evmResultObject.value.signProof = proof
-    emit('getSignedData', evmResultObject.value)
+  if (store.walletOptions.isPerformAction) {
+    signArbitrary()
   } else {
-    const chainId = getAccount(wagmiConfig).chainId
-    const address = getAccount(wagmiConfig).address
-
-    const didDoc = await hsSDK.createByClientSpec({
-      address,
-      methodSpecificId: address,
-      chainId,
-      clientSpec: 'eth-personalSign'
-    })
-
-    didDocResult.value = didDoc
-
-    const addVerification = await hsSDK.addVerificationMethod({
-      didDocument: didDoc,
-      type: 'EcdsaSecp256k1RecoveryMethod2020',
-      id: `${didDoc.id}#key-2`,
-      controller: didDoc.controller,
-      blockchainAccountId: `eip155:${chainId}:${evmResultObject.value.walletAddress}`
-    })
-
-    delete didDoc.keyAgreement
-
-    const proof = await jsSig.sign(didDoc, {
-      suite: eth,
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: didDoc.id,
-          assertionMethod: didDoc.authentication
-        }
-      }),
-      verificationMethod: didDoc.verificationMethod[0].id,
-      domain: {},
-      documentLoader: docloader
-    })
-    console.log(proof)
-
-    evmResultObject.value.signProof = proof
-
-    const verifed = await jsSig.verify(proof, {
-      suite: new EthereumEip712Signature2021({}),
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: didDoc.id,
-          assertionMethod: didDoc.authentication
-        },
-        challenge: challenge,
-        domain: 'http://example.com'
-      }),
-      verificationMethod: didDoc.verificationMethod[0].id,
-      domain: {},
-      documentLoader: docloader
-    })
-    console.log(verifed)
-    console.log(verifed)
-    evmResultObject.value.isSignedVerified = verifed
-
-    emit('getSignedData', evmResultObject.value)
+    getSignature()
   }
-  props.options.showBwModal = false
+}
+
+const signArbitrary = async () => {
+  try {
+    loading.value = true
+
+    const { chainId, address } = getAccount(wagmiConfig)
+
+    console.log(chainId, address)
+
+    evmResultObject.walletAddress = address
+
+    const payload = {
+      signType: 'eip155',
+      localDidDoc: store.walletOptions.didDocument,
+      wallet: null,
+      chainId: chainId,
+      address: address,
+      provider: evmResultObject.provider
+    }
+
+    const { proof, verifed } = await addWallet(payload)
+
+    console.log(proof, verifed)
+
+    evmResultObject.signProof = proof
+    evmResultObject.isSignedVerified = verifed
+
+    console.log(evmResultObject)
+
+    props.options.showBwModal = false
+  } catch (err) {
+    console.log(err)
+    alert(err.message)
+  } finally {
+    loading.value = false
+    props.options.showBwModal = false
+  }
 }
 
 const getSignature = async () => {
   const { chainId, address } = getAccount(wagmiConfig)
+
+  evmResultObject.walletAddress = address
 
   const payload = {
     chainId: chainId,
     address: address,
     clientSpec: 'eth-personalSign',
     suiteType: 'eth',
-    reactiveConnector: reactiveConnector
+    provider: evmResultObject.provider
   }
 
   const { proof, verifed } = await signData(payload)
 
-  evmResultObject.value.signProof = proof
-  evmResultObject.value.isSignedVerified = verifed
+  evmResultObject.signProof = proof
+  evmResultObject.isSignedVerified = verifed
 
-  emit('getSignedData', evmResultObject.value)
   props.options.showBwModal = false
 }
 </script>

@@ -48,6 +48,7 @@ export const initializeDidSDK = (): HypersignDID => {
 }
 
 export const signData = async (payload) => {
+  console.log(payload)
   const hsSDK = initializeDidSDK()
 
   const address = payload.address
@@ -55,7 +56,8 @@ export const signData = async (payload) => {
   const clientSpec = payload.clientSpec
   const suiteType = payload.suiteType
   const wallet = payload.wallet
-  const reactiveConnector = payload.reactiveConnector
+  let provider = payload.provider
+
   let eth = null
   let eds = null
   let signInId = null
@@ -86,7 +88,6 @@ export const signData = async (payload) => {
       signInId = didDoc.verificationMethod[0].id
       authentication = didDoc.authentication[0]
     } else {
-      const provider = await reactiveConnector.connector.connector.getProvider()
       eth = new EthereumEip712Signature2021({}, { _provider: provider })
 
       signInId = didDoc.id
@@ -103,7 +104,7 @@ export const signData = async (payload) => {
         },
         challenge: store.challenge
       }),
-      verificationMethod: didDoc.verificationMethod[0].id,
+      // verificationMethod: didDoc.verificationMethod[0].id,
       documentLoader: docloader
     })
 
@@ -125,8 +126,8 @@ export const signData = async (payload) => {
         challenge: store.challenge,
         domain: prefixDomain
       }),
-      verificationMethod: didDoc.verificationMethod[0].id,
-      domain: {},
+      // verificationMethod: didDoc.verificationMethod[0].id,
+      // domain: {},
       documentLoader: docloader
     })
 
@@ -134,5 +135,140 @@ export const signData = async (payload) => {
   } catch (err) {
     console.log(err)
     return { proof: null, verifed: false }
+  }
+}
+
+const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
+  const verificationMethods = didDoc.verificationMethod
+
+  for (const method of verificationMethods) {
+    if (
+      method.blockchainAccountId &&
+      method.blockchainAccountId.startsWith(`${provider}:${chainId}:${chainAddress}`)
+    ) {
+      return true // Found matching blockchainAccountId
+    }
+  }
+
+  return false // Not found
+}
+
+//connet wallet and add verification methods
+
+export const addWallet = async (payload) => {
+  console.log(payload)
+  try {
+    const signType = payload.signType
+    const wallet = payload.wallet
+    const localDidDoc = payload.localDidDoc
+    let address = payload.address
+    let chainId = payload.chainId
+    let provider = payload.provider
+
+    let publicKey, blockchainAccountId, suite
+
+    if (signType === 'cosmos') {
+      // Assuming wallet.pubKey exists for Cosmos
+
+      chainId = wallet.pubKey.data.chainId
+      address = wallet.address
+      publicKey = base58btc.encode(wallet.pubKey.data.key)
+      blockchainAccountId = `${signType}:${chainId}:${address}`
+      const prefix = address.split('1')[0]
+      suite = new EcdsaSecp256k1Signature2019({
+        chainId,
+        provider: wallet.ext ? wallet.ext : wallet.wc,
+        bech32AddressPrefix: prefix
+      })
+    } else {
+      blockchainAccountId = `${signType}:${chainId}:${address}`
+      suite = new EthereumEip712Signature2021({}, { _provider: provider })
+    }
+
+    console.log(chainId)
+
+    const hsSDK = initializeDidSDK()
+
+    const isBlockchainAccountIdVerified = verifyBlockchainAccountId(
+      localDidDoc,
+      signType,
+      chainId,
+      address
+    )
+    console.log(isBlockchainAccountIdVerified)
+
+    console.log({
+      didDocument: localDidDoc,
+      type: wallet?.pubKey
+        ? 'EcdsaSecp256k1VerificationKey2019'
+        : 'EcdsaSecp256k1RecoveryMethod2020',
+      id: `${localDidDoc.id}#key-2`,
+      controller: localDidDoc.controller,
+      blockchainAccountId,
+      publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
+    })
+
+    const localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
+
+    console.log(localDidKey)
+
+    if (!isBlockchainAccountIdVerified) {
+      const addVerification = await hsSDK.addVerificationMethod({
+        didDocument: localDidDoc,
+        type: wallet?.pubKey
+          ? 'EcdsaSecp256k1VerificationKey2019'
+          : 'EcdsaSecp256k1RecoveryMethod2020',
+        id: `${localDidDoc.id}${localDidKey}`,
+        controller: localDidDoc.controller,
+        blockchainAccountId,
+        publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
+      })
+    }
+
+    console.log(localDidDoc)
+    console.log({
+      suite,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: `${localDidDoc.id}${localDidKey}`,
+          assertionMethod: `${localDidDoc.id}${localDidKey}`
+        }
+      }),
+      verificationMethod: `${localDidDoc.id}${localDidKey}`,
+      documentLoader: docloader
+    })
+
+    const proof = await jsSig.sign(localDidDoc, {
+      suite,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: `${localDidDoc.id}`,
+          assertionMethod: `${localDidDoc.id}${localDidKey}`
+        }
+      }),
+      verificationMethod: `${localDidDoc.id}${localDidKey}`,
+      documentLoader: docloader
+    })
+
+    console.log(proof)
+
+    const verifed = await jsSig.verify(proof, {
+      suite,
+      purpose: new purposes.AssertionProofPurpose({
+        controller: {
+          '@context': ['https://w3id.org/security/v2'],
+          id: `${localDidDoc.id}${localDidKey}`,
+          assertionMethod: localDidDoc.authentication
+        }
+      }),
+      documentLoader: docloader
+    })
+
+    return { proof, verifed }
+  } catch (err) {
+    console.log(err)
+    alert(err.message)
   }
 }

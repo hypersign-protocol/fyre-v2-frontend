@@ -175,6 +175,7 @@ const navigate = (item) => {
 
 const showLogin = () => {
   options.showBwModal = true
+  document.getElementById('emit-options').click()
   document.getElementById('update-challenge').click()
 }
 

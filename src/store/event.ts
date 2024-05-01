@@ -32,11 +32,7 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.popularEvents = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -57,11 +53,7 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.tabEvents = response
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -83,11 +75,7 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.eventById = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -109,11 +97,7 @@ export const useEventStore = defineStore('event', {
 
         if (response.success) {
           this.eventTasks = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({

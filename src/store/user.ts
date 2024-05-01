@@ -41,11 +41,7 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.events = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -66,11 +62,7 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.communities = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -91,11 +83,7 @@ export const useUserStore = defineStore('user', {
 
         if (response.success) {
           this.userRewards = response.data
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'success',
-            message: 'Data fetched successfully'
-          })
+
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({

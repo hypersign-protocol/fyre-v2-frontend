@@ -177,10 +177,12 @@ const tabs = ref([
 
 import { useCommunityStore } from '@/store/community.ts'
 import { useUserStore } from '@/store/user.ts'
+import { useAuthStore } from '@/store/auth.ts'
 
 import { storeToRefs } from 'pinia'
 const store = useCommunityStore()
 const userStore = useUserStore()
+const Store = useAuthStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -198,7 +200,7 @@ const { userMeta } = storeToRefs(useUserStore)
 onMounted(async () => {
   loading.value = true
   fetchCommunity()
-  await userStore.USER_AUTH()
+  await userStore.USER_DETAILS()
 })
 
 watch(
