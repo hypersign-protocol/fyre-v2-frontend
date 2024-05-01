@@ -10,6 +10,10 @@ const tasks: Array<ITask> = [
     types: ['COLLECT_INPUT_URL'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Url.vue'))
   },
+  // {
+  //   types: ['COLLECT_INPUT_QUIZ'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Quiz.vue'))
+  // },
   {
     types: ['COLLECT_INPUT_TEXT'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Text.vue'))

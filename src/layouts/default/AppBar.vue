@@ -126,11 +126,6 @@ const menu = ref([
     title: 'Explore',
     link: '/explore',
     slug: 'explore'
-  },
-  {
-    title: 'About Us',
-    link: '/about',
-    slug: 'about'
   }
 ])
 

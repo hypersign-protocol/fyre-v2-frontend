@@ -15,7 +15,7 @@
       <div class="task__action" @click="showExpand = !showExpand">
         <v-btn
           v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+            !showExpand && !isTaskVerified
           "
         >
           Verify
@@ -23,7 +23,7 @@
         <v-btn
           variant="outlined"
           v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+            !showExpand && isTaskVerified
           "
         >
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
@@ -41,11 +41,11 @@
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction">Verify</v-btn>
+        <v-btn @click="performAction" v-if="!isTaskVerified">Verify</v-btn>
       </div>
     </div>
   </div>
@@ -78,6 +78,19 @@ const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if(props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)){
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id];
+    inputText.value = result.proof.userTextInput
+  }
+}
 
 watch(
   () => performResult.value,

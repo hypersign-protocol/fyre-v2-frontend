@@ -14,7 +14,7 @@
       </div>
       <div
         class="task__action"
-        v-if="!isTaskVerified || !eventParticipants?.tasks?.hasOwnProperty(task._id)"
+        v-if="!isTaskVerified"
         @click="showExpand = !showExpand"
       >
         <v-btn v-if="!showExpand">Verify</v-btn>
@@ -22,7 +22,7 @@
       </div>
       <div
         class="task__action"
-        v-if="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+        v-if="isTaskVerified"
       >
         <v-btn variant="outlined">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
@@ -43,7 +43,7 @@
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
         ></v-text-field>
       </div>
       <div class="task__submit">
@@ -91,6 +91,18 @@ watch(
   },
   { deep: true }
 )
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if(props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)){
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id];
+    inputText.value = result.proof
+  }
+}
 
 watch(
   () => performResult.value,
