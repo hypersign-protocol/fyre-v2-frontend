@@ -113,6 +113,7 @@ const collectWalletAddress = async (data) => {
 }
 
 const collectSignedData = async (data) => {
+  formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
 }
 

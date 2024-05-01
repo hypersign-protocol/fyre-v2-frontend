@@ -12,30 +12,22 @@
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div
-        class="task__action"
-        v-if="!isTaskVerified || !eventParticipants?.tasks?.hasOwnProperty(task._id)"
-        @click="showExpand = !showExpand"
-      >
-        <v-btn v-if="!showExpand">Verify</v-btn>
+      <div class="task__action" @click="showExpand = !showExpand">
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
+          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          Verified
+        </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
-      <div
-        class="task__action"
-        v-if="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
-      >
-        <v-btn variant="outlined">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
-          Verified</v-btn
-        >
-      </div>
     </div>
-    <div class="task__body" v-if="showExpand && !isTaskVerified">
+    <div class="task__body" v-if="showExpand">
       <div class="task__input">
-        <div class="task__submit">
-          <v-btn @click="handleTwitterLogin"> Authorize Github</v-btn>
+        <div class="task__submit mb-2">
+          <v-btn @click="handleTwitterLogin" :disabled="socialAccessToken || isTaskVerified">
+            Authorize Github</v-btn
+          >
         </div>
-
         <v-text-field
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
@@ -43,11 +35,11 @@
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
         ></v-text-field>
       </div>
       <div class="task__submit">
-        <v-btn @click="performAction"> Verify</v-btn>
+        <v-btn @click="performAction" v-if="!isTaskVerified"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -84,6 +76,7 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
+
 watch(
   () => socialAccessToken.value,
   (value: any) => {
@@ -91,6 +84,18 @@ watch(
   },
   { deep: true }
 )
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    inputText.value = result.proof.githubPrUrl
+  }
+}
 
 watch(
   () => performResult.value,

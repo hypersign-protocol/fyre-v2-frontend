@@ -13,19 +13,8 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn
-          v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
-          "
-        >
-          Verify
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
-          "
-        >
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -34,12 +23,10 @@
     </div>
     <div class="task__body" v-if="showExpand">
       <div class="task__submit">
-        <v-btn
-          @click="handleTwitterLogin"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
-        >
-          Follow @{{ task.options.cta.visitUrl }}</v-btn
-        >
+        <v-btn @click="handleTwitterLogin" :disabled="isTaskVerified">
+          <span v-if="!isTaskVerified">Follow @{{ task.options.cta.visitUrl }}</span>
+          <span v-if="isTaskVerified">Followed @{{ task.options.cta.visitUrl }}</span>
+        </v-btn>
       </div>
     </div>
   </div>
@@ -76,6 +63,20 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    console.log(result)
+    inputText.value = result.proof
+  }
+}
+
 watch(
   () => socialAccessToken.value,
   (value: any) => {
@@ -99,7 +100,6 @@ watch(
 )
 
 const handleTwitterLogin = () => {
-  const url = `https://twitter.com/${props.task.options.cta.visitUrl}?ref_src=twsrc%5Etfw`
   webAuth.popup.authorize(
     {
       connection: 'twitter',

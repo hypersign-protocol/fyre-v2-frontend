@@ -13,19 +13,8 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn
-          v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
-          "
-        >
-          Verify
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
-          "
-        >
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -37,7 +26,7 @@
         <v-btn
           :href="task.options.cta.visitUrl"
           target="_blank"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
           @click="performAction"
           >Collect Url</v-btn
         >
@@ -72,6 +61,18 @@ const inputText = ref(null)
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    inputText.value = result.proof.userUrlInput
+  }
+}
+
 watch(
   () => performResult.value,
   (value: any) => {
@@ -88,7 +89,7 @@ watch(
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
-    communityId: '65e43eca9a3b5d2bd597e43b',
+    communityId: props.task.communityId,
     task: {
       id: props.task._id,
       proof: true
