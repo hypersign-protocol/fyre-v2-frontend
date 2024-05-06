@@ -293,7 +293,7 @@ const items = ref([
     provider: 'cosmos'
   },
   {
-    title: 'Omniflex',
+    title: 'Omniflix',
     address: null,
     image: new URL(`@/assets/images/task/omniflex.png`, import.meta.url).href,
     isAddress: false,
