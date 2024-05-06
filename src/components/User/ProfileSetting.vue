@@ -109,8 +109,6 @@ const collectWalletAddress = async (data) => {
 const collectSignedData = async (data) => {
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
-  formData.signedDidDoc.alsoKnownAs.push(user.value.userName)
-  console.log(formData)
 }
 
 const user = computed(() => {
@@ -169,6 +167,7 @@ watch(
 )
 
 const updateProfile = () => {
+  user.value.didDocument.alsoKnownAs.push(user.value.userName)
   const vm = user.value.didDocument.verificationMethod[0]
   const chainId = vm.blockchainAccountId.split(':')[1]
   if (vm.blockchainAccountId.includes('eip')) {

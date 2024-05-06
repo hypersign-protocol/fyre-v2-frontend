@@ -99,7 +99,7 @@ export const signData = async (payload) => {
     }
 
     if (suiteType !== 'cosmos') {
-      didDoc.verificationMethod[0].publicKeyMultibase = 'z'
+      didDoc.verificationMethod[0].publicKeyMultibase = ''
     }
 
     const proof = await jsSig.sign(didDoc, {
@@ -221,9 +221,11 @@ export const addWallet = async (payload) => {
     }
     const length = localDidDoc.verificationMethod.length
     if (localDidDoc.verificationMethod[length - 1].publicKeyMultibase === undefined) {
-      localDidDoc.verificationMethod[length - 1]['publicKeyMultibase'] = 'z'
+      localDidDoc.verificationMethod[length - 1]['publicKeyMultibase'] = ''
     }
 
+    console.log(localDidDoc.alsoKnownAs)
+    delete localDidDoc.service
     const proof = await jsSig.sign(localDidDoc, {
       suite,
       purpose: new purposes.AssertionProofPurpose({
