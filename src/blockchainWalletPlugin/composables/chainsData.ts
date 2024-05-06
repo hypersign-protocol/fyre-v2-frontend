@@ -55,7 +55,7 @@ const chains: ChainData[] = [
 
   {
     type: 'omniflixhub-1',
-    name: 'Omniflex',
+    name: 'Omniflix',
     image: new URL(`@/assets/images/task/omniflex.png`, import.meta.url).href,
     showOption: true,
     rpc: 'https://omniflix-rpc.polkachu.com',
