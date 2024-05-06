@@ -137,7 +137,7 @@ const emit = defineEmits([
   'getSignature',
   'getWalletAddress',
   'getSignInProof',
-  'getSignedData'
+  'emitSignedData'
 ])
 
 const props = defineProps({
@@ -215,7 +215,7 @@ const collectWalletAddress = (data) => {
 
 const collectSignedData = (data) => {
   console.log(data)
-  emit('getSignedData', data)
+  emit('emitSignedData', data)
   props.options.showBwModal = false
 }
 
@@ -356,8 +356,9 @@ const signArbitrary = async () => {
 }
 
 const emitSigned = () => {
+  console.log(evmResultObject)
   setTimeout(() => {
-     emit('getSignedData', evmResultObject)
+     emit('emitSignedData', evmResultObject)
      props.options.showBwModal = false
   })
 }

@@ -165,6 +165,7 @@ const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
 
 export const addWallet = async (payload) => {
   console.log(payload)
+  console.log(store.walletOptions)
   try {
     const signType = payload.signType
     const wallet = payload.wallet
@@ -205,9 +206,25 @@ export const addWallet = async (payload) => {
       address
     )
 
-    let localDidKey = `#key-1`
-    if (!isBlockchainAccountIdVerified) {
+    let localDidKey = '#key-1'
+
+    console.log(localDidKey)
+
+    // console.log({
+    //   didDocument: localDidDoc,
+    //   type: wallet?.pubKey
+    //     ? 'EcdsaSecp256k1VerificationKey2019'
+    //     : 'EcdsaSecp256k1RecoveryMethod2020',
+    //   id: `${localDidDoc.id}${localDidKey}`,
+    //   controller: localDidDoc.controller,
+    //   blockchainAccountId,
+    //   publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
+    // })
+
+    if (store.walletOptions.addVerificationMethod) {
+
       localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
+
       const addVerification = await hsSDK.addVerificationMethod({
         didDocument: localDidDoc,
         type: wallet?.pubKey
@@ -218,6 +235,7 @@ export const addWallet = async (payload) => {
         blockchainAccountId,
         publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
       })
+
     }
     const length = localDidDoc.verificationMethod.length
     if (localDidDoc.verificationMethod[length - 1].publicKeyMultibase === undefined) {
@@ -252,6 +270,5 @@ export const addWallet = async (payload) => {
     return { proof }
   } catch (err) {
     console.log(err)
-    alert(err.message)
   }
 }

@@ -48,8 +48,8 @@ dependencies:
     specifier: ^2.6.1
     version: 2.7.2(vue@3.4.26)
   ethereumeip712signature2021suite:
-    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#tsconfig
-    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371dcddfdcb99f5d8c5
+    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#7fb4ba8bcb788e85f0c97371
+    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371
   hs-ssi-sdk:
     specifier: github:hypersign-protocol/hid-ssi-js-sdk#testcase/bjj
     version: github.com/hypersign-protocol/hid-ssi-js-sdk/d552c9fab0a0c777f3a236ee0fd9019a5d2914d3(@iden3/js-crypto@1.1.0)(idb-keyval@6.2.1)
@@ -13443,8 +13443,8 @@ packages:
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
-  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371dcddfdcb99f5d8c5:
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/7fb4ba8bcb788e85f0c97371dcddfdcb99f5d8c5}
+  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371:
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/7fb4ba8bcb788e85f0c97371}
     name: ethereumeip712signature2021suite
     version: 0.0.1
     dependencies:
@@ -13538,7 +13538,6 @@ packages:
     id: github.com/hypersign-protocol/hid-ssi-js-sdk/d552c9fab0a0c777f3a236ee0fd9019a5d2914d3
     name: hs-ssi-sdk
     version: 7.0.1
-    prepare: true
     requiresBuild: true
     dependencies:
       '@cfworker/json-schema': github.com/hypersign-protocol/json-schema/ed4a14c72ce3e761895483dc8d6089cec71e2892
