@@ -169,15 +169,20 @@ watch(
 
 watch(
   () => interChainResultObject.signProof,
-  (value: any) => {
+  (value) => {
+    console.log(value)
+  }
+)
+
+watch(
+  () => interChainResultObject.isSignedVerified,
+  (value) => {
+    console.log(value)
     if (value) {
-      emit('getSignedData', evmResultObject)
+      loading.value = false
       emit('close')
-    } else {
-      console.log('No signature found')
     }
-  },
-  { deep: true }
+  }
 )
 
 const WC_PROJECT_ID = '2b7d5a2da89dd74fed821d184acabf95'
@@ -197,6 +202,7 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
+
   console.log(store.walletOptions.didDocument)
   try {
     loading.value = true
@@ -219,6 +225,10 @@ const signArbitrary = async () => {
 
     interChainResultObject.signProof = proof
     interChainResultObject.isSignedVerified = verifed
+
+    emit('getSignedData', interChainResultObject)
+    emit('close')
+
   } catch (err) {
     console.log(err)
     alert(err.message)
@@ -245,5 +255,9 @@ const getSignature = async () => {
 
   interChainResultObject.signProof = proof
   interChainResultObject.isSignedVerified = verifed
+
+  emit('getSignedData', interChainResultObject)
+
+  emit('close')
 }
 </script>
