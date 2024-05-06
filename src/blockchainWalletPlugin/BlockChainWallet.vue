@@ -280,17 +280,19 @@ watch(
 
 // }
 
-watch(
-  () => evmResultObject.signProof,
-  (value: any) => {
-    if (value) {
-      emit('getSignedData', evmResultObject)
-    } else {
-      console.log('No signature found')
-    }
-  },
-  { deep: true }
-)
+// watch(
+//   () => evmResultObject.signProof,
+//   (value: any) => {
+//     console.log(value)
+//     emit('getSignedData', evmResultObject)
+//     // if (value) {
+//     //   emit('getSignedData', evmResultObject)
+//     // } else {
+//     //   console.log('No signature found')
+//     // }
+//   },
+//   { deep: true }
+// )
 
 wagmiConfig.subscribe((value) => {
   if (value.status === 'connected') {
@@ -333,16 +335,17 @@ const signArbitrary = async () => {
       provider: evmResultObject.provider
     }
 
-    const { proof, verifed } = await addWallet(payload)
+    const { proof } = await addWallet(payload)
 
-    console.log(proof, verifed)
+    console.log(proof)
 
     evmResultObject.signProof = proof
-    evmResultObject.isSignedVerified = verifed
+    // evmResultObject.isSignedVerified = verifed
 
     console.log(evmResultObject)
 
-    // props.options.showBwModal = false
+    emitSigned()
+
   } catch (err) {
     console.log(err)
     alert(err.message)
@@ -350,6 +353,13 @@ const signArbitrary = async () => {
     loading.value = false
     props.options.showBwModal = false
   }
+}
+
+const emitSigned = () => {
+  setTimeout(() => {
+     emit('getSignedData', evmResultObject)
+     props.options.showBwModal = false
+  })
 }
 
 const getSignature = async () => {
@@ -369,6 +379,7 @@ const getSignature = async () => {
 
   evmResultObject.signProof = proof
   evmResultObject.isSignedVerified = verifed
-  props.options.showBwModal = false
+
+  emitSigned()
 }
 </script>
