@@ -281,10 +281,13 @@ watch(
 // }
 
 watch(
-  () => evmResultObject,
+  () => evmResultObject.signProof,
   (value: any) => {
-    console.log(value)
-    emit('getSignedData', value)
+    if (value) {
+      emit('getSignedData', evmResultObject)
+    } else {
+      console.log('No signature found')
+    }
   },
   { deep: true }
 )
@@ -338,9 +341,8 @@ const signArbitrary = async () => {
     evmResultObject.isSignedVerified = verifed
 
     console.log(evmResultObject)
-    emit('getSignedData', evmResultObject)
 
-    props.options.showBwModal = false
+    // props.options.showBwModal = false
   } catch (err) {
     console.log(err)
     alert(err.message)

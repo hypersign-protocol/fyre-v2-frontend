@@ -184,7 +184,7 @@ const getProvider = async (data) => {
 
 const collectSignedData = async (data) => {
   console.log(data)
-  if (data) {
+  if (data.signProof) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
   } else {
     console.log('Please select the provider before you proceed')

@@ -1,7 +1,8 @@
 <template>
   <div class="profile__setting__container">
     <p class="title">Network Lists</p>
-    <v-row>
+    <Loader v-if="loading" />
+    <v-row v-if="!loading">
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
         <div class="wallet__address__container" :class="checkIfExists(item) ? 'address' : ''">
           <div class="tag" v-if="item.address">Controller</div>
@@ -195,6 +196,7 @@ onMounted(() => {
 })
 
 const checkWalletStatus = () => {
+  loading.value = true
   // Ensure that items.value is an array
   if (!Array.isArray(items.value)) {
     console.error('items.value is not an array.')
@@ -212,6 +214,8 @@ const checkWalletStatus = () => {
       item.isAddress = false
     }
   }
+
+  loading.value = false
 }
 
 const items = ref([

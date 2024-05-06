@@ -169,20 +169,15 @@ watch(
 
 watch(
   () => interChainResultObject.signProof,
-  (value) => {
-    console.log(value)
-  }
-)
-
-watch(
-  () => interChainResultObject.isSignedVerified,
-  (value) => {
-    console.log(value)
+  (value: any) => {
     if (value) {
-      loading.value = false
+      emit('getSignedData', evmResultObject)
       emit('close')
+    } else {
+      console.log('No signature found')
     }
-  }
+  },
+  { deep: true }
 )
 
 const WC_PROJECT_ID = '2b7d5a2da89dd74fed821d184acabf95'
@@ -202,6 +197,7 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
+  console.log(store.walletOptions.didDocument)
   try {
     loading.value = true
 
@@ -213,7 +209,7 @@ const signArbitrary = async () => {
 
     const payload = {
       signType: 'cosmos',
-      localDidDoc: JSON.parse(localStorage.getItem('user')).didDocument,
+      localDidDoc: store.walletOptions.didDocument,
       wallet: wallet
     }
 
@@ -223,14 +219,12 @@ const signArbitrary = async () => {
 
     interChainResultObject.signProof = proof
     interChainResultObject.isSignedVerified = verifed
-
-    emit('getSignedData', interChainResultObject)
   } catch (err) {
     console.log(err)
     alert(err.message)
   } finally {
     loading.value = false
-    props.options.showBwModal = false
+    emit('close')
   }
 }
 
@@ -251,7 +245,5 @@ const getSignature = async () => {
 
   interChainResultObject.signProof = proof
   interChainResultObject.isSignedVerified = verifed
-
-  emit('getSignedData', interChainResultObject)
 }
 </script>

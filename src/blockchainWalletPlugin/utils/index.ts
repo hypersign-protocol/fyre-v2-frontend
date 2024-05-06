@@ -263,7 +263,7 @@ export const addWallet = async (payload) => {
     //   documentLoader: wallet?.pubKey ? docloader1 : docloader
     // })
 
-    return { proof,  }
+    return { proof }
   } catch (err) {
     console.log(err)
     alert(err.message)
