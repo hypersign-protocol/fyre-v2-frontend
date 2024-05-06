@@ -209,11 +209,11 @@ const signArbitrary = async () => {
       store.interChainObject.selectedChain
     ]
 
-    console.log(wallet)
+    console.log(store)
 
     const payload = {
       signType: 'cosmos',
-      localDidDoc: store.walletOptions.didDocument,
+      localDidDoc: JSON.parse(localStorage.getItem('user')).didDocument,
       wallet: wallet
     }
 

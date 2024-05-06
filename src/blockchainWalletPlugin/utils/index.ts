@@ -3,7 +3,10 @@ import jsonld from 'jsonld'
 
 import { base58btc } from 'multiformats/bases/base58'
 import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
-import { EcdsaSecp256k1Signature2019 } from 'keplr-ecdsasecp256k1signature2019'
+import {
+  EcdsaSecp256k1Signature2019,
+  docloader as docloader1
+} from 'keplr-ecdsasecp256k1signature2019'
 import jsSig, { purposes } from 'jsonld-signatures'
 
 //getting challenge from store
@@ -48,7 +51,6 @@ export const initializeDidSDK = (): HypersignDID => {
 }
 
 export const signData = async (payload) => {
-  console.log(payload)
   const hsSDK = initializeDidSDK()
 
   const address = payload.address
@@ -86,12 +88,18 @@ export const signData = async (payload) => {
       })
 
       signInId = didDoc.verificationMethod[0].id
-      authentication = didDoc.authentication[0]
+      authentication = didDoc.authentication
     } else {
+      console.log(provider)
+
       eth = new EthereumEip712Signature2021({}, { _provider: provider })
 
-      signInId = didDoc.id
+      signInId = didDoc.verificationMethod[0].id
       authentication = didDoc.authentication
+    }
+
+    if (suiteType !== 'cosmos') {
+      didDoc.verificationMethod[0].publicKeyMultibase = 'z'
     }
 
     const proof = await jsSig.sign(didDoc, {
@@ -108,30 +116,30 @@ export const signData = async (payload) => {
       documentLoader: docloader
     })
 
-    const verifed = await jsSig.verify(proof, {
-      suite:
-        suiteType === 'cosmos'
-          ? new EcdsaSecp256k1Signature2019({
-              chainId,
-              bech32AddressPrefix: prefix
-            })
-          : new EthereumEip712Signature2021({}),
+    // const verifed = await jsSig.verify(proof, {
+    //   suite:
+    //     suiteType === 'cosmos'
+    //       ? new EcdsaSecp256k1Signature2019({
+    //           chainId,
+    //           bech32AddressPrefix: prefix
+    //         })
+    //       : new EthereumEip712Signature2021({}),
 
-      purpose: new purposes.AuthenticationProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: signInId,
-          authentication: authentication
-        },
-        challenge: store.challenge,
-        domain: prefixDomain
-      }),
-      // verificationMethod: didDoc.verificationMethod[0].id,
-      // domain: {},
-      documentLoader: docloader
-    })
+    //   purpose: new purposes.AuthenticationProofPurpose({
+    //     controller: {
+    //       '@context': ['https://w3id.org/security/v2'],
+    //       id: signInId,
+    //       authentication: authentication
+    //     },
+    //     challenge: store.challenge,
+    //     domain: prefixDomain
+    //   }),
+    //   // verificationMethod: didDoc.verificationMethod[0].id,
+    //   // domain: {},
+    //   documentLoader: docloader
+    // })
 
-    return { proof, verifed }
+    return { proof }
   } catch (err) {
     console.log(err)
     return { proof: null, verifed: false }
@@ -163,7 +171,7 @@ export const addWallet = async (payload) => {
     const localDidDoc = payload.localDidDoc
     let address = payload.address
     let chainId = payload.chainId
-    let provider = payload.provider
+    const provider = payload.provider
 
     let publicKey, blockchainAccountId, suite
 
@@ -182,6 +190,7 @@ export const addWallet = async (payload) => {
       })
     } else {
       blockchainAccountId = `${signType}:${chainId}:${address}`
+
       suite = new EthereumEip712Signature2021({}, { _provider: provider })
     }
 
@@ -224,49 +233,37 @@ export const addWallet = async (payload) => {
         publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
       })
     }
-
-    console.log(localDidDoc)
-    console.log({
-      suite,
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: `${localDidDoc.id}${localDidKey}`,
-          assertionMethod: `${localDidDoc.id}${localDidKey}`
-        }
-      }),
-      verificationMethod: `${localDidDoc.id}${localDidKey}`,
-      documentLoader: docloader
-    })
+    const length = localDidDoc.verificationMethod.length
+    if (localDidDoc.verificationMethod[length - 1].publicKeyMultibase === undefined) {
+      localDidDoc.verificationMethod[length - 1]['publicKeyMultibase'] = 'z'
+    }
 
     const proof = await jsSig.sign(localDidDoc, {
       suite,
       purpose: new purposes.AssertionProofPurpose({
         controller: {
           '@context': ['https://w3id.org/security/v2'],
-          id: `${localDidDoc.id}`,
-          assertionMethod: `${localDidDoc.id}${localDidKey}`
+          id: `${localDidDoc.id}${localDidKey}`,
+          assertionMethod: [`${localDidDoc.id}${localDidKey}`]
         }
       }),
-      verificationMethod: `${localDidDoc.id}${localDidKey}`,
-      documentLoader: docloader
+      documentLoader: wallet?.pubKey ? docloader1 : docloader
     })
-
     console.log(proof)
 
-    const verifed = await jsSig.verify(proof, {
-      suite,
-      purpose: new purposes.AssertionProofPurpose({
-        controller: {
-          '@context': ['https://w3id.org/security/v2'],
-          id: `${localDidDoc.id}${localDidKey}`,
-          assertionMethod: localDidDoc.authentication
-        }
-      }),
-      documentLoader: docloader
-    })
+    // const verifed = await jsSig.verify(proof, {
+    //   suite,
+    //   purpose: new purposes.AssertionProofPurpose({
+    //     controller: {
+    //       '@context': ['https://w3id.org/security/v2'],
+    //       id: `${localDidDoc.id}${localDidKey}`,
+    //       assertionMethod: [`${localDidDoc.id}${localDidKey}`]
+    //     }
+    //   }),
+    //   documentLoader: wallet?.pubKey ? docloader1 : docloader
+    // })
 
-    return { proof, verifed }
+    return { proof,  }
   } catch (err) {
     console.log(err)
     alert(err.message)
