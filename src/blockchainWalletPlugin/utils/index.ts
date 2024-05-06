@@ -204,27 +204,10 @@ export const addWallet = async (payload) => {
       chainId,
       address
     )
-    console.log(isBlockchainAccountIdVerified)
 
-    console.log(localDidDoc.verificationMethod.length)
-    console.log(localDidDoc.verificationMethod.length + 1)
-
-    const localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
-
-    console.log(localDidKey)
-
-    console.log({
-      didDocument: localDidDoc,
-      type: wallet?.pubKey
-        ? 'EcdsaSecp256k1VerificationKey2019'
-        : 'EcdsaSecp256k1RecoveryMethod2020',
-      id: `${localDidDoc.id}${localDidKey}`,
-      controller: localDidDoc.controller,
-      blockchainAccountId,
-      publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
-    })
-
+    let localDidKey = `#key-1`
     if (!isBlockchainAccountIdVerified) {
+      localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
       const addVerification = await hsSDK.addVerificationMethod({
         didDocument: localDidDoc,
         type: wallet?.pubKey
