@@ -74,7 +74,7 @@
     <BlockChainWallet
       :options="options"
       @emitProvider="getProvider"
-      @getSignedData="collectSignedData"
+      @emitSignedData="collectSignedData"
     />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
     <div id="emit-options" @click="emitOptions(options)"></div>

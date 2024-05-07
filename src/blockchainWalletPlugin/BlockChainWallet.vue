@@ -344,7 +344,10 @@ const signArbitrary = async () => {
 
     console.log(evmResultObject)
 
-    emitSigned()
+    setTimeout(() => {
+       emit('emitSignedData', evmResultObject)
+       props.options.showBwModal = false
+    },100)
 
   } catch (err) {
     console.log(err)
@@ -355,13 +358,6 @@ const signArbitrary = async () => {
   }
 }
 
-const emitSigned = () => {
-  console.log(evmResultObject)
-  setTimeout(() => {
-     emit('emitSignedData', evmResultObject)
-     props.options.showBwModal = false
-  })
-}
 
 const getSignature = async () => {
   const { chainId, address } = getAccount(wagmiConfig)
@@ -381,6 +377,9 @@ const getSignature = async () => {
   evmResultObject.signProof = proof
   evmResultObject.isSignedVerified = verifed
 
-  emitSigned()
+  setTimeout(() => {
+     emit('emitSignedData', evmResultObject)
+     props.options.showBwModal = false
+  },100)
 }
 </script>
