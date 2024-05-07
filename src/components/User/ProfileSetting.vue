@@ -40,7 +40,7 @@
     <v-form @submit.prevent>
       <div>
         <label>User Name</label>
-        <v-text-field v-model="user.userName" hide-details="auto" variant="solo"></v-text-field>
+        <v-text-field v-model="userName" hide-details="auto" variant="solo"></v-text-field>
       </div>
       <div class="button__wrapper">
         <v-btn variant="outlined" color="secondary">Cancel</v-btn>
@@ -80,14 +80,18 @@ import {
   reactive
 } from 'vue'
 import { useAuthStore } from '@/store/auth.ts'
+import { useNotificationStore } from '@/store/notification.ts'
+
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const store = useAuthStore()
+const notificationStore = useNotificationStore()
 const deletePopup = ref(false)
 const loading = ref(false)
 const avatar = ref(null)
+const userName = ref(null)
 
 const formData = reactive({
   walletAddress: null,
@@ -116,6 +120,7 @@ const collectSignedData = async (data) => {
 const user = computed(() => {
   const res = getUser()
   avatar.value = res.avatar
+  userName.value = res.userName
   return res
 })
 
@@ -169,17 +174,27 @@ watch(
 )
 
 const updateProfile = () => {
-  const vm = user.value.didDocument.verificationMethod[0]
-  const chainId = vm.blockchainAccountId.split(':')[1]
-  if (vm.blockchainAccountId.includes('eip')) {
-    options.providers = ['evm']
-  } else {
-    options.providers = ['interchain']
+  console.log(userName.value)
+  if(userName.value){
+    const vm = user.value.didDocument.verificationMethod[0]
+    const chainId = vm.blockchainAccountId.split(':')[1]
+    if (vm.blockchainAccountId.includes('eip')) {
+      options.providers = ['evm']
+    } else {
+      options.providers = ['interchain']
+    }
+    setTimeout(async () => {
+      document.getElementById('emit-options').click()
+    }, 100)
+    loading.value = true
+  }else{
+     notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please enter name'
+    })
   }
-  setTimeout(async () => {
-    document.getElementById('emit-options').click()
-  }, 100)
-  loading.value = true
+  
 }
 
 const updateProfileSendRequest = () => {

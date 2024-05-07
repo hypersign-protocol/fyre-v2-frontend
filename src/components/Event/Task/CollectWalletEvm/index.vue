@@ -16,7 +16,7 @@
       <div class="task__action" @click="showExpand = !showExpand">
         <v-btn
           v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+            !showExpand && !isTaskVerified 
           "
         >
           Verify
@@ -24,7 +24,7 @@
         <v-btn
           variant="outlined"
           v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+            !showExpand && isTaskVerified
           "
         >
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
@@ -38,15 +38,15 @@
       <div class="task__submit">
         <v-btn
           class="mr-2"
-          @click="(options.showBwModal = true), (isCollecting = true)"
+          @click="connectWallet"
           :loading="isCollecting"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
           >Collect Wallet Address</v-btn
         >
         <v-btn
           @click="submit"
           :loading="loading"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
           >Verify Task</v-btn
         >
       </div>
@@ -57,12 +57,13 @@
     @getWalletAddress="collectWalletAddress"
     @getSignedData="collectSignedData"
   />
+  <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-
+import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { getImage } from '@/composables/event.ts'
 
 const props = defineProps({
@@ -100,12 +101,18 @@ const formData = reactive({
   signedDidDoc: null
 })
 
+const user = computed(() => {
+  return getUser()
+})
+
 const options = reactive({
   showBwModal: false,
   providers: ['evm'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true
+  isPerformAction: true,
+  didDocument: user.value.didDocument,
+  addVerificationMethod: true
 })
 
 const collectWalletAddress = async (data) => {
@@ -115,7 +122,32 @@ const collectWalletAddress = async (data) => {
 const collectSignedData = async (data) => {
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
+  isCollecting.value = false
 }
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    console.log(result)
+    inputText.value = result.proof.retweetUrl
+  }
+}
+
+const connectWallet = async (item) => {
+
+  options.chains = ['Etherem']
+  isCollecting.value = true
+  setTimeout(async () => {
+    document.getElementById('emit-options').click()
+  }, 100)
+
+}
+
 
 watch(
   () => performResult.value,
