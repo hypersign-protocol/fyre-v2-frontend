@@ -54,7 +54,7 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
 
         if (response.success) {
           this.performResult = response.data
-          authStore.USER_DETAILS()
+          // authStore.USER_DETAILS()
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({

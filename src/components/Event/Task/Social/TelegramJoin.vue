@@ -74,7 +74,7 @@ const notificationStore = useNotificationStore()
 
 const checkIfUserLogged = () => {
   if (props.token) {
-    showExpand = !showExpand
+    showExpand.value = !showExpand.value
   } else {
     notificationStore.SHOW_NOTIFICATION({
       show: true,
