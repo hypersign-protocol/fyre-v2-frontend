@@ -51,7 +51,6 @@ export const initializeDidSDK = (): HypersignDID => {
 }
 
 export const signData = async (payload) => {
-  
   const hsSDK = initializeDidSDK()
 
   const address = payload.address
@@ -223,7 +222,6 @@ export const addWallet = async (payload) => {
     // })
 
     if (store.walletOptions.addVerificationMethod) {
-
       localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
 
       const addVerification = await hsSDK.addVerificationMethod({
@@ -236,7 +234,6 @@ export const addWallet = async (payload) => {
         blockchainAccountId,
         publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
       })
-
     }
     const length = localDidDoc.verificationMethod.length
     if (localDidDoc.verificationMethod[length - 1].publicKeyMultibase === undefined) {

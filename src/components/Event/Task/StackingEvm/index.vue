@@ -13,20 +13,9 @@
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn
-          v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
-          "
-        >
-          Verify
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
-          "
-        >
+      <div class="task__action" @click="checkIfUserLogged">
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -38,17 +27,12 @@
       <div class="task__submit">
         <v-btn
           class="mr-2"
-          @click="(options.showBwModal = true), (isCollecting = true)"
+          @click="connectWallet"
           :loading="isCollecting"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
+          :disabled="isTaskVerified"
           >Collect Wallet Address</v-btn
         >
-        <v-btn
-          @click="submit"
-          :loading="loading"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"
-          >Verify Task</v-btn
-        >
+        <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
       </div>
     </div>
   </div>
@@ -57,16 +41,19 @@
     @getWalletAddress="collectWalletAddress"
     @getSignedData="collectSignedData"
   />
+  <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
+import { useNotificationStore } from '@/store/notification.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-
+import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { getImage } from '@/composables/event.ts'
 
 const props = defineProps({
   communityId: { type: String, required: true },
+  token: { type: String, required: true },
   task: {
     type: Object,
     required: true,
@@ -90,6 +77,7 @@ const isTaskVerified = ref(false)
 const inputText = ref(null)
 
 const store = useEventParticipantStore()
+const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const wAddress = ref(null)
@@ -100,12 +88,30 @@ const formData = reactive({
   signedDidDoc: null
 })
 
+const user = computed(() => {
+  return getUser()
+})
+
+const checkIfUserLogged = () => {
+  if (props.token) {
+    showExpand = !showExpand
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to perform action'
+    })
+  }
+}
+
 const options = reactive({
   showBwModal: false,
   providers: ['evm'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true
+  isPerformAction: true,
+  didDocument: user.value.didDocument,
+  addVerificationMethod: true
 })
 
 const collectWalletAddress = async (data) => {
@@ -113,7 +119,30 @@ const collectWalletAddress = async (data) => {
 }
 
 const collectSignedData = async (data) => {
+  formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
+  isCollecting.value = false
+}
+
+onMounted(() => {
+  fetchResult()
+})
+
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    console.log(result)
+    inputText.value = result.proof.retweetUrl
+  }
+}
+
+const connectWallet = async (item) => {
+  options.chains = ['Etherem']
+  isCollecting.value = true
+  setTimeout(async () => {
+    document.getElementById('emit-options').click()
+  }, 100)
 }
 
 watch(

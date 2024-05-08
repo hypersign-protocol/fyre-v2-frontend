@@ -18,7 +18,7 @@
           </h1>
           <div class="profile__meta">
             <label>Controller:</label>
-            <p>{{getAddress()}}</p>
+            <p>{{ getAddress() }}</p>
           </div>
           <div class="profile__meta">
             <div class="profile__meta__item">

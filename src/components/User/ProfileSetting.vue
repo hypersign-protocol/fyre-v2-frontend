@@ -174,8 +174,7 @@ watch(
 )
 
 const updateProfile = () => {
-  
-  if(userName.value){
+  if (userName.value) {
     const vm = user.value.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {
@@ -187,8 +186,8 @@ const updateProfile = () => {
       document.getElementById('emit-options').click()
     }, 100)
     loading.value = true
-  }else{
-     notificationStore.SHOW_NOTIFICATION({
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
       show: true,
       type: 'error',
       message: 'Please enter name'

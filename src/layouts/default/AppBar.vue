@@ -50,7 +50,7 @@
 
         <v-menu activator="#menu-activator">
           <v-list density="compact" class="menu__wrap">
-            <v-list-subheader class="text-center">{{user.userName}}</v-list-subheader>
+            <v-list-subheader class="text-center">{{ user.userName }}</v-list-subheader>
 
             <v-list-item
               v-for="(item, i) in userMenu"

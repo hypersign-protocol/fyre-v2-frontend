@@ -12,7 +12,7 @@
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="showExpand = !showExpand">
+      <div class="task__action" @click="checkIfUserLogged">
         <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
@@ -35,11 +35,12 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-
+import { useNotificationStore } from '@/store/notification.ts'
 import { webAuth } from '@/composables/twitterAuth.ts'
 
 const props = defineProps({
   communityId: { type: String, required: true },
+  token: { type: String, required: true },
   task: {
     type: Object,
     required: true,
@@ -63,6 +64,20 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
+
+const notificationStore = useNotificationStore()
+
+const checkIfUserLogged = () => {
+  if (props.token) {
+    showExpand = !showExpand
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to perform action'
+    })
+  }
+}
 
 onMounted(() => {
   fetchResult()

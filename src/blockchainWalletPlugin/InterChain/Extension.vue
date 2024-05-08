@@ -202,7 +202,6 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
-
   console.log(store.walletOptions.didDocument)
   try {
     loading.value = true
@@ -228,7 +227,6 @@ const signArbitrary = async () => {
 
     emit('getSignedData', interChainResultObject)
     emit('close')
-
   } catch (err) {
     console.log(err)
     alert(err.message)
