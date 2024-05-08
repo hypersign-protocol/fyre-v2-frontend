@@ -23,7 +23,7 @@
     "cosmes": "github:hypersign-protocol/cosmes#build",
     "defu": "^6.1.4",
     "element-plus": "^2.6.1",
-    "ethereumeip712signature2021suite": "github:hypersign-protocol/EthereumEip712Signature2021Suite#tsconfig",
+    "ethereumeip712signature2021suite": "github:hypersign-protocol/EthereumEip712Signature2021Suite#7fb4ba8bcb788e85f0c97371",
     "hs-ssi-sdk": "github:hypersign-protocol/hid-ssi-js-sdk#testcase/bjj",
     "jsonld": "^8.3.2",
     "jsonld-signatures": "^11.2.1",

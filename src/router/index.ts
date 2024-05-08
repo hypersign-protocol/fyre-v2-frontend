@@ -21,18 +21,6 @@ const router = createRouter({
 function isAuthenticated(): boolean {
   const token = localStorage.getItem('accessToken')
   return !!token
-  // if(token && isTokenExpired(token)){
-  //   return false
-  // }else{
-  //   return true
-  // }
- 
-}
-
-
-function isTokenExpired(token): string {
-  const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
-  return (Math.floor((new Date()).getTime() / 1000)) >= expiry;
 }
 
 // Define a function to check if auth required
@@ -49,15 +37,13 @@ function isAuthRequired(routeName): boolean {
   return true
 }
 
-
 router.beforeEach((to, from, next) => {
-
-// console.log(isAuthenticated())
-// if (!isAuthRequired(to.path) && !isAuthenticated()) {
-//     next('/')
-//   } else {
-//     next()
-//   }
+  console.log(to.path)
+  if (isAuthRequired(to.path) && !isAuthenticated()) {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 

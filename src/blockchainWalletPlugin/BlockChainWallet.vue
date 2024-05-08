@@ -137,7 +137,7 @@ const emit = defineEmits([
   'getSignature',
   'getWalletAddress',
   'getSignInProof',
-  'getSignedData'
+  'emitSignedData'
 ])
 
 const props = defineProps({
@@ -215,7 +215,7 @@ const collectWalletAddress = (data) => {
 
 const collectSignedData = (data) => {
   console.log(data)
-  emit('getSignedData', data)
+  emit('emitSignedData', data)
   props.options.showBwModal = false
 }
 
@@ -280,14 +280,19 @@ watch(
 
 // }
 
-watch(
-  () => evmResultObject,
-  (value: any) => {
-    console.log(value)
-    emit('getSignedData', value)
-  },
-  { deep: true }
-)
+// watch(
+//   () => evmResultObject.signProof,
+//   (value: any) => {
+//     console.log(value)
+//     emit('getSignedData', evmResultObject)
+//     // if (value) {
+//     //   emit('getSignedData', evmResultObject)
+//     // } else {
+//     //   console.log('No signature found')
+//     // }
+//   },
+//   { deep: true }
+// )
 
 wagmiConfig.subscribe((value) => {
   if (value.status === 'connected') {
@@ -330,16 +335,20 @@ const signArbitrary = async () => {
       provider: evmResultObject.provider
     }
 
-    const { proof, verifed } = await addWallet(payload)
+    const { proof } = await addWallet(payload)
 
-    console.log(proof, verifed)
+    console.log(proof)
 
     evmResultObject.signProof = proof
-    evmResultObject.isSignedVerified = verifed
+    // evmResultObject.isSignedVerified = verifed
 
     console.log(evmResultObject)
 
-    props.options.showBwModal = false
+    setTimeout(() => {
+       emit('emitSignedData', evmResultObject)
+       props.options.showBwModal = false
+    },100)
+
   } catch (err) {
     console.log(err)
     alert(err.message)
@@ -348,6 +357,7 @@ const signArbitrary = async () => {
     props.options.showBwModal = false
   }
 }
+
 
 const getSignature = async () => {
   const { chainId, address } = getAccount(wagmiConfig)
@@ -367,6 +377,9 @@ const getSignature = async () => {
   evmResultObject.signProof = proof
   evmResultObject.isSignedVerified = verifed
 
-  props.options.showBwModal = false
+  setTimeout(() => {
+     emit('emitSignedData', evmResultObject)
+     props.options.showBwModal = false
+  },100)
 }
 </script>

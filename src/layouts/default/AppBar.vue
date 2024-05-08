@@ -50,7 +50,7 @@
 
         <v-menu activator="#menu-activator">
           <v-list density="compact" class="menu__wrap">
-            <v-list-subheader class="text-center">Username</v-list-subheader>
+            <v-list-subheader class="text-center">{{user.userName}}</v-list-subheader>
 
             <v-list-item
               v-for="(item, i) in userMenu"
@@ -74,7 +74,7 @@
     <BlockChainWallet
       :options="options"
       @emitProvider="getProvider"
-      @getSignedData="collectSignedData"
+      @emitSignedData="collectSignedData"
     />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
     <div id="emit-options" @click="emitOptions(options)"></div>
@@ -91,11 +91,15 @@ const router = useRouter()
 const route = useRoute()
 import { useAuthStore } from '@/store/auth.ts'
 import { useUserStore } from '@/store/user.ts'
-
+import { getUser } from '@/composables/jwtService.ts'
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const { challenge, loginRes } = storeToRefs(useAuthStore())
 const { userMeta } = storeToRefs(useUserStore())
+
+const user = computed(() => {
+  return getUser()
+})
 
 const options = reactive({
   showBwModal: false,
@@ -184,7 +188,7 @@ const getProvider = async (data) => {
 
 const collectSignedData = async (data) => {
   console.log(data)
-  if (data) {
+  if (data.signProof) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
   } else {
     console.log('Please select the provider before you proceed')

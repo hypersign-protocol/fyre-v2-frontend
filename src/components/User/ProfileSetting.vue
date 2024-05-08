@@ -64,7 +64,7 @@
   <BlockChainWallet
     :options="options"
     @getWalletAddress="collectWalletAddress"
-    @getSignedData="collectSignedData"
+    @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
@@ -113,7 +113,7 @@ const collectWalletAddress = async (data) => {
 const collectSignedData = async (data) => {
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
-  formData.signedDidDoc.alsoKnownAs.push(user.value.userName)
+  formData.signedDidDoc.alsoKnownAs.push(userName.value)
   console.log(formData)
 }
 
@@ -174,7 +174,7 @@ watch(
 )
 
 const updateProfile = () => {
-  console.log(userName.value)
+  
   if(userName.value){
     const vm = user.value.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
@@ -194,14 +194,13 @@ const updateProfile = () => {
       message: 'Please enter name'
     })
   }
-  
 }
 
 const updateProfileSendRequest = () => {
   setTimeout(async () => {
     await store.UPDATE_USER_PROFILE({
       editMode: 'profile',
-      userName: user.value.userName,
+      userName: userName.value,
       avatar: avatar.value,
       signedDidDoc: formData.signedDidDoc
     })
