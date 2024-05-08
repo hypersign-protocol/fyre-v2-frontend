@@ -13,8 +13,8 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="checkIfUserLogged">
-        <v-btn v-if="!isTaskVerified"> Verify </v-btn>
-        <v-btn variant="outlined" v-else-if="isTaskVerified">
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -81,7 +81,7 @@ const notificationStore = useNotificationStore()
 
 const checkIfUserLogged = () => {
   if (props.token) {
-    showExpand = !showExpand
+    showExpand.value = !showExpand.value
   } else {
     notificationStore.SHOW_NOTIFICATION({
       show: true,
