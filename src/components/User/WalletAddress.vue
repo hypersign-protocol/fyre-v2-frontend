@@ -1,7 +1,8 @@
 <template>
   <div class="profile__setting__container">
     <p class="title">Network Lists</p>
-    <v-row>
+    <Loader v-if="loading" />
+    <v-row v-if="!loading">
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
         <div class="wallet__address__container" :class="checkIfExists(item) ? 'address' : ''">
           <div class="tag" v-if="item.address">Controller</div>
@@ -37,9 +38,10 @@
     :options="options"
     @emitProvider="getProvider"
     @getWalletAddress="collectWalletAddress"
-    @getSignedData="collectSignedData"
+    @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
+  <div id="receive-options" @click="receiveSignedData"></div>
 </template>
 <script lang="ts" setup>
 import {
@@ -195,6 +197,7 @@ onMounted(() => {
 })
 
 const checkWalletStatus = () => {
+  loading.value = true
   // Ensure that items.value is an array
   if (!Array.isArray(items.value)) {
     console.error('items.value is not an array.')
@@ -212,6 +215,8 @@ const checkWalletStatus = () => {
       item.isAddress = false
     }
   }
+
+  loading.value = false
 }
 
 const items = ref([
@@ -289,7 +294,7 @@ const items = ref([
     provider: 'cosmos'
   },
   {
-    title: 'Omniflex',
+    title: 'Omniflix',
     address: null,
     image: new URL(`@/assets/images/task/omniflex.png`, import.meta.url).href,
     isAddress: false,

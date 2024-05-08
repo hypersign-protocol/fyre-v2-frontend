@@ -18,7 +18,7 @@
           </h1>
           <div class="profile__meta">
             <label>Controller:</label>
-            <p>0xd42...dc40cc6</p>
+            <p>{{ getAddress() }}</p>
           </div>
           <div class="profile__meta">
             <div class="profile__meta__item">
@@ -164,6 +164,15 @@ const { userMeta } = storeToRefs(useAuthStore())
 const user = computed(() => {
   return getUser()
 })
+
+const getAddress = () => {
+  const segments = user.value.didDocument.id.split(':')
+  const lastSegment = segments[segments.length - 1]
+  const firstFour = lastSegment.substring(0, 6)
+  const lastFour = lastSegment.substring(lastSegment.length - 6)
+  const result = `${firstFour}....${lastFour}`
+  return result
+}
 
 onMounted(async () => {
   loading.value = true

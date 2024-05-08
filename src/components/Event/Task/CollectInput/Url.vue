@@ -12,9 +12,9 @@
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
-        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
+      <div class="task__action" @click="checkIfUserLogged">
+        <v-btn v-if="!isTaskVerified"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>
@@ -34,7 +34,7 @@
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction" v-if="!isTaskVerified">Verify</v-btn>
+        <v-btn @click="performAction" v-if="!isTaskVerified" :disabled="!token">Verify2</v-btn>
       </div>
     </div>
   </div>
@@ -43,9 +43,11 @@
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useNotificationStore } from '@/store/notification.ts'
 
 const props = defineProps({
   communityId: { type: String, required: true },
+  token: { type: String, required: true },
   task: {
     type: Object,
     required: true,
@@ -66,7 +68,20 @@ const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
+const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+
+const checkIfUserLogged = () => {
+  if (props.token) {
+    showExpand = !showExpand
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to perform action'
+    })
+  }
+}
 
 onMounted(() => {
   fetchResult()

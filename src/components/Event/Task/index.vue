@@ -2,6 +2,7 @@
   <!-- <p class="text-right">{{ task.type }}</p> -->
   <component
     :task="task"
+    :token="token"
     :communityId="communityId"
     :is="checkComponent"
     :eventParticipants="eventParticipants"
@@ -11,8 +12,10 @@
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/event/Actions.ts'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+
 const props = defineProps({
   communityId: { type: String, required: true },
+  token: { type: String, required: true },
   task: {
     type: Object,
     required: true,

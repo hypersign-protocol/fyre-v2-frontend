@@ -150,6 +150,7 @@
                       :task="task"
                       :communityId="eventById.communityId"
                       :eventParticipants="eventParticipants"
+                      :token="token"
                       class="mb-5"
                     />
                   </template>
@@ -260,6 +261,7 @@ const tabs = ref([
 import { useEventStore } from '@/store/event.ts'
 import { isEventHappening } from '@/composables/event.ts'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
+import { getToken } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 
 const eventStore = useEventStore()
@@ -280,6 +282,10 @@ const tasks = computed(() => eventStore.getEventTasksList)
 const eventById = computed(() => eventStore.getEventByIdData)
 
 const eventErr = computed(() => eventStore.geteventError)
+
+const token = computed(() => {
+  return getToken()
+})
 
 onMounted(async () => {
   loading.value = true
@@ -314,7 +320,9 @@ watch(
   (value: any) => {
     setTimeout(async () => {
       loading.value = false
-      await eventParticipantStore.EVENT_PARTICIPANTS(route.params.id)
+      if (token.value) {
+        await eventParticipantStore.EVENT_PARTICIPANTS(route.params.id)
+      }
       await getOtherEvents()
     }, 1000)
   }

@@ -41,6 +41,7 @@ import {
   defineAsyncComponent
 } from 'vue'
 import { useUserStore } from '@/store/user.ts'
+import { getToken } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 const store = useUserStore()
 const { userRewards } = storeToRefs(useUserStore())
@@ -48,6 +49,11 @@ const loading = ref(false)
 const props = defineProps({
   eventId: { type: String, required: false, default: '' }
 })
+
+const token = computed(() => {
+  return getToken()
+})
+
 watch(
   () => store.userRewards,
   (value: any) => {
@@ -71,11 +77,13 @@ const calculateDaysUntilExpiry = (expiryDate) => {
 }
 
 onMounted(async () => {
-  loading.value = true
-  if (props.eventId) {
-    await store.USER_REWARD(`?rewardType=TOKEN&eventId=${props.eventId}&page=1&limit=10`)
-  } else {
-    await store.USER_REWARD(`?rewardType=TOKEN&page=1&limit=10`)
+  if (token.value) {
+    loading.value = true
+    if (props.eventId) {
+      await store.USER_REWARD(`?rewardType=TOKEN&eventId=${props.eventId}&page=1&limit=10`)
+    } else {
+      await store.USER_REWARD(`?rewardType=TOKEN&page=1&limit=10`)
+    }
   }
 })
 </script>

@@ -6,5 +6,6 @@
 </template>
 
 <script lang="ts" setup>
-//
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 </script>
+<style lang="scss" scoped></style>

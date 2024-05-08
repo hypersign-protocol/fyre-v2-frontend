@@ -37,8 +37,14 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
+import { getToken } from '@/composables/jwtService.ts'
+
 const eventParticipantStore = useEventParticipantStore()
 const { leaderBoard } = storeToRefs(useEventParticipantStore())
+
+const token = computed(() => {
+  return getToken()
+})
 
 const props = defineProps<{
   eventId: string
@@ -48,8 +54,10 @@ const props = defineProps<{
 const loading = ref(true)
 
 onMounted(async () => {
-  loading.value = true
-  fetchLeaderboard()
+  if (token.value) {
+    loading.value = true
+    fetchLeaderboard()
+  }
 })
 
 watch(

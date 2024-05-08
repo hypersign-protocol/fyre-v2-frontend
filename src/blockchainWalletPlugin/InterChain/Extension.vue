@@ -202,6 +202,7 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
+  console.log(store.walletOptions.didDocument)
   try {
     loading.value = true
 
@@ -209,7 +210,7 @@ const signArbitrary = async () => {
       store.interChainObject.selectedChain
     ]
 
-    console.log(wallet)
+    console.log(store)
 
     const payload = {
       signType: 'cosmos',
@@ -225,12 +226,13 @@ const signArbitrary = async () => {
     interChainResultObject.isSignedVerified = verifed
 
     emit('getSignedData', interChainResultObject)
+    emit('close')
   } catch (err) {
     console.log(err)
     alert(err.message)
   } finally {
     loading.value = false
-    props.options.showBwModal = false
+    emit('close')
   }
 }
 
@@ -253,5 +255,7 @@ const getSignature = async () => {
   interChainResultObject.isSignedVerified = verifed
 
   emit('getSignedData', interChainResultObject)
+
+  emit('close')
 }
 </script>
