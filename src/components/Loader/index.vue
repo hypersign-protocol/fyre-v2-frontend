@@ -6,49 +6,16 @@
     :height="height"
   >
     <div>
-      <svg
-        data-v-f98baaca=""
-        data-v-7cc9fe95=""
-        id="loader-1"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        x="0px"
-        y="0px"
-        width="40px"
-        height="40px"
-        viewBox="0 0 40 40"
-        enable-background="new 0 0 40 40"
-        xml:space="preserve"
-      >
-        <path
-          data-v-f98baaca=""
-          class="path-1"
-          opacity="0.2"
-          fill="#f8f9fa"
-          d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
-    s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
-    c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"
-        ></path>
-        <path
-          data-v-f98baaca=""
-          class="path-2"
-          fill="white"
-          d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
-    C22.32,8.481,24.301,9.057,26.013,10.047z"
-        >
-          <animateTransform
-            data-v-f98baaca=""
-            attributeType="xml"
-            attributeName="transform"
-            type="rotate"
-            from="0 20 20"
-            to="360 20 20"
-            dur="0.5s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </path>
-      </svg>
+      <el-icon class="is-loading">
+        <svg class="circular" viewBox="0 0 20 20">
+          <g class="path2 loading-path" stroke-width="0" style="animation: none; stroke: none">
+            <circle r="3.375" class="dot1" rx="0" ry="0" />
+            <circle r="3.375" class="dot2" rx="0" ry="0" />
+            <circle r="3.375" class="dot4" rx="0" ry="0" />
+            <circle r="3.375" class="dot3" rx="0" ry="0" />
+          </g>
+        </svg>
+      </el-icon>
     </div>
     <p class="pt-4 font-15 lh-26 mx-5 text-white-100 font-weight-medium text-center">
       {{ text }}
@@ -64,7 +31,84 @@ const props = defineProps({
   },
   height: {
     type: String,
-    default: '300'
+    default: '500'
   }
 })
 </script>
+<style scoped>
+.circular {
+  display: inline;
+  height: 40px;
+  width: 40px;
+  animation: loading-rotate 2s linear infinite;
+}
+
+.path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-color-primary);
+  stroke-linecap: round;
+}
+
+.loading-path .dot1 {
+  transform: translate(3.75px, 3.75px);
+  fill: var(--el-color-primary);
+  animation: custom-spin-move 1s infinite linear alternate;
+  opacity: 0.3;
+}
+
+.loading-path .dot2 {
+  transform: translate(calc(100% - 3.75px), 3.75px);
+  fill: var(--el-color-primary);
+  animation: custom-spin-move 1s infinite linear alternate;
+  opacity: 0.3;
+  animation-delay: 0.4s;
+}
+
+.loading-path .dot3 {
+  transform: translate(3.75px, calc(100% - 3.75px));
+  fill: var(--el-color-primary);
+  animation: custom-spin-move 1s infinite linear alternate;
+  opacity: 0.3;
+  animation-delay: 1.2s;
+}
+
+.loading-path .dot4 {
+  transform: translate(calc(100% - 3.75px), calc(100% - 3.75px));
+  fill: var(--el-color-primary);
+  animation: custom-spin-move 1s infinite linear alternate;
+  opacity: 0.3;
+  animation-delay: 0.8s;
+}
+
+@keyframes loading-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+@keyframes custom-spin-move {
+  to {
+    opacity: 1;
+  }
+}
+</style>

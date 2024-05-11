@@ -4,7 +4,10 @@
     <Loader v-if="loading" />
     <v-row v-if="!loading">
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
-        <div class="wallet__address__container" :class="checkIfExists(item) ? 'address' : ''">
+        <div
+          class="wallet__address__container base-style"
+          :class="checkIfExists(item) ? 'address' : ''"
+        >
           <div class="tag" v-if="item.address">Controller</div>
           <div class="wallet__header">
             <div class="wallet__meta">
@@ -16,14 +19,10 @@
             </div>
           </div>
           <div class="wallet__footer">
-            <v-btn
-              v-if="!item.address"
-              color="secondary"
-              variant="flat"
-              @click="connectWallet(item)"
+            <v-btn v-if="!item.address" color="white" variant="flat" @click="connectWallet(item)"
               >Connect Wallet</v-btn
             >
-            <v-btn v-if="item.address" color="white" variant="text" class="btn-copy">
+            <v-btn class="base-btn" v-if="item.address" color="white" variant="text">
               {{ getAddress(item.address) }}
               <v-icon @click="copyContent(item.address)" class="ml-2" size="15"
                 >mdi-content-copy</v-icon

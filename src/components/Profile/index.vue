@@ -123,7 +123,7 @@
             />
           </svg>
         </a>
-        <a class="edit--icon cursor-pointer" :href="`/profile/${user?._id}`"
+        <a class="edit--icon cursor-pointer base-style" :href="`/profile/${user?._id}`"
           ><img src="@/assets/images/user_edit.svg"
         /></a>
       </div>
@@ -131,18 +131,18 @@
     <v-card-text class="profile__container">
       <v-row>
         <v-col cols="12" md="6">
-          <div class="points__sec">
+          <div class="points__sec base-style">
             <div class="left">
               <p>Total Experience Points Collected</p>
               <p>{{ user.totalXps }} XP</p>
             </div>
             <div class="right">
-              <v-btn>Check Rewards</v-btn>
+              <v-btn class="base-btn">Check Rewards</v-btn>
             </div>
           </div>
         </v-col>
         <v-col cols="12" md="6">
-          <div class="level__sec">
+          <div class="level__sec base-style">
             <p>Level {{ user.levelReached }}</p>
             <v-progress-linear :model-value="user.levelReached" :height="12"></v-progress-linear>
             <p>Need {{ user.xpRequiredForNextLevel }} points to reach the next level</p>
