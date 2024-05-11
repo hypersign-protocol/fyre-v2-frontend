@@ -14,7 +14,7 @@
       </div>
       <div class="task__action" @click="checkIfUserLogged">
         <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
-        <v-btn variant="outlined" v-else-if="!showExpand &&  isTaskVerified">
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
         </v-btn>

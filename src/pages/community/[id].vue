@@ -1,12 +1,5 @@
 <template>
-  <div v-if="loading" class="height-500 d-flex align-center justify-center fill-height">
-    <v-progress-circular
-      class="d-flex align-center justify-center"
-      alicolor="primary"
-      size="64"
-      indeterminate
-    ></v-progress-circular>
-  </div>
+  <Loader v-if="loading" />
   <template v-if="!loading">
     <v-container fluid class="background-left">
       <div class="w-100 community-banner">
@@ -137,7 +130,7 @@
                   <v-col cols="12">
                     <div class="d-flex align-center justify-center height-200">
                       <p class="font-25 lh-26 mx-5 purple-linear-gradient-text font-weight-medium">
-                        No events found!
+                        No results found!
                       </p>
                     </div>
                   </v-col>

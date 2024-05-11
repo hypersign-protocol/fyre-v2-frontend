@@ -11,7 +11,7 @@
         class="cursor-pointer"
         v-for="(item, index) in menu"
         @click="router.push({ path: `${item.link}` })"
-        :class="isActive(item) ? 'text-blue-100' : ''"
+        :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'"
         >{{ item.title }}</v-btn
       >
       <v-btn
@@ -129,7 +129,7 @@ const menu = ref([
   {
     title: 'Explore',
     link: '/explore',
-    slug: 'explore'
+    slug: '/explore'
   }
 ])
 
@@ -200,7 +200,7 @@ const currentRouteName = computed(() => {
 })
 
 const isActive = (item) => {
-  return currentRouteName.value.includes(item.slug) ? true : false
+  return currentRouteName.value === item.link ? true : false
 }
 
 onMounted(() => {

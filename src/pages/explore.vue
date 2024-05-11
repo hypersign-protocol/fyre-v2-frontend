@@ -1,9 +1,9 @@
 <template>
   <v-container fluid class="background-center">
     <!-- <div class="homepage-section padding-global-y background-center"> -->
-    <div class="homepage-section background-center">
+    <div class="homepage-section background-center pt-10">
       <div class="section-content">
-        <v-card class="bg-light-100 mx-auto mt-10" max-width="500">
+        <v-card class="bg-light-100 mx-auto" max-width="500">
           <v-tabs
             selected-class="tab--active"
             slider-color="secondary"
@@ -103,10 +103,9 @@
                 <v-text-field
                   hide-details
                   density="compact"
-                  class="rounded-pill is-border-radius"
+                  class="base-input"
                   placeholder="Search communities"
                   variant="solo"
-                  height="53"
                   v-model="options.search"
                 >
                   <template v-slot:prepend-inner>

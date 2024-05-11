@@ -15,10 +15,12 @@ import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
 import { useNotificationStore } from '@/store/notification.ts'
+import { capitalize } from '@/composables/general.ts'
 import { storeToRefs } from 'pinia'
 const store = useNotificationStore()
 const { response } = storeToRefs(useNotificationStore())
-const snackbar = ref(true)
+
+import { ElNotification } from 'element-plus'
 
 watch(
   () => store.response,
@@ -30,13 +32,10 @@ watch(
 )
 
 const notify = () => {
-  toast(`${store.response.message}`, {
-    theme: 'dark',
-    type: `${store.response.type}`,
-    transition: 'bounce',
-    closeOnClick: true,
-    autoClose: true,
-    position: toast.POSITION.TOP_RIGHT
+  ElNotification({
+    title: `${capitalize(store.response.type)}`,
+    message: `${store.response.message}`,
+    type: `${store.response.type}`
   })
 }
 </script>

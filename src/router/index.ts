@@ -7,6 +7,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
+import { isTokenExpired } from '@/utils/tokenCheck.ts'
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -17,30 +18,19 @@ const router = createRouter({
   }
 })
 
-// Define a function to check if the user is authenticated
-function isAuthenticated(): boolean {
-  const token = localStorage.getItem('accessToken')
-  return !!token
-}
-
-// Define a function to check if auth required
-function isAuthRequired(routeName): boolean {
-  if (
-    routeName === '/' ||
-    routeName === '/explore' ||
-    routeName === '/rewards' ||
-    routeName.startsWith('/community/') ||
-    routeName.startsWith('/event/')
-  ) {
-    return false
-  }
-  return true
-}
-
 router.beforeEach((to, from, next) => {
-  console.log(to.path)
-  if (isAuthRequired(to.path) && !isAuthenticated()) {
-    next('/')
+  const token = localStorage.getItem('accessToken')
+  if (token) {
+    if (isTokenExpired(token)) {
+      if (to.path !== '/') {
+        localStorage.clear()
+        next('/')
+      } else {
+        next()
+      }
+    } else {
+      next()
+    }
   } else {
     next()
   }

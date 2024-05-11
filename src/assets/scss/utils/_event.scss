@@ -1,11 +1,12 @@
 .event__chip {
   background: rgb(255 255 255 / 1%) !important;
-  width: 180px;
-  padding: 26px 40px !important;
+  width: 160px;
+  padding: 16px 25px !important;
   justify-content: center;
   margin-right: 10px;
   border: 0;
   transition: border-color 0.3s ease;
+  height: 54px !important;
 
   &:hover {
     border: 1px solid #fff;
@@ -32,17 +33,17 @@
 }
 
 .task__wrap {
-  background: #000000;
+  background: #020202;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 16px 20px;
   border-radius: 5px;
   transition: border 0.3s ease-in-out;
   position: relative;
   border-top-left-radius: 0px;
   margin-bottom: 50px;
-
-  border: 1px solid transparent;
+  border: 1px solid #1d2123;
+  box-shadow: 0 0 80px #000000a6;
 
   @include media-respond(xs) {
     padding: 4vw;
@@ -53,7 +54,7 @@
     padding: 4px 20px 0px 15px;
     position: absolute;
     top: -23px;
-    left: -1px;
+    left: 0px;
     color: red;
     clip-path: polygon(0 0, 88% 0, 100% 100%, 0% 100%);
     border-top-left-radius: 5px;
@@ -117,14 +118,15 @@
   }
 
   .v-btn {
-    height: 40px !important;
-    border-radius: 4px !important;
-    background: #2656d6 !important;
+    height: 34px !important;
+    border-radius: 5px !important;
+    background: transparent !important;
     text-transform: capitalize !important;
     letter-spacing: 0.5px !important;
     font-size: 14px !important;
     font-weight: 400 !important;
-    border-radius: 7px !important;
+    min-width: 78px;
+    border: 1px solid #fff;
 
     &:hover {
       background: #ffffff !important;

@@ -3,7 +3,7 @@
     <p class="title">Network Lists</p>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
-        <div class="wallet__address__container" :class="item.handle ? 'address' : ''">
+        <div class="wallet__address__container base-style" :class="item.handle ? 'address' : ''">
           <div class="wallet__header">
             <div class="wallet__meta">
               <img :src="item.image" />
@@ -17,13 +17,18 @@
             <template v-if="item.title === 'Twitter'">
               <v-btn
                 v-if="!user.socials?.twitterHandle"
-                color="secondary"
+                color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
               >
               <template v-if="user.socials?.twitterHandle">
-                <v-btn color="white" variant="text" class="btn-copy">
+                <v-btn
+                  color="white"
+                  variant="text"
+                  class="btn-copy base-btn"
+                  @click="copyContent(user.socials?.twitterHandle)"
+                >
                   {{ user.socials?.twitterHandle }}
                   <img src="@/assets/images/content-copy.svg" class="ml-2" />
                 </v-btn>
@@ -33,7 +38,7 @@
             <template v-if="item.title === 'Discord'">
               <v-btn
                 v-if="!user.socials?.discordHandle"
-                color="secondary"
+                color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
@@ -49,7 +54,7 @@
             <template v-if="item.title === 'Telegram'">
               <v-btn
                 v-if="!user.socials?.telegramHandle"
-                color="secondary"
+                color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
@@ -81,6 +86,7 @@ import {
 import { webAuth } from '@/composables/twitterAuth.ts'
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
+import { copyContent } from '@/composables/general.ts'
 
 const store = useAuthStore()
 

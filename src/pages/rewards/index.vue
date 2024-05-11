@@ -5,6 +5,7 @@
       <div class="homepage-section">
         <div class="section-content">
           <v-container class="pt-8">
+            {{ userMeta }}
             <v-row>
               <v-col cols="12" md="6">
                 <div class="rewards__wrapper">
@@ -163,6 +164,15 @@ const tabs = ref([
     slug: 'XP'
   }
 ])
+
+onMounted(() => {
+  // getDetails()
+})
+
+const getDetails = async () => {
+  await authStore.USER_DETAILS()
+}
+
 const user = computed(() => {
   return getUser()
 })

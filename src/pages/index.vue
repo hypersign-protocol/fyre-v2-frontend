@@ -10,7 +10,7 @@
           class="d-flex align-center justify-center my-5"
           @click="router.push({ path: `/explore` })"
         >
-          <v-btn variant="outlined" rounded>See more</v-btn>
+          <v-btn class="base-btn" variant="outlined" rounded>See more</v-btn>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
             class="d-flex align-center justify-center my-5"
             @click="router.push({ path: `/explore` })"
           >
-            <v-btn variant="outlined" rounded>See more</v-btn>
+            <v-btn class="base-btn" variant="outlined" rounded>See more</v-btn>
           </div>
         </div>
       </div>
