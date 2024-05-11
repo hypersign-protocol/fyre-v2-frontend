@@ -7,7 +7,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
-import { isTokenExpired } from '@/utils/tokenCheck.ts'
+import { isTokenExpired, isAuthRequired } from '@/utils/tokenCheck.ts'
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -20,7 +20,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('accessToken')
-  if (token) {
+  if (isAuthRequired(to.path)) {
     if (isTokenExpired(token)) {
       if (to.path !== '/') {
         localStorage.clear()

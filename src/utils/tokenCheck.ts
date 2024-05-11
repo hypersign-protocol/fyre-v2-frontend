@@ -19,11 +19,11 @@ function isAuthenticated(): boolean {
 }
 
 // Define a function to check if auth required
-function isAuthRequired(routeName): boolean {
+export function isAuthRequired(routeName): boolean {
+  console.log(routeName)
   if (
     routeName === '/' ||
     routeName === '/explore' ||
-    routeName === '/rewards' ||
     routeName.startsWith('/community/') ||
     routeName.startsWith('/event/')
   ) {

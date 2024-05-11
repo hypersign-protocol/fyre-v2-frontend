@@ -60,7 +60,12 @@
                 >Connect</v-btn
               >
               <template v-if="user.socials?.telegramHandle">
-                <v-btn color="white" variant="text" class="btn-copy">
+                <v-btn
+                  color="white"
+                  variant="text"
+                  class="btn-copy"
+                  @click="copyContent(user.socials?.telegramHandle)"
+                >
                   {{ user.socials?.telegramHandle }}
                   <img src="@/assets/images/content-copy.svg" class="ml-2" />
                 </v-btn>
