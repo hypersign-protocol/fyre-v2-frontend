@@ -324,12 +324,22 @@ watch(
 )
 
 watch(
-  () => tasks.value,
+  () => eventParticipantStore.eventParticipants,
   (value: any) => {
     setTimeout(async () => {
       loading.value = false
+    }, 1000)
+  }
+)
+
+watch(
+  () => tasks.value,
+  (value: any) => {
+    setTimeout(async () => {
       if (token.value) {
         await eventParticipantStore.EVENT_PARTICIPANTS(route.params.id)
+      }else{
+        loading.value = false
       }
       await getOtherEvents()
     }, 1000)

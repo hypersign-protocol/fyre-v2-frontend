@@ -84,6 +84,10 @@ onMounted(() => {
 })
 
 const fetchResult = () => {
+  console.log(typeof props.eventParticipants)
+  console.log(props.eventParticipants)
+  console.log(props.eventParticipants.tasks)
+  console.log(props.task?._id)
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
