@@ -93,9 +93,9 @@ const loadRewards = async () => {
   if (token.value) {
     loading.value = true
     let params = `?rewardType=${options.filter}&page=${options.page}&limit=${options.limit}`
-    if (props.eventId) {
-      params += `&eventId=${props.eventId}`
-    }
+    // if (props.eventId) {
+    //   params += `&eventId=${props.eventId}`
+    // }
     await store.USER_REWARD(params)
   }
 }
