@@ -34,7 +34,9 @@
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified" :disabled="!token">Verify</v-btn>
+        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified" :disabled="!token"
+          >Verify</v-btn
+        >
       </div>
     </div>
   </div>

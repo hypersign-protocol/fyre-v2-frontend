@@ -109,7 +109,7 @@ watch(
         isTaskVerified.value = false
         showExpand.value = true
       }
-    },500)
+    }, 500)
   },
   { deep: true }
 )
