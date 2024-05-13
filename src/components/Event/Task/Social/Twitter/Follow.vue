@@ -58,6 +58,7 @@ const props = defineProps({
 })
 
 const showExpand = ref(false)
+const loading = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
@@ -84,10 +85,6 @@ onMounted(() => {
 })
 
 const fetchResult = () => {
-  console.log(typeof props.eventParticipants)
-  console.log(props.eventParticipants)
-  console.log(props.eventParticipants.tasks)
-  console.log(props.task?._id)
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
@@ -108,12 +105,16 @@ watch(
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+        showExpand.value = false
+      } else {
+        isTaskVerified.value = false
+        showExpand.value = true
+      }
+    }, 500)
   },
   { deep: true }
 )
@@ -135,6 +136,7 @@ const handleTwitterLogin = () => {
 }
 
 const performAction = async () => {
+  loading.value = true
   await store.PERFORM_EVENT_TASK({
     socialToken: socialAccessToken.value,
     eventId: props.task.eventId,
