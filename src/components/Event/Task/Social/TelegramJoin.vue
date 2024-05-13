@@ -24,17 +24,18 @@
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
-      <div class="task__action" v-if="isTaskVerified">
-        <v-btn variant="outlined">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
-          Verified</v-btn
-        >
-      </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__submit">
-        <v-btn @click="authenticate" class="mr-2"> Join our Telegram</v-btn>
-        <v-btn @click="performAction"> Verify</v-btn>
+        <v-btn class="base-btn" @click="authenticate" :disabled="tgUserID || isTaskVerified">
+          <span v-if="tgUserID || isTaskVerified">Joined</span>
+          <span v-else>Join our Telegram</span>
+        </v-btn>
+      </div>
+      <div class="task__submit">
+        <v-btn :loading="loading" @click="performAction" v-if="tgUserID && !isTaskVerified">
+          Verify</v-btn
+        >
       </div>
     </div>
   </div>
@@ -65,6 +66,7 @@ const props = defineProps({
   }
 })
 const showExpand = ref(false)
+const loading = ref(false)
 const isTaskVerified = ref(false)
 const tgUserID = ref(null)
 const store = useEventParticipantStore()
@@ -100,12 +102,14 @@ const fetchResult = () => {
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+      } else {
+        isTaskVerified.value = false
+      }
+    }, 500)
   },
   { deep: true }
 )
@@ -127,6 +131,7 @@ const authenticate = () => {
 }
 
 const performAction = async () => {
+  loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,

@@ -24,17 +24,26 @@
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
-      <div class="task__action" v-if="isTaskVerified">
-        <v-btn variant="outlined">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
-          Verified</v-btn
-        >
-      </div>
     </div>
-    <div class="task__body" v-if="showExpand && !isTaskVerified">
+    <div class="task__body" v-if="showExpand">
       <div class="task__submit">
-        <v-btn @click="authenticateWithDiscord" class="mr-2"> Join our Discord</v-btn>
-        <v-btn @click="performAction"> Verify</v-btn>
+        <v-btn
+          class="base-btn"
+          @click="authenticateWithDiscord"
+          :disabled="socialAccessToken || isTaskVerified"
+        >
+          <span v-if="socialAccessToken || isTaskVerified">Joined</span>
+          <span v-else>Join our Discord</span>
+        </v-btn>
+      </div>
+      <div class="task__submit">
+        <v-btn
+          :loading="loading"
+          @click="performAction"
+          v-if="socialAccessToken && !isTaskVerified"
+        >
+          Verify</v-btn
+        >
       </div>
     </div>
   </div>
@@ -65,6 +74,7 @@ const props = defineProps({
   }
 })
 const showExpand = ref(false)
+const loading = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
@@ -121,12 +131,14 @@ watch(
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+      } else {
+        isTaskVerified.value = false
+      }
+    }, 500)
   },
   { deep: true }
 )
@@ -159,6 +171,7 @@ const authenticateWithDiscord = () => {
 }
 
 const performAction = async () => {
+  loading.value = true
   await store.PERFORM_EVENT_TASK({
     socialToken: socialAccessToken.value,
     eventId: props.task.eventId,

@@ -338,7 +338,7 @@ watch(
     setTimeout(async () => {
       if (token.value) {
         await eventParticipantStore.EVENT_PARTICIPANTS(route.params.id)
-      }else{
+      } else {
         loading.value = false
       }
       await getOtherEvents()

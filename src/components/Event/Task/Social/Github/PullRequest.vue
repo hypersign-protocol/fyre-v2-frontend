@@ -24,11 +24,14 @@
     <div class="task__body" v-if="showExpand">
       <div class="task__input">
         <div class="task__submit mb-2">
-          <v-btn class="base-btn" @click="handleTwitterLogin" :disabled="socialAccessToken || isTaskVerified">
+          <v-btn
+            class="base-btn"
+            @click="handleTwitterLogin"
+            :disabled="socialAccessToken || isTaskVerified"
+          >
             <span v-if="socialAccessToken || isTaskVerified">Authorized</span>
             <span v-else>Authorize Github</span>
-            </v-btn
-          >
+          </v-btn>
         </div>
         <v-text-field
           v-if="socialAccessToken"
@@ -42,7 +45,13 @@
         ></v-text-field>
       </div>
       <div class="task__submit">
-        <v-btn :loading="loading" @click="performAction" v-if="socialAccessToken && !isTaskVerified"> Verify</v-btn>
+        <v-btn
+          :loading="loading"
+          @click="performAction"
+          v-if="socialAccessToken && !isTaskVerified"
+        >
+          Verify</v-btn
+        >
       </div>
     </div>
   </div>
