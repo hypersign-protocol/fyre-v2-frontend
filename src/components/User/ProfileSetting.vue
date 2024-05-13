@@ -85,6 +85,8 @@ import { useNotificationStore } from '@/store/notification.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 
+const { userMeta, fileUpload } = storeToRefs(useAuthStore())
+
 const router = useRouter()
 const store = useAuthStore()
 const notificationStore = useNotificationStore()
@@ -117,20 +119,22 @@ const collectSignedData = async (data) => {
   console.log(formData)
 }
 
-const user = computed(() => {
-  const res = getUser()
-  avatar.value = res.avatar
-  userName.value = res.userName
-  return res
-})
-
 watch(
-  () => user.value,
+  () => store.userMeta,
   (value: any) => {
-    console.log(value)
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
   },
   { deep: true }
 )
+
+onMounted(() => {
+  loading.value = true
+  setTimeout(async () => {
+    await store.USER_AUTHORIZE()
+  }, 200)
+})
 
 const options = reactive({
   showBwModal: false,
@@ -138,11 +142,9 @@ const options = reactive({
   chains: ['mainnet', 'bsc', 'polygon', 'cosmos', 'osmosis'],
   isRequiredDID: true,
   isPerformAction: true,
-  didDocument: user.value.didDocument,
+  didDocument: store.userMeta.didDocument,
   addVerificationMethod: false
 })
-
-const { userMeta, fileUpload } = storeToRefs(useAuthStore())
 
 watch(
   () => store.fileUpload,
@@ -157,7 +159,7 @@ watch(
   () => store.userProfileResponse,
   (value: any) => {
     loading.value = false
-    saveUser(value)
+    store.USER_AUTHORIZE()
   },
   { deep: true }
 )
@@ -175,13 +177,14 @@ watch(
 
 const updateProfile = () => {
   if (userName.value) {
-    const vm = user.value.didDocument.verificationMethod[0]
+    const vm = store.userMeta.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {
       options.providers = ['evm']
     } else {
       options.providers = ['interchain']
     }
+    options.didDocument = store.userMeta.didDocument
     setTimeout(async () => {
       document.getElementById('emit-options').click()
     }, 100)

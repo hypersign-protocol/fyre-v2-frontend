@@ -147,6 +147,7 @@ export const signData = async (payload) => {
 }
 
 const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
+  console.log(didDoc)
   const verificationMethods = didDoc.verificationMethod
 
   for (const method of verificationMethods) {

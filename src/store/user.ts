@@ -9,11 +9,6 @@ import type { CommunityType } from '@/data/types/community/CommunityType.ts'
 import { useNotificationStore } from './notification.ts'
 const notificationStore = useNotificationStore()
 
-interface UserMeta {
-  _id: string
-  userName: string
-}
-
 interface RewardType {
   _id: string
   userId: string
@@ -21,7 +16,6 @@ interface RewardType {
 
 interface eventType {
   events: EventType[]
-  userMeta: UserMeta
   userRewards: RewardType[]
   communities: CommunityType[]
   errors: unknown

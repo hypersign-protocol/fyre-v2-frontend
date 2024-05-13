@@ -5,19 +5,18 @@
       <div class="homepage-section">
         <div class="section-content">
           <v-container class="pt-8">
-            {{ userMeta }}
             <v-row>
               <v-col cols="12" md="6">
                 <div class="rewards__wrapper">
                   <p class="title">Your total experience points</p>
-                  <p class="xp">{{ user.totalXps }} XP</p>
-                  <p class="level">Level {{ user.levelReached }}</p>
+                  <p class="xp">{{ userMeta.totalXps }} XP</p>
+                  <p class="level">Level {{ userMeta.levelReached }}</p>
                   <v-progress-linear
-                    :model-value="user.levelReached"
+                    :model-value="userMeta.levelReached"
                     :height="12"
                   ></v-progress-linear>
                   <p class="points">
-                    Need {{ user.xpRequiredForNextLevel }} points to reach the next level
+                    Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level
                   </p>
                 </div>
               </v-col>
@@ -116,14 +115,12 @@
             </v-row> -->
           </v-container>
           <v-container>
-            <RewardTab :eventTab="eventTab" />
+            <RewardTab ref="rewardComp" />
           </v-container>
         </div>
       </div>
     </v-container>
   </template>
-  <tenXpModal v-model="show10xpModal" @close="(show10xpModal = false), (show10xp = true)" />
-  <flat20Modal v-model="show20Modal" @close="(show20Modal = false), (flat20 = true)" />
 </template>
 <script lang="ts" setup>
 import {
@@ -136,44 +133,34 @@ import {
   watch,
   defineAsyncComponent
 } from 'vue'
-import { useUserStore } from '@/store/user.ts'
 import { useAuthStore } from '@/store/auth.ts'
-import { getUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
-import tenXpModal from './tenXpModal.vue'
-import flat20Modal from './flat20Modal.vue'
+
 const router = useRouter()
-const store = useUserStore()
 const authStore = useAuthStore()
 const { userMeta } = storeToRefs(useAuthStore())
 
-const eventTab = ref(null)
 const loading = ref(false)
-const show10xp = ref(false)
-const flat20 = ref(false)
-const show10xpModal = ref(false)
-const show20Modal = ref(false)
-const activeTab = ref('tokens')
-const tabs = ref([
-  {
-    title: 'Tokens',
-    slug: 'TOKEN'
+const rewardComp = ref(null)
+
+watch(
+  () => authStore.userMeta,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
   },
-  {
-    title: 'XP',
-    slug: 'XP'
-  }
-])
+  { deep: true }
+)
 
 onMounted(() => {
-  // getDetails()
+  getDetails()
 })
 
 const getDetails = async () => {
-  await authStore.USER_DETAILS()
+  setTimeout(async () => {
+    loading.value = true
+    await authStore.USER_AUTHORIZE()
+  }, 200)
 }
-
-const user = computed(() => {
-  return getUser()
-})
 </script>

@@ -149,6 +149,7 @@ const pageChange = (page) => {
 
 const searchKey = _.debounce(() => {
   setTimeout(async () => {
+    options.page = 1
     loadEvents()
   })
 }, 500)

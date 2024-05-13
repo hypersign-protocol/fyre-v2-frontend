@@ -24,7 +24,7 @@
     <div class="task__body" v-if="showExpand">
       <div class="task__input">
         <v-text-field
-          class="rounded-xl"
+          class="base-input"
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
@@ -34,7 +34,7 @@
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction" v-if="!isTaskVerified" :disabled="!token">Verify2</v-btn>
+        <v-btn @click="performAction" v-if="!isTaskVerified" :disabled="!token">Verify</v-btn>
       </div>
     </div>
   </div>

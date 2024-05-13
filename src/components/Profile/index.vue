@@ -7,20 +7,20 @@
           <v-avatar>
             <v-img src="@/assets/images/user-avatar.png"></v-img>
           </v-avatar>
-          <p class="profile__badge">
+          <!-- <p class="profile__badge">
             <span>#232</span>
-          </p>
+          </p> -->
         </div>
         <div class="profile__content">
-          <h1 class="profile__name">
-            {{ user.userName }}
+          <h1 class="profile__name" v-if="userMeta.userName">
+            {{ userMeta.userName }}
             <img src="@/assets/images/check-amber.svg" />
           </h1>
           <div class="profile__meta">
             <label>Controller:</label>
-            <p>{{ getAddress() }}</p>
+            <p>{{ getAddress(userMeta.didDocument) }}</p>
           </div>
-          <div class="profile__meta">
+          <!-- <div class="profile__meta">
             <div class="profile__meta__item">
               <label>Invites:</label>
               <p>3</p>
@@ -29,7 +29,7 @@
               <label>Rewards:</label>
               <p>3</p>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="profile__social__meta">
@@ -123,7 +123,7 @@
             />
           </svg>
         </a>
-        <a class="edit--icon cursor-pointer base-style" :href="`/profile/${user?._id}`"
+        <a class="edit--icon cursor-pointer base-style" :href="`/profile/${userMeta?._id}`"
           ><img src="@/assets/images/user_edit.svg"
         /></a>
       </div>
@@ -134,7 +134,7 @@
           <div class="points__sec base-style">
             <div class="left">
               <p>Total Experience Points Collected</p>
-              <p>{{ user.totalXps }} XP</p>
+              <p>{{ userMeta.totalXps }} XP</p>
             </div>
             <div class="right">
               <v-btn class="base-btn">Check Rewards</v-btn>
@@ -143,9 +143,12 @@
         </v-col>
         <v-col cols="12" md="6">
           <div class="level__sec base-style">
-            <p>Level {{ user.levelReached }}</p>
-            <v-progress-linear :model-value="user.levelReached" :height="12"></v-progress-linear>
-            <p>Need {{ user.xpRequiredForNextLevel }} points to reach the next level</p>
+            <p>Level {{ userMeta.levelReached }}</p>
+            <v-progress-linear
+              :model-value="userMeta.levelReached"
+              :height="12"
+            ></v-progress-linear>
+            <p>Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level</p>
           </div>
         </v-col>
       </v-row>
@@ -155,29 +158,36 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useAuthStore } from '@/store/auth.ts'
-import { getUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
-const store = useAuthStore()
+const authStore = useAuthStore()
 const loading = ref(false)
 const { userMeta } = storeToRefs(useAuthStore())
 
-const user = computed(() => {
-  return getUser()
-})
-
-const getAddress = () => {
-  const segments = user.value.didDocument.id.split(':')
-  const lastSegment = segments[segments.length - 1]
-  const firstFour = lastSegment.substring(0, 6)
-  const lastFour = lastSegment.substring(lastSegment.length - 6)
-  const result = `${firstFour}....${lastFour}`
-  return result
+const getAddress = (obj) => {
+  if (obj) {
+    const segments = obj.id.split(':')
+    const lastSegment = segments[segments.length - 1]
+    const firstFour = lastSegment.substring(0, 6)
+    const lastFour = lastSegment.substring(lastSegment.length - 6)
+    const result = `${firstFour}....${lastFour}`
+    return result
+  }
 }
 
-onMounted(async () => {
+watch(
+  () => authStore.userMeta,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
+  },
+  { deep: true }
+)
+
+onMounted(() => {
   loading.value = true
   setTimeout(async () => {
-    loading.value = false
-  }, 500)
+    await authStore.USER_AUTHORIZE()
+  }, 200)
 })
 </script>

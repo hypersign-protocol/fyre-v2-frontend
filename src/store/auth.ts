@@ -78,14 +78,15 @@ export const useAuthStore = defineStore('auth', {
         return []
       }
     },
-    async USER_DETAILS(): Promise {
+
+    async USER_AUTHORIZE(): Promise {
       try {
         const response: AxiosResponse = await axios.post(`/authorize`)
 
         if (response.success) {
           this.userMeta = response.data
           saveUser(response.data)
-          return response.data
+          return response
         } else {
           notificationStore.SHOW_NOTIFICATION({
             show: true,

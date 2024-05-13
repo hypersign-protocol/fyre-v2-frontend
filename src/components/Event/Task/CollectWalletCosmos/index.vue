@@ -106,8 +106,8 @@ const checkIfUserLogged = () => {
 
 const options = reactive({
   showBwModal: false,
-  providers: ['evm'],
-  chains: [''],
+  providers: ['interchain'],
+  chains: [],
   isRequiredDID: false,
   isPerformAction: true,
   didDocument: user.value.didDocument,
@@ -138,7 +138,9 @@ const fetchResult = () => {
 }
 
 const connectWallet = async (item) => {
-  options.chains = ['Etherem']
+  options.providers = ['interchain']
+  options.chains = ['cosmoshub-4']
+
   isCollecting.value = true
   setTimeout(async () => {
     document.getElementById('emit-options').click()

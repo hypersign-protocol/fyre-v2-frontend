@@ -171,11 +171,13 @@ const tabs = ref([
 import { useCommunityStore } from '@/store/community.ts'
 import { useUserStore } from '@/store/user.ts'
 import { useAuthStore } from '@/store/auth.ts'
-
+import { getToken } from '@/composables/jwtService.ts'
+import { useNotificationStore } from '@/store/notification.ts'
 import { storeToRefs } from 'pinia'
 const store = useCommunityStore()
 const userStore = useUserStore()
-const Store = useAuthStore()
+const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -188,16 +190,19 @@ const communityById = computed(() => store.getCommunityByIdData)
 const communityEvents = computed(() => store.getEventsByCommunityId)
 const communityFollowSuccess = computed(() => store.getCommunityFollow)
 
-const { userMeta } = storeToRefs(useUserStore)
+const { userMeta } = storeToRefs(useAuthStore)
+
+const token = computed(() => {
+  return getToken()
+})
 
 onMounted(async () => {
   loading.value = true
   fetchCommunity()
-  await userStore.USER_DETAILS()
 })
 
 watch(
-  () => userStore.userMeta,
+  () => authStore.userMeta,
   (value: any) => {
     isFollowed.value = value.communityIds.includes(route.params.id)
   }
@@ -206,8 +211,11 @@ watch(
 watch(
   () => communityById.value,
   (value: any) => {
-    setTimeout(() => {
+    setTimeout(async () => {
       loading.value = false
+      if (token.value) {
+        await authStore.USER_AUTHORIZE()
+      }
     }, 1000)
   }
 )
@@ -234,8 +242,16 @@ const viewEvent = (event) => {
 }
 
 const followCommunity = async () => {
-  following.value = true
-  await store.FOLLOW_COMMUNITY(`${route.params.id}`)
+  if (token.value) {
+    following.value = true
+    await store.FOLLOW_COMMUNITY(`${route.params.id}`)
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to perform action'
+    })
+  }
 }
 
 const fetchCommunity = async () => {

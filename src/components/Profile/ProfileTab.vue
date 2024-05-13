@@ -30,23 +30,15 @@
       <v-window-item :eager="true" value="events">
         <Loader v-if="loading" />
         <v-card class="bg__card tab__card" v-if="!loading && eventData.length > 0">
-          <v-row class="py-4">
+          <!--  <v-row class="py-4">
             <v-col cols="12" md="6">
-              <v-text-field
-                hide-details
-                density="compact"
-                class="base-input"
-                placeholder="Search Events"
-                variant="solo"
-                height="53"
-                flat
-              >
+              <v-text-field hide-details density="compact" class="base-input" placeholder="Search Events" variant="solo" height="53" flat>
                 <template v-slot:prepend-inner>
                   <v-icon icon="mdi-magnify" />
                 </template>
               </v-text-field>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row class="mt-5">
             <template v-for="(item, index) in eventData">
               <v-col v-for="(event, index) in item.events" cols="12" sm="6" md="6" xl="3" lg="3">
@@ -68,48 +60,36 @@
       <v-window-item :eager="true" value="communities">
         <Loader v-if="loading" />
         <v-card class="bg__card tab__card" v-if="!loading && communityData.length > 0">
-          <v-row class="py-4">
-            <v-col cols="12" md="6">
-              <v-text-field
-                hide-details
-                density="compact"
-                class="base-input"
-                placeholder="Search Community"
-                variant="solo"
-                height="53"
-                flat
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon icon="mdi-magnify" />
+          <template v-for="(item, index) in communityData" :key="index">
+            <template v-if="item?.communities.length > 0">
+              <!-- <v-row class="py-4" v-if="item?.communities.length > 0">
+                <v-col cols="12" md="6">
+                  <v-text-field hide-details density="compact" class="base-input" placeholder="Search Community" variant="solo" height="53" flat>
+                    <template v-slot:prepend-inner>
+                      <v-icon icon="mdi-magnify" />
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row> -->
+              <v-row>
+                <template :key="index" v-for="(item, index) in item?.communities">
+                  <v-col cols="12" sm="6" md="6" xl="3" lg="3">
+                    <CommunityCard :communityData="item" />
+                  </v-col>
                 </template>
-              </v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <template v-for="(item, index) in communityData">
-              <v-col
-                cols="12"
-                sm="6"
-                md="6"
-                xl="3"
-                lg="3"
-                v-for="(community, index) in item.communities"
-                :key="index"
-              >
-                <CommunityCard :communityData="community" />
-              </v-col>
+              </v-row>
             </template>
-          </v-row>
+            <v-row class="mt-5" v-else="item?.communities.length === 0">
+              <v-col cols="12">
+                <div class="d-flex align-center justify-center height-200">
+                  <p class="font-25 lh-26 mx-5 purple-linear-gradient-text font-weight-medium">
+                    No communities found!
+                  </p>
+                </div>
+              </v-col>
+            </v-row>
+          </template>
         </v-card>
-        <v-row class="mt-5" v-if="!loading && communityData.length === 0">
-          <v-col cols="12">
-            <div class="d-flex align-center justify-center height-200">
-              <p class="font-25 lh-26 mx-5 purple-linear-gradient-text font-weight-medium">
-                No communities found!
-              </p>
-            </div>
-          </v-col>
-        </v-row>
       </v-window-item>
       <v-window-item :eager="true" value="credentials">
         <v-card class="bg__card tab__card">

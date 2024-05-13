@@ -215,6 +215,7 @@ const pageChange = (page) => {
 
 const searchKey = _.debounce(() => {
   setTimeout(async () => {
+    options.page = 1
     getPopularCommunities()
   })
 }, 500)
@@ -237,7 +238,11 @@ const viewCommunity = (event) => {
 
 const getPopularCommunities = async () => {
   loading.value = true
-  let params = `?page=${options.page}&limit=${options.limit}&filter=${options.filter}`
+  let params = `?page=${options.page}&limit=${options.limit}`
+
+  if (options.filter) {
+    params += `&filter=${options.filter}`
+  }
 
   if (options.search) {
     params += `&searchString=${options.search}`

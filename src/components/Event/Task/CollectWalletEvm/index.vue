@@ -39,7 +39,7 @@
   <BlockChainWallet
     :options="options"
     @getWalletAddress="collectWalletAddress"
-    @getSignedData="collectSignedData"
+    @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>

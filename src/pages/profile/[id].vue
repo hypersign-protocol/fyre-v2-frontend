@@ -45,7 +45,7 @@ import {
   watch,
   defineAsyncComponent
 } from 'vue'
-
+const router = useRouter()
 const loading = ref(false)
 const activeTab = ref('profile-setting')
 const defaultComp = shallowRef({
