@@ -24,14 +24,15 @@
     <div class="task__body" v-if="showExpand">
       <div class="task__input">
         <div class="task__submit mb-2">
-          <v-btn @click="handleTwitterLogin" :disabled="socialAccessToken || isTaskVerified">
+          <v-btn class="base-btn" @click="handleTwitterLogin" :disabled="socialAccessToken || isTaskVerified">
             Authorize Github</v-btn
           >
         </div>
         <v-text-field
+          v-if="socialAccessToken"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
-          class="rounded-xl"
+          class="base-input"
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"
@@ -39,7 +40,7 @@
         ></v-text-field>
       </div>
       <div class="task__submit">
-        <v-btn @click="performAction" v-if="!isTaskVerified"> Verify</v-btn>
+        <v-btn :loading="loading" @click="performAction" v-if="socialAccessToken && !isTaskVerified"> Verify</v-btn>
       </div>
     </div>
   </div>
@@ -71,6 +72,7 @@ const props = defineProps({
 })
 
 const showExpand = ref(false)
+const loading = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 const store = useEventParticipantStore()
@@ -114,11 +116,13 @@ const fetchResult = () => {
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
+    loading.value = false
     if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
       isTaskVerified.value = true
+      showExpand.value = false
     } else {
       isTaskVerified.value = false
+      showExpand.value = true
     }
   },
   { deep: true }
@@ -142,6 +146,7 @@ const handleTwitterLogin = () => {
 }
 
 const performAction = async () => {
+  loading.value = true
   await store.PERFORM_EVENT_TASK({
     socialToken: socialAccessToken.value,
     eventId: props.task.eventId,

@@ -34,7 +34,7 @@
         ></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction" v-if="!isTaskVerified">Verify</v-btn>
+        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified">Verify</v-btn>
       </div>
     </div>
   </div>
@@ -64,6 +64,7 @@ const props = defineProps({
   }
 })
 
+const loading = ref(false)
 const showExpand = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
@@ -99,17 +100,22 @@ const fetchResult = () => {
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+        showExpand.value = false
+      } else {
+        isTaskVerified.value = false
+        showExpand.value = true
+      }
+    },500)
   },
   { deep: true }
 )
 
 const performAction = async () => {
+  loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,
