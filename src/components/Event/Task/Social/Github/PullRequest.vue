@@ -25,7 +25,9 @@
       <div class="task__input">
         <div class="task__submit mb-2">
           <v-btn class="base-btn" @click="handleTwitterLogin" :disabled="socialAccessToken || isTaskVerified">
-            Authorize Github</v-btn
+            <span v-if="socialAccessToken || isTaskVerified">Authorized</span>
+            <span v-else>Authorize Github</span>
+            </v-btn
           >
         </div>
         <v-text-field
