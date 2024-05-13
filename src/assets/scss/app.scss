@@ -12,6 +12,10 @@
   font-optical-sizing: auto;
 }
 
+body {
+  font-family: 'Outfit', sans-serif !important;
+}
+
 @import 'media';
 
 @import './utils/header';

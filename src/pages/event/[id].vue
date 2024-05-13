@@ -1,6 +1,5 @@
 <template>
   <Loader v-if="loading && !errorMessage" />
-
   <template v-else-if="errorMessage">
     <v-container fluid class="background-left">
       <v-container class="padding-global-y">
@@ -10,7 +9,6 @@
       </v-container>
     </v-container>
   </template>
-
   <template v-else>
     <v-container fluid class="background-left">
       <v-container class="event__wrapper pt-8">
@@ -132,7 +130,7 @@
               }}</v-tab>
             </v-tabs>
             <v-window v-model="activeTab">
-              <v-window-item :eager="true" value="task">
+              <v-window-item value="task">
                 <div class="d-flex align-center justify-space-between pa-5 mt-4">
                   <p class="font-25 font-weight--bold">Tasks</p>
                   <p class="font-16 font-weight--bold">
@@ -145,24 +143,29 @@
                   </p>
                 </div>
                 <v-card class="event-task--card">
-                  <template v-for="(task, index) in tasks">
-                    <Task
-                      :task="task"
-                      :communityId="eventById.communityId"
-                      :eventParticipants="eventParticipants"
-                      :token="token"
-                      class="mb-5"
-                    />
+                  <template v-if="tasks.length > 0">
+                    <template v-for="(task, index) in tasks">
+                      <Task
+                        :task="task"
+                        :communityId="eventById.communityId"
+                        :eventParticipants="eventParticipants"
+                        :token="token"
+                        class="mb-5"
+                      />
+                    </template>
+                  </template>
+                  <template v-if="tasks.length === 0">
+                    <p class="text-center font-16 lh-18">No Tasks found!</p>
                   </template>
                 </v-card>
               </v-window-item>
-              <v-window-item :eager="true" value="leaderboard">
+              <v-window-item value="leaderboard">
                 <Leaderboard :eventId="eventById._id" :communityId="eventById.communityId" />
               </v-window-item>
-              <v-window-item :eager="true" value="reward">
+              <v-window-item value="reward">
                 <RewardTab :eventId="eventById._id" />
               </v-window-item>
-              <v-window-item :eager="true" value="result">
+              <v-window-item value="result">
                 <div class="d-flex align-center justify-space-between pa-5 mt-4">
                   <p class="font-25 font-weight--bold">Results</p>
                   <p class="font-16 font-weight--bold">
@@ -201,7 +204,6 @@
       <div class="homepage-section">
         <div class="section-content">
           <h4 class="homepage__section__title text-left">Explore other Events</h4>
-
           <v-row class="mt-5">
             <v-col v-for="(event, index) in popular.slice(0, 4)" cols="12" sm="6" md="6" lg="3">
               <Card :eventData="event" />
@@ -223,9 +225,15 @@
       :eventData="eventById"
     />
     <EventRewards :eventData="eventById" @close="toggleRewards = false" v-model="toggleRewards" />
-    <EventRefer :eventData="eventById" @close="toggleRefer = false" v-model="toggleRefer" />
-    <EventParticipant
+    <EventRefer
       :eventData="eventById"
+      :eventParticipants="eventParticipants"
+      @close="toggleRefer = false"
+      v-model="toggleRefer"
+    />
+    <EventParticipant
+      :eventId="eventById._id"
+      :communityId="eventById.communityId"
       @close="toggleParticipant = false"
       v-model="toggleParticipant"
     />
@@ -248,10 +256,10 @@ const tabs = ref([
     title: 'Leaderboard',
     slug: 'leaderboard'
   },
-  {
-    title: 'Results',
-    slug: 'result'
-  },
+  // {
+  //   title: 'Results',
+  //   slug: 'result'
+  // },
   {
     title: 'Rewards',
     slug: 'reward'
@@ -363,7 +371,7 @@ const getTasks = async () => {
 }
 
 const getOtherEvents = async () => {
-  await eventStore.POPULAR_EVENTS(`?page=2&limit=10`)
+  await eventStore.POPULAR_EVENTS(`?page=1&limit=10`)
 }
 
 const loadEventTasks = async () => {

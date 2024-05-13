@@ -17,6 +17,7 @@
   @include media-respond(md) {
     padding: 0px 30px !important;
   }
+
   @include media-respond(sm) {
     padding: 0px 30px !important;
   }
@@ -82,16 +83,19 @@
 
       .text {
         font-size: 18px;
+
         @include media-respond(xs) {
           font-weight: 400;
           font-size: 3.733vw;
           line-height: 4.667vw;
         }
       }
+
       .points {
         font-size: 18px;
         font-weight: bold;
         margin-left: 5px;
+
         @include media-respond(xs) {
           font-size: 10px;
         }
@@ -99,6 +103,7 @@
 
       img {
         height: 34px;
+
         @include media-respond(xs) {
           width: 6.667vw;
           height: 6.667vw;
@@ -107,12 +112,14 @@
 
       span {
         margin-right: 16px;
+
         @include media-respond(xs) {
           margin-right: 2.667vw;
         }
       }
     }
   }
+
   .task__input {
     margin-bottom: 20px;
   }
@@ -132,6 +139,7 @@
       background: #ffffff !important;
       color: #000000 !important;
     }
+
     &.v-btn--variant-outlined {
       background: transparent !important;
       border-color: #2656d6 !important;
@@ -374,5 +382,19 @@
       display: flex;
       align-items: center;
     }
+  }
+}
+
+.leader-slot {
+  position: relative;
+
+  .number {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 43%;
+    translate: -50% -50%;
   }
 }

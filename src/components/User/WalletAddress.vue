@@ -1,8 +1,8 @@
 <template>
-  <div class="profile__setting__container">
+  <Loader v-if="loading" />
+  <div class="profile__setting__container" v-if="!loading">
     <p class="title">Network Lists</p>
-    <Loader v-if="loading" />
-    <v-row v-if="!loading">
+    <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
         <div
           class="wallet__address__container base-style"
@@ -60,8 +60,25 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const store = useAuthStore()
 
-const user = computed(() => {
-  return getUser()
+const { userMeta } = storeToRefs(useAuthStore())
+
+const loading = ref(false)
+
+watch(
+  () => store.userMeta,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
+  },
+  { deep: true }
+)
+
+onMounted(() => {
+  loading.value = true
+  setTimeout(async () => {
+    await store.USER_AUTHORIZE()
+  }, 200)
 })
 
 const options = reactive({
@@ -70,7 +87,7 @@ const options = reactive({
   chains: [''],
   isRequiredDID: false,
   isPerformAction: true,
-  didDocument: user.value.didDocument,
+  didDocument: store.userMeta.didDocument,
   addVerificationMethod: true
 })
 
@@ -82,8 +99,6 @@ const formData = reactive({
   selectedWallet: null,
   editMode: 'wallet'
 })
-
-const loading = ref(false)
 
 const getProvider = async (data) => {
   formData.chainName = data === 'evm' ? 'EVM' : 'COSMOS'
@@ -147,7 +162,7 @@ const connectWallet = async (item) => {
 
 const checkIfWalletExists = async (item) => {
   const searchAccountId = `${formData.selectedWallet.provider}:${formData.selectedWallet.chainId}:${formData.selectedWallet.walletAddress}`
-  const addresses = user.value.didDocument.verificationMethod
+  const addresses = store.userMeta.didDocument.verificationMethod
   const IfExists = accountIdExists(addresses, searchAccountId)
 
   if (!IfExists) {
@@ -159,7 +174,7 @@ const checkIfWalletExists = async (item) => {
 
 const checkIfExists = (item) => {
   const searchString = `${item.provider}:${item.chainId}`
-  const addresses = user.value.didDocument.verificationMethod
+  const addresses = store.userMeta.didDocument.verificationMethod
   let itemFound = null
   for (const item of addresses) {
     if (item.blockchainAccountId.includes(searchString)) {

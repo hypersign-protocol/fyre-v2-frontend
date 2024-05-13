@@ -26,7 +26,7 @@
         <v-text-field
           v-model="inputText"
           :placeholder="task.options.userInput.collectText.label"
-          class="rounded-xl"
+          class="base-input"
           variant="outlined"
           hide-details="auto"
           bg-color="transparent"

@@ -33,7 +33,9 @@ watch(
 
 const notify = () => {
   ElNotification({
-    title: `${capitalize(store.response.type)}`,
+    title: store.response.title
+      ? `${capitalize(store.response.title)}`
+      : `${capitalize(store.response.type)}`,
     message: `${store.response.message}`,
     type: `${store.response.type}`
   })

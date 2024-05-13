@@ -1,5 +1,6 @@
 <template>
-  <div class="profile__setting__container">
+  <Loader v-if="loading" />
+  <div class="profile__setting__container" v-if="!loading">
     <p class="title">Network Lists</p>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
@@ -16,20 +17,20 @@
           <div class="wallet__footer">
             <template v-if="item.title === 'Twitter'">
               <v-btn
-                v-if="!user.socials?.twitterHandle"
+                v-if="!userMeta.socials?.twitterHandle"
                 color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
               >
-              <template v-if="user.socials?.twitterHandle">
+              <template v-if="userMeta.socials?.twitterHandle">
                 <v-btn
                   color="white"
                   variant="text"
                   class="btn-copy base-btn"
-                  @click="copyContent(user.socials?.twitterHandle)"
+                  @click="copyContent(userMeta.socials?.twitterHandle)"
                 >
-                  {{ user.socials?.twitterHandle }}
+                  {{ userMeta.socials?.twitterHandle }}
                   <img src="@/assets/images/content-copy.svg" class="ml-2" />
                 </v-btn>
               </template>
@@ -37,15 +38,15 @@
 
             <template v-if="item.title === 'Discord'">
               <v-btn
-                v-if="!user.socials?.discordHandle"
+                v-if="!userMeta.socials?.discordHandle"
                 color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
               >
-              <template v-if="user.socials?.discordHandle">
+              <template v-if="userMeta.socials?.discordHandle">
                 <v-btn color="white" variant="text" class="btn-copy">
-                  {{ user.socials?.discordHandle }}
+                  {{ userMeta.socials?.discordHandle }}
                   <img src="@/assets/images/content-copy.svg" class="ml-2" />
                 </v-btn>
               </template>
@@ -53,20 +54,20 @@
 
             <template v-if="item.title === 'Telegram'">
               <v-btn
-                v-if="!user.socials?.telegramHandle"
+                v-if="!userMeta.socials?.telegramHandle"
                 color="white"
                 variant="flat"
                 @click="socialConnect(item)"
                 >Connect</v-btn
               >
-              <template v-if="user.socials?.telegramHandle">
+              <template v-if="userMeta.socials?.telegramHandle">
                 <v-btn
                   color="white"
                   variant="text"
                   class="btn-copy"
-                  @click="copyContent(user.socials?.telegramHandle)"
+                  @click="copyContent(userMeta.socials?.telegramHandle)"
                 >
-                  {{ user.socials?.telegramHandle }}
+                  {{ userMeta.socials?.telegramHandle }}
                   <img src="@/assets/images/content-copy.svg" class="ml-2" />
                 </v-btn>
               </template>
@@ -92,11 +93,29 @@ import { webAuth } from '@/composables/twitterAuth.ts'
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { copyContent } from '@/composables/general.ts'
+import { storeToRefs } from 'pinia'
 
 const store = useAuthStore()
 
-const user = computed(() => {
-  return getUser()
+const { userMeta } = storeToRefs(useAuthStore())
+
+const loading = ref(false)
+
+watch(
+  () => store.userMeta,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
+  },
+  { deep: true }
+)
+
+onMounted(() => {
+  loading.value = true
+  setTimeout(async () => {
+    await store.USER_AUTHORIZE()
+  }, 200)
 })
 
 const formData = reactive({
@@ -106,8 +125,6 @@ const formData = reactive({
   tgUserId: null,
   editMode: 'social'
 })
-
-const loading = ref(false)
 
 const socialConnect = (item) => {
   formData.selectedSocial = item
@@ -191,7 +208,7 @@ watch(
   (value: any) => {
     console.log(value)
     loading.value = false
-    saveUser(value)
+    store.USER_AUTHORIZE()
   },
   { deep: true }
 )

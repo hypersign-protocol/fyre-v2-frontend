@@ -11,7 +11,9 @@
       <div class="modal__body">
         <div class="border__dotted pa-6 d-flex flex-column align-center">
           <div class="d-flex align-center mb-2">
-            <p class="mr-2">0/{{ eventData.referral.limit }}</p>
+            <p class="mr-2">
+              {{ eventParticipants.myReferralsCount }}/{{ eventData.referral.limit }}
+            </p>
             <img src="@/assets/images/user.svg" />
           </div>
           <p class="font-16 font-weight-bold mb-2">
@@ -23,14 +25,19 @@
         </div>
         <div class="border__dotted pa-6 d-flex flex-column align-center mt-4">
           <p class="font-16 font-weight-medium mb-2">Your Referral Code</p>
-          <v-btn variant="outlined" class="rounded-lg">
-            <span class="mr-2">fyre.id/jlttoken-veevaa-231dcw1d</span>
-            <v-icon>mdi-link-variant</v-icon>
+          <v-btn class="base-btn overflow-hidden text-truncate">
+            <span class="mr-2">{{ eventParticipants.myReferralInvitationCode }}</span>
           </v-btn>
         </div>
-        <v-btn height="53" block color="secondary" class="claim--button mt-4">
-          <v-icon size="30">mdi-share-outline</v-icon>
-          <span class="ml-2"> Share now</span>
+        <v-btn
+          height="53"
+          block
+          color="secondary"
+          class="claim--button mt-4"
+          @click="copyContent(getReferralUrl())"
+        >
+          <v-icon>mdi-link-variant</v-icon>
+          <span class="ml-2"> Copy Link</span>
         </v-btn>
       </div>
     </v-card>
@@ -38,14 +45,29 @@
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { copyContent } from '@/composables/general.ts'
 
-interface eventById {
-  _id: string
-}
-
-const props = defineProps<{
-  eventData: eventById
-}>()
+const props = defineProps({
+  eventData: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  eventParticipants: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  }
+})
 
 const dialog = ref(true)
+
+const getReferralUrl = () => {
+  const url = window.location.href
+  return `${url}?ref=${props.eventParticipants.myReferralInvitationCode}`
+}
 </script>

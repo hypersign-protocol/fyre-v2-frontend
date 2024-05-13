@@ -3,19 +3,19 @@
     <div class="user__profile">
       <v-card class="bg__card pa-10 mt-8">
         <v-row class="token__row d-flex" v-for="(item, index) in userRewards">
-          <v-col>
+          <v-col md="5">
             <p class="d-flex align-center">
               <img src="@/assets/images/trophy.svg" class="mr-2" />
               {{ item.reward.distributionMediumType }}
             </p>
           </v-col>
-          <v-col>
+          <v-col md="2">
             <p>{{ item.reward.denomination }}</p>
           </v-col>
-          <v-col>
+          <v-col md="3">
             <p>{{ calculateDaysUntilExpiry(item?.reward?.options?.expiresAt) }}</p>
           </v-col>
-          <v-col>
+          <v-col md="2">
             <p class="text-green-accent-3" v-if="item.hasClaimed">Claimed</p>
             <v-btn class="bg-blue-accent-3 font-12" v-if="!item.hasClaimed"> Claim Now </v-btn>
           </v-col>
@@ -25,7 +25,7 @@
   </template>
   <template v-else>
     <v-card height="200" class="event-task--card mt-5 d-flex align-center justify-center">
-      <h3>No data found!</h3>
+      <h3>No results found!</h3>
     </v-card>
   </template>
 </template>
@@ -40,49 +40,15 @@ import {
   watch,
   defineAsyncComponent
 } from 'vue'
-import { useUserStore } from '@/store/user.ts'
-import { getToken } from '@/composables/jwtService.ts'
-import { storeToRefs } from 'pinia'
-const store = useUserStore()
-const { userRewards } = storeToRefs(useUserStore())
-const loading = ref(false)
+
+import { calculateDaysUntilExpiry } from '@/composables/general.ts'
+
 const props = defineProps({
-  eventId: { type: String, required: false, default: '' }
-})
-
-const token = computed(() => {
-  return getToken()
-})
-
-watch(
-  () => store.userRewards,
-  (value: any) => {
-    loading.value = false
-  },
-  { deep: true }
-)
-
-const calculateDaysUntilExpiry = (expiryDate) => {
-  const now = new Date()
-  const expiresAt = new Date(expiryDate)
-  const diffInMilliseconds = expiresAt - now
-  let remainingDaysCount = ''
-  if (diffInMilliseconds < 0) {
-    remainingDaysCount = 'Expired'
-  } else {
-    remainingDaysCount = `Expiring in ${Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24))} days`
-  }
-
-  return remainingDaysCount
-}
-
-onMounted(async () => {
-  if (token.value) {
-    loading.value = true
-    if (props.eventId) {
-      await store.USER_REWARD(`?rewardType=TOKEN&eventId=${props.eventId}&page=1&limit=10`)
-    } else {
-      await store.USER_REWARD(`?rewardType=TOKEN&page=1&limit=10`)
+  userRewards: {
+    type: Array,
+    required: true,
+    default() {
+      return []
     }
   }
 })

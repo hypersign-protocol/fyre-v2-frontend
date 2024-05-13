@@ -14,22 +14,32 @@
     </v-tabs>
     <v-window v-model="activeTab">
       <v-window-item :eventId="eventId" value="TOKEN">
-        <TokenType />
+        <Loader v-if="loading" />
+        <TokenType v-if="!loading" :userRewards="userRewards" />
       </v-window-item>
       <v-window-item :eventId="eventId" value="XP">
-        <XpType />
-      </v-window-item>
-      <v-window-item :eventId="eventId" value="NFT">
-        <NftType />
-      </v-window-item>
-      <v-window-item :eventId="eventId" value="OTHER">
-        <OtherType />
+        <Loader v-if="loading" />
+        <XpType v-if="!loading" :userRewards="userRewards" />
       </v-window-item>
     </v-window>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import {
+  defineComponent,
+  ref,
+  shallowRef,
+  onMounted,
+  onBeforeUnmount,
+  computed,
+  watch,
+  defineAsyncComponent
+} from 'vue'
+
+import { useUserStore } from '@/store/user.ts'
+import { getToken } from '@/composables/jwtService.ts'
+import { storeToRefs } from 'pinia'
+
 const activeTab = ref('tokens')
 const props = defineProps({
   eventId: { type: String, required: false, default: '' }
@@ -44,4 +54,49 @@ const tabs = ref([
     slug: 'XP'
   }
 ])
+
+const options = reactive({
+  page: 1,
+  limit: 10,
+  search: '',
+  filter: 'TOKEN'
+})
+
+const store = useUserStore()
+const { userRewards } = storeToRefs(useUserStore())
+
+const loading = ref(false)
+
+watch(
+  () => activeTab.value,
+  (value: any) => {
+    options.filter = value
+    loadRewards()
+  }
+)
+
+const token = computed(() => {
+  return getToken()
+})
+
+watch(
+  () => store.userRewards,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+    }, 400)
+  },
+  { deep: true }
+)
+
+const loadRewards = async () => {
+  if (token.value) {
+    loading.value = true
+    let params = `?rewardType=${options.filter}&page=${options.page}&limit=${options.limit}`
+    if (props.eventId) {
+      params += `&eventId=${props.eventId}`
+    }
+    await store.USER_REWARD(params)
+  }
+}
 </script>

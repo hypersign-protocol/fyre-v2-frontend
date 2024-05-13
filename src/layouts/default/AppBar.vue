@@ -6,14 +6,17 @@
       /></a>
     </template>
     <template v-slot:append>
-      <v-btn
-        v-if="!mobile"
-        class="cursor-pointer"
-        v-for="(item, index) in menu"
-        @click="router.push({ path: `${item.link}` })"
-        :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'"
-        >{{ item.title }}</v-btn
-      >
+      <div class="mr-6">
+        <v-btn
+          v-if="!mobile"
+          class="cursor-pointer"
+          v-for="(item, index) in menu"
+          :key="index"
+          @click="router.push({ path: `${item.link}` })"
+          :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'"
+          >{{ item.title }}</v-btn
+        >
+      </div>
       <v-btn
         color="secondary"
         variant="flat"
@@ -65,6 +68,8 @@
               </template>
               <v-list-item-title class="font-14" v-text="item.title"></v-list-item-title>
             </v-list-item>
+
+            <v-btn class="logout-btn" @click="logout()">Log Out</v-btn>
           </v-list>
         </v-menu>
       </template>
@@ -90,12 +95,9 @@ const { mobile, mdAndDown } = useDisplay()
 const router = useRouter()
 const route = useRoute()
 import { useAuthStore } from '@/store/auth.ts'
-import { useUserStore } from '@/store/user.ts'
 import { getUser } from '@/composables/jwtService.ts'
 const authStore = useAuthStore()
-const userStore = useUserStore()
 const { challenge, loginRes } = storeToRefs(useAuthStore())
-const { userMeta } = storeToRefs(useUserStore())
 
 const user = computed(() => {
   return getUser()
@@ -104,9 +106,12 @@ const user = computed(() => {
 const options = reactive({
   showBwModal: false,
   providers: ['evm', 'interchain'],
-  chains: ['mainnet', 'bsc', 'polygon', 'cosmos', 'osmosis'],
+  chains: [],
+  isAuth: true,
   isRequiredDID: true,
-  isPerformAction: false
+  isPerformAction: false,
+  didDocument: user.value.didDocument,
+  addVerificationMethod: false
 })
 
 const isUserLoggedIn = computed(() => {
@@ -116,8 +121,7 @@ const isUserLoggedIn = computed(() => {
 const userMenu = ref([
   { title: 'Home', icon: 'mdi-home-outline', link: '/' },
   { title: 'My Profile', icon: 'mdi-account-outline', link: '/profile' },
-  { title: 'My Rewards', icon: 'mdi-gift-outline', link: '/rewards' },
-  { title: 'Log Out', icon: 'mdi-logout', link: '/logout' }
+  { title: 'My Rewards', icon: 'mdi-gift-outline', link: '/rewards' }
 ])
 
 const menu = ref([
@@ -148,28 +152,24 @@ watch(
   (value: any) => {
     localStorage.setItem('accessToken', value)
     setTimeout(async () => {
-      await authStore.USER_DETAILS()
+      await authStore.USER_AUTHORIZE()
+      location.reload()
     })
   },
   { deep: true }
 )
 
-watch(
-  () => authStore.userMeta,
-  (value: any) => {
-    localStorage.setItem('user', JSON.stringify(value))
-    location.reload()
-  },
-  { deep: true }
-)
+// watch(
+//   () => authStore.userMeta,
+//   (value: any) => {
+//     localStorage.setItem('user', JSON.stringify(value))
+//     location.reload()
+//   },
+//   { deep: true }
+// )
 
 const navigate = (item) => {
-  if (item.title === 'Log Out') {
-    localStorage.removeItem('accessToken')
-    location.reload()
-  } else {
-    window.location.href = `${item.link}`
-  }
+  window.location.href = `${item.link}`
 }
 
 const showLogin = () => {
@@ -198,6 +198,11 @@ const collectSignedData = async (data) => {
 const currentRouteName = computed(() => {
   return route.name
 })
+
+const logout = () => {
+  localStorage.clear()
+  location.reload()
+}
 
 const isActive = (item) => {
   return currentRouteName.value === item.link ? true : false

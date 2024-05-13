@@ -6,12 +6,6 @@
     <div class="homepage-section">
       <div class="section-content">
         <Tabs />
-        <div
-          class="d-flex align-center justify-center my-5"
-          @click="router.push({ path: `/explore` })"
-        >
-          <v-btn class="base-btn" variant="outlined" rounded>See more</v-btn>
-        </div>
       </div>
     </div>
   </v-container>
