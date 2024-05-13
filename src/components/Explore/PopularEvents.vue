@@ -14,7 +14,7 @@
       :key="i"
     >
       <v-row>
-        <v-col v-for="(event, index) in popular" :key="index" cols="3" sm="3" md="3" xl="3" lg="3">
+        <v-col v-for="(event, index) in popular" :key="index" cols="12" sm="3" md="3" xl="3" lg="3">
           <ExploreCard :eventData="event" />
         </v-col>
       </v-row>

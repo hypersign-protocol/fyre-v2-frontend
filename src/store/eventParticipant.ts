@@ -43,7 +43,7 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
       try {
         const response: AxiosResponse<EventTask[]> = await axios.post(
-          `/event-participants/perform-task`,
+          `/event-participants/perform-task?referrer=${payload.referrer}`,
           payload,
           {
             headers: {

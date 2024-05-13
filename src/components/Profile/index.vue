@@ -137,7 +137,7 @@
               <p>{{ userMeta.totalXps }} XP</p>
             </div>
             <div class="right">
-              <v-btn class="base-btn">Check Rewards</v-btn>
+              <v-btn class="base-btn" @click="router.push({ path: `/rewards` })">Check Rewards</v-btn>
             </div>
           </div>
         </v-col>
@@ -162,7 +162,7 @@ import { storeToRefs } from 'pinia'
 const authStore = useAuthStore()
 const loading = ref(false)
 const { userMeta } = storeToRefs(useAuthStore())
-
+const router = useRouter()
 const getAddress = (obj) => {
   if (obj) {
     const segments = obj.id.split(':')
