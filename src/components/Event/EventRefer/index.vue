@@ -68,6 +68,6 @@ const dialog = ref(true)
 
 const getReferralUrl = () => {
   const url = window.location.href
-  return `${url}?ref=${props.eventParticipants.myReferralInvitationCode}`
+  return `${url}?referrer=${props.eventParticipants.myReferralInvitationCode}`
 }
 </script>

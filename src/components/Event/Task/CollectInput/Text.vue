@@ -44,7 +44,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
 import { useNotificationStore } from '@/store/notification.ts'
-
+import { capitalize } from '@/composables/general.ts'
 const props = defineProps({
   communityId: { type: String, required: true },
   token: { type: String, required: true },

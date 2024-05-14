@@ -154,12 +154,12 @@ watch(
 )
 
 onMounted(() => {
-  getDetails()
+   loading.value = true
+   getDetails()
 })
 
 const getDetails = async () => {
   setTimeout(async () => {
-    loading.value = true
     await authStore.USER_AUTHORIZE()
   }, 200)
 }
