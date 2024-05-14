@@ -27,7 +27,7 @@
         Login
       </v-btn>
 
-      <template v-if="mobile && !isUserLoggedIn">
+      <template v-if="mobile">
         <v-app-bar-nav-icon id="website-menu-activator" class="mr-3"></v-app-bar-nav-icon>
 
         <v-menu activator="#website-menu-activator">
