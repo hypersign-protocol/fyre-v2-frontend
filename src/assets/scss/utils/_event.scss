@@ -96,6 +96,8 @@
       }
 
       .title--div{
+        align-items: center;
+          display: flex;
         @include media-respond(xs) {
           align-items: center;
           display: flex;
