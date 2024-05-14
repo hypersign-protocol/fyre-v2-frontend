@@ -10,7 +10,7 @@
         <span>
           <img :src="getImage(task.type)" />
         </span>
-        <span class="text text-white-100">{{ task.title }}</span>
+        <span class="text text-white-100">{{ capitalize(task.title) }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="checkIfUserLogged">
@@ -49,6 +49,7 @@ import { useNotificationStore } from '@/store/notification.ts'
 import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
+import { capitalize } from '@/composables/general.ts'
 import { getImage } from '@/composables/event.ts'
 
 const props = defineProps({

@@ -5,7 +5,7 @@
       <div class="profile__section">
         <div class="profile__img">
           <v-avatar>
-            <v-img src="@/assets/images/user-avatar.png"></v-img>
+            <v-img src="@/assets/images/user-profile.png"></v-img>
           </v-avatar>
           <!-- <p class="profile__badge">
             <span>#232</span>

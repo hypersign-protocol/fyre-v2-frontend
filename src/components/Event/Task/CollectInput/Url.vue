@@ -117,18 +117,9 @@ watch(
 
 const performAction = async () => {
   loading.value = true
-
-  let referrer = null
-  let params = new URLSearchParams(window.location.search);
-  let refValue = params.get('ref');
-  if (refValue !== null) {
-      referrer = refValue
-  } 
-
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,
-    referrer: referrer,
     task: {
       id: props.task._id,
       proof: {

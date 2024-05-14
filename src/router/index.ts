@@ -19,21 +19,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('accessToken')
-  if (isAuthRequired(to.path)) {
-    if (isTokenExpired(token)) {
-      if (to.path !== '/') {
-        localStorage.clear()
-        next('/')
-      } else {
-        next()
-      }
-    } else {
-      next()
-    }
+  const token = localStorage.getItem('accessToken');
+  const authRequired = isAuthRequired(to.path);
+  const tokenExpired = isTokenExpired(token);
+
+  if (authRequired && tokenExpired) {
+    localStorage.clear();
+    next("/");
+  } else if (!authRequired && tokenExpired) {
+    localStorage.clear();
+    next();
   } else {
-    next()
+    next();
   }
-})
+});
+
 
 export default router
