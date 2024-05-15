@@ -16,7 +16,7 @@ import 'element-plus/dist/index.css'
 
 import { blockChainWalletPlugin } from './blockchainWalletPlugin'
 
-// Composables
+// Composable
 import { createApp } from 'vue'
 
 const app = createApp(App)

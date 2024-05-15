@@ -33,10 +33,6 @@ const props = defineProps({
   }
 })
 
-store.$subscribe((mutation, state) => {
-  console.log(mutation.payload)
-})
-
 const monitorChanges = (component, selectedValue) => {
   store.$patch({
     interChainActiveStep: component

@@ -5,7 +5,8 @@
       <div class="profile__section">
         <div class="profile__img">
           <v-avatar>
-            <v-img src="@/assets/images/user-profile.png"></v-img>
+            <v-img v-if="userMeta.avatar" :src="userMeta.avatar"></v-img>
+            <v-img v-else src="@/assets/images/user-profile.png"></v-img>
           </v-avatar>
           <!-- <p class="profile__badge">
             <span>#232</span>
@@ -137,7 +138,9 @@
               <p>{{ userMeta.totalXps }} XP</p>
             </div>
             <div class="right">
-              <v-btn class="base-btn" @click="router.push({ path: `/rewards` })">Check Rewards</v-btn>
+              <v-btn class="base-btn" @click="router.push({ path: `/rewards` })"
+                >Check Rewards</v-btn
+              >
             </div>
           </div>
         </v-col>

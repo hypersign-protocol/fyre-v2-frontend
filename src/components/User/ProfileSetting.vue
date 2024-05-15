@@ -2,9 +2,9 @@
   <Loader v-if="loading" />
   <div class="profile__setting__container" v-if="!loading">
     <p class="title">Avatar</p>
-    <v-hover v-slot="{ isHovering, props }" v-if="avatar">
+    <v-hover v-slot="{ isHovering, props }" v-if="userMeta.avatar">
       <v-avatar v-bind="props">
-        <v-img :src="avatar" class="rounded-circle">
+        <v-img :src="userMeta.avatar" class="rounded-circle">
           <div class="d-flex align-center justify-center h-100" v-if="isHovering">
             <v-btn
               @click="openFilePicker"
@@ -16,7 +16,7 @@
         </v-img>
       </v-avatar>
     </v-hover>
-    <v-hover v-slot="{ isHovering, props }" v-if="!avatar">
+    <v-hover v-slot="{ isHovering, props }" v-if="!userMeta.avatar">
       <v-avatar v-bind="props">
         <v-img src="@/assets/images/user-profile.png" class="rounded-circle">
           <div class="d-flex align-center justify-center h-100" v-if="isHovering">
@@ -40,7 +40,7 @@
     <v-form @submit.prevent>
       <div>
         <label>User Name</label>
-        <v-text-field v-model="userName" hide-details="auto" variant="solo"></v-text-field>
+        <v-text-field v-model="userMeta.userName" hide-details="auto" variant="solo"></v-text-field>
       </div>
       <div class="button__wrapper">
         <v-btn variant="outlined" color="secondary">Cancel</v-btn>
@@ -63,7 +63,7 @@
   <DeleteModal @close="deletePopup = false" v-model="deletePopup" />
   <BlockChainWallet
     :options="options"
-    @getWalletAddress="collectWalletAddress"
+    @emitWalletAddress="collectWalletAddress"
     @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
@@ -109,13 +109,15 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
+  console.log(data)
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
+  console.log(data)
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
-  formData.signedDidDoc.alsoKnownAs.push(userName.value)
+  formData.signedDidDoc.alsoKnownAs.push(store.userMeta.userName)
   console.log(formData)
 }
 
@@ -129,12 +131,16 @@ watch(
   { deep: true }
 )
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchUserData()
+})
+
+const fetchUserData = async () => {
   loading.value = true
   setTimeout(async () => {
     await store.USER_AUTHORIZE()
   }, 200)
-})
+}
 
 const options = reactive({
   showBwModal: false,
@@ -143,14 +149,15 @@ const options = reactive({
   isRequiredDID: true,
   isPerformAction: true,
   didDocument: store.userMeta.didDocument,
-  addVerificationMethod: false
+  addVerificationMethod: false,
+  selectedNetwork: null
 })
 
 watch(
   () => store.fileUpload,
   (value: any) => {
     console.log(value)
-    avatar.value = value.publicUrl
+    store.userMeta.avatar = value.publicUrl
   },
   { deep: true }
 )
@@ -159,7 +166,7 @@ watch(
   () => store.userProfileResponse,
   (value: any) => {
     loading.value = false
-    store.USER_AUTHORIZE()
+    fetchUserData()
   },
   { deep: true }
 )
@@ -176,15 +183,16 @@ watch(
 )
 
 const updateProfile = () => {
-  if (userName.value) {
+  if (store.userMeta.userName) {
     const vm = store.userMeta.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {
-      options.providers = ['evm']
+      options.selectedNetwork = 'evm'
     } else {
-      options.providers = ['interchain']
+      options.selectedNetwork = 'interchain'
     }
     options.didDocument = store.userMeta.didDocument
+    options.showBwModal = true
     setTimeout(async () => {
       document.getElementById('emit-options').click()
     }, 100)
@@ -199,11 +207,12 @@ const updateProfile = () => {
 }
 
 const updateProfileSendRequest = () => {
+  console.log(store.userMeta)
   setTimeout(async () => {
     await store.UPDATE_USER_PROFILE({
       editMode: 'profile',
-      userName: userName.value,
-      avatar: avatar.value,
+      userName: store.userMeta.userName,
+      avatar: store.userMeta.avatar,
       signedDidDoc: formData.signedDidDoc
     })
   }, 100)

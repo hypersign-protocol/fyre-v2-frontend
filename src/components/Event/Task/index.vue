@@ -6,12 +6,19 @@
     :communityId="communityId"
     :is="checkComponent"
     :eventParticipants="eventParticipants"
+    v-if="checkComponent"
     class="mb-10"
+    @enableWallet="connectWallet"
+    @removeFormData="emit('removeFormData')"
   />
 </template>
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/event/Actions.ts'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useAuthStore } from '@/store/auth.ts'
+import { storeToRefs } from 'pinia'
+
+const emit = defineEmits(['emitShowWallet', 'removeFormData'])
 
 const props = defineProps({
   communityId: { type: String, required: true },
@@ -32,8 +39,16 @@ const props = defineProps({
   }
 })
 const showExpand = ref(false)
+const showWalletPopup = ref(false)
 const isTaskVerified = ref(false)
 const componentName = ref(null)
+
+const authStore = useAuthStore()
+const { userMeta } = storeToRefs(useAuthStore())
+
+const connectWallet = async (data) => {
+  emit('emitShowWallet', data)
+}
 
 const getPathWhereActionExists = (actionToCheck) => {
   const foundObject = eventTasks.find((obj) => obj.types.includes(actionToCheck))
@@ -45,7 +60,7 @@ const checkComponent = computed(() => {
   if (task) {
     return task.path
   } else {
-    console.error(`Task with type not found.`)
+    return null
   }
 })
 </script>
