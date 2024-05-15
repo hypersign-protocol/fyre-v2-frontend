@@ -149,7 +149,8 @@ const options = reactive({
   isRequiredDID: true,
   isPerformAction: true,
   didDocument: store.userMeta.didDocument,
-  addVerificationMethod: false
+  addVerificationMethod: false,
+  selectedNetwork: null
 })
 
 watch(
@@ -186,11 +187,12 @@ const updateProfile = () => {
     const vm = store.userMeta.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {
-      options.providers = ['evm']
+      options.selectedNetwork = 'evm'
     } else {
-      options.providers = ['interchain']
+      options.selectedNetwork = 'interchain'
     }
     options.didDocument = store.userMeta.didDocument
+    options.showBwModal = true
     setTimeout(async () => {
       document.getElementById('emit-options').click()
     }, 100)

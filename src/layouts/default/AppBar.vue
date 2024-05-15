@@ -116,7 +116,8 @@ const options = reactive({
   isRequiredDID: true,
   isPerformAction: false,
   didDocument: user.value.didDocument,
-  addVerificationMethod: false
+  addVerificationMethod: false,
+  selectedNetwork: null
 })
 
 const isUserLoggedIn = computed(() => {

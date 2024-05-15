@@ -199,9 +199,11 @@ watchEffect(async () => {
       props.options.showBwModal = false
       evmModal.value = true
       evmWallet.value.openModal()
-    } else {
+    } else if(store.walletOptions.selectedNetwork === 'interchain') {
       props.options.showBwModal = false
       interchainModal.value = true
+    }else {
+      props.options.showBwModal = true
     }
   }
 })
