@@ -112,7 +112,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import InterChainModal from './InterChain/index.vue'
 import EvmModal from './Evm/index.vue'
 
@@ -191,22 +191,17 @@ const chooseProvider = (data: any) => {
   }
 }
 
-store.$subscribe((mutation) => {
-  if (mutation.payload) {
-    let obj = mutation.payload?.walletOptions
-    if (store.walletOptions?.isPerformAction) {
-      const onlyEvm = obj?.providers.every((element: any) => element === 'evm')
-      if (onlyEvm) {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.options.showBwModal = false
-        evmModal.value = true
-        evmWallet.value.openModal()
-      } else {
-        interchainModal.value = true
-        // store.$patch({
-        //   interChainActiveStep: 'wallet'
-        // })
-      }
+watchEffect(async () => {
+  console.log(store.walletOptions)
+  if (store.walletOptions.showBwModal) {
+    if (store.walletOptions.selectedNetwork === 'evm') {
+      console.log('culprit here')
+      props.options.showBwModal = false
+      evmModal.value = true
+      evmWallet.value.openModal()
+    } else {
+      props.options.showBwModal = false
+      interchainModal.value = true
     }
   }
 })

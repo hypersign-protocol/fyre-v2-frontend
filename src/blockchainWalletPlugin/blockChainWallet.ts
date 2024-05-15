@@ -15,3 +15,7 @@ export const receiveOptions = (data: any) => {
     walletOptions: data
   })
 }
+export const sendData = () => {
+  const store = useInterChainStore()
+  return store.walletOptions
+}

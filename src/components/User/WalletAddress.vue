@@ -76,9 +76,7 @@ watch(
 
 onMounted(() => {
   loading.value = true
-  setTimeout(async () => {
-    await store.USER_AUTHORIZE()
-  }, 200)
+  fetchUserData()
 })
 
 const options = reactive({
@@ -88,7 +86,8 @@ const options = reactive({
   isRequiredDID: false,
   isPerformAction: true,
   didDocument: store.userMeta.didDocument,
-  addVerificationMethod: true
+  addVerificationMethod: true,
+  selectedNetwork: null
 })
 
 const formData = reactive({
@@ -132,13 +131,21 @@ watch(
   (value: any) => {
     console.log(value)
     loading.value = false
-    saveUser(value)
-    setTimeout(async () => {
-      checkWalletStatus()
-    }, 100)
+    fetchUserData()
+    formData.walletAddress = null
+    formData.signedDidDoc = null
   },
   { deep: true }
 )
+
+const fetchUserData = async () => {
+  setTimeout(async () => {
+    await store.USER_AUTHORIZE()
+    setTimeout(async () => {
+      checkWalletStatus()
+    }, 100)
+  }, 200)
+}
 
 const updateWallet = () => {
   setTimeout(async () => {
@@ -147,8 +154,9 @@ const updateWallet = () => {
 }
 
 const connectWallet = async (item) => {
-  options.providers = item.provider === 'cosmos' ? ['interchain'] : ['evm']
+  options.selectedNetwork = item.provider === 'cosmos' ? 'interchain' : 'evm'
   options.chains = [item.chainId]
+  options.showBwModal = true
 
   setTimeout(async () => {
     document.getElementById('emit-options').click()

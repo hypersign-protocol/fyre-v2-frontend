@@ -150,7 +150,10 @@
                         :communityId="eventById.communityId"
                         :eventParticipants="eventParticipants"
                         :token="token"
+                        :walletInfo="formData"
                         class="mb-5"
+                        @emitShowWallet="logWallet"
+                        @removeFormData="clearWalletInfo"
                       />
                     </template>
                   </template>
@@ -238,6 +241,15 @@
       v-model="toggleParticipant"
     />
   </template>
+
+  <BlockChainWallet
+    :options="options"
+    @emitProvider="getProvider"
+    @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData"
+  />
+  <div id="emit-options" @click="emitOptions(options)"></div>
+  <div id="receive-options" @click="receiveSignedData"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
@@ -267,15 +279,19 @@ const tabs = ref([
 ])
 
 import { useEventStore } from '@/store/event.ts'
+import { useAuthStore } from '@/store/auth.ts'
 import { isEventHappening } from '@/composables/event.ts'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { getToken } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 
+const authStore = useAuthStore()
+
 const eventStore = useEventStore()
 const eventParticipantStore = useEventParticipantStore()
 
 const { eventParticipants } = storeToRefs(useEventParticipantStore())
+const { userMeta } = storeToRefs(useAuthStore())
 
 const route = useRoute()
 const router = useRouter()
@@ -295,6 +311,67 @@ const token = computed(() => {
   return getToken()
 })
 
+const formData = reactive({
+  walletAddress: null,
+  signedDidDoc: null,
+  taskId: null
+})
+
+const options = reactive({
+  showBwModal: false,
+  providers: ['evm', 'interchain'],
+  chains: [''],
+  isRequiredDID: false,
+  isPerformAction: true,
+  didDocument: authStore.userMeta.didDocument,
+  addVerificationMethod: true,
+  selectedNetwork: null
+})
+
+watch(
+  () => formData,
+  (value: any) => {
+    if (value.walletAddress !== null && value.signedDidDoc !== null) {
+      console.log(value)
+    }
+  },
+  { deep: true }
+)
+
+const collectWalletAddress = async (data) => {
+  console.log(data)
+  formData.walletAddress = data.walletAddress
+}
+
+const collectSignedData = async (data) => {
+  console.log(data)
+  formData.walletAddress = data.walletAddress
+  formData.signedDidDoc = data.signProof
+}
+
+const clearWalletInfo = async () => {
+  console.log('clear')
+  formData.walletAddress = null
+  formData.signedDidDoc = null
+  formData.taskId = null
+}
+
+const logWallet = async (data) => {
+  console.log(authStore.userMeta)
+  console.log(typeof data.network)
+  console.log(data.network)
+  options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
+  options.selectedNetwork = data.network
+  options.showBwModal = true
+  formData.taskId = data.taskId
+  options.didDocument = authStore.userMeta.didDocument
+  console.log(options)
+
+  setTimeout(async () => {
+    document.getElementById('emit-options').click()
+  }, 100)
+}
+
 onMounted(async () => {
   loading.value = true
   loadEventTasks()
@@ -308,12 +385,19 @@ const checkEventStarted = () => {
   } else {
     isEventHappeningTrue.value = false
   }
+  fetchUserData()
 }
 
 watch(
   () => activeTab.value,
   (value: any) => {}
 )
+
+const fetchUserData = async () => {
+  setTimeout(async () => {
+    await authStore.USER_AUTHORIZE()
+  }, 200)
+}
 
 watch(
   () => eventErr.value,

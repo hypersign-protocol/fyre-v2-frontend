@@ -4,7 +4,6 @@
       <p class="text-red-100" v-if="task.isMandatory">Mandatory</p>
       <p class="text-green-100" v-if="!task.isMandatory">Optional</p>
     </div>
-
     <div class="task__header">
       <div class="task__title">
         <span>
@@ -13,8 +12,8 @@
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="checkIfUserLogged">
-        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+      <div class="task__action">
+        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
@@ -25,23 +24,14 @@
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input"></div>
       <div class="task__submit">
-        <v-btn
-          class="mr-2"
-          @click="connectWallet"
-          :loading="isCollecting"
-          :disabled="isTaskVerified"
-          >Collect Wallet Address</v-btn
-        >
+        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
+          <span v-if="!walletConnected">Collect Wallet Address</span>
+          <span v-if="walletConnected">Collected</span>
+        </v-btn>
         <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
       </div>
     </div>
   </div>
-  <BlockChainWallet
-    :options="options"
-    @getWalletAddress="collectWalletAddress"
-    @getSignedData="collectSignedData"
-  />
-  <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
@@ -50,11 +40,21 @@ import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { getImage } from '@/composables/event.ts'
+import { useAuthStore } from '@/store/auth.ts'
+
+const emit = defineEmits(['enableWallet', 'removeFormData'])
 
 const props = defineProps({
   communityId: { type: String, required: true },
   token: { type: String, required: true },
   task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  walletInfo: {
     type: Object,
     required: true,
     default() {
@@ -73,6 +73,7 @@ const props = defineProps({
 const showExpand = ref(false)
 const loading = ref(false)
 const isCollecting = ref(false)
+const walletConnected = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
 
@@ -80,16 +81,12 @@ const store = useEventParticipantStore()
 const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
-const wAddress = ref(null)
-const sProof = ref(null)
-
-const formData = reactive({
-  walletAddress: null,
-  signedDidDoc: null
-})
-
 const user = computed(() => {
   return getUser()
+})
+
+onMounted(() => {
+  fetchResult()
 })
 
 const checkIfUserLogged = () => {
@@ -104,30 +101,6 @@ const checkIfUserLogged = () => {
   }
 }
 
-const options = reactive({
-  showBwModal: false,
-  providers: ['interchain'],
-  chains: [],
-  isRequiredDID: false,
-  isPerformAction: true,
-  didDocument: user.value.didDocument,
-  addVerificationMethod: true
-})
-
-const collectWalletAddress = async (data) => {
-  formData.walletAddress = data
-}
-
-const collectSignedData = async (data) => {
-  formData.walletAddress = data.walletAddress
-  formData.signedDidDoc = data.signProof
-  isCollecting.value = false
-}
-
-onMounted(() => {
-  fetchResult()
-})
-
 const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
@@ -137,34 +110,47 @@ const fetchResult = () => {
   }
 }
 
-const connectWallet = async (item) => {
-  options.providers = ['interchain']
-  options.chains = ['cosmoshub-4']
+watch(
+  () => props.walletInfo,
+  (value: any) => {
+    if (
+      value.taskId === props.task._id &&
+      value.walletAddress !== null &&
+      value.signedDidDoc !== null
+    ) {
+      isCollecting.value = false
+      walletConnected.value = true
+    }
+  },
+  { deep: true }
+)
 
+const connect = async (item) => {
   isCollecting.value = true
-  setTimeout(async () => {
-    document.getElementById('emit-options').click()
-  }, 100)
+  emit('enableWallet', { network: 'interchain', taskId: props.task._id })
 }
 
 watch(
   () => performResult.value,
   (value: any) => {
     console.log(performResult.value.tasks)
-    loading.value = false
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+        showExpand.value = false
+      } else {
+        isTaskVerified.value = false
+        showExpand.value = true
+      }
+      emit('removeFormData')
+    }, 500)
   },
   { deep: true }
 )
 
 const submit = async () => {
-  console.log(formData)
-  console.log(formData.walletAddress)
-  console.log(formData.signedDidDoc)
+  console.log(props.walletInfo)
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
@@ -172,8 +158,8 @@ const submit = async () => {
     task: {
       id: props.task._id,
       proof: {
-        walletAddress: formData.walletAddress,
-        signedDidDocument: formData.signedDidDoc
+        walletAddress: props.walletInfo.walletAddress,
+        signedDidDocument: props.walletInfo.signedDidDoc
       }
     }
   })
