@@ -104,21 +104,21 @@ const getProvider = async (data) => {
   if (data) {
     await store.USER_LOGIN(`?provider=${data}-wallet`)
   } else {
-    console.log('Please select the provider before you proceed')
+    //('Please select the provider before you proceed')
   }
 }
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
   formData.signedDidDoc.alsoKnownAs.push(store.userMeta.userName)
-  console.log(formData)
+  //(formData)
 }
 
 watch(
@@ -156,7 +156,7 @@ const options = reactive({
 watch(
   () => store.fileUpload,
   (value: any) => {
-    console.log(value)
+    //(value)
     store.userMeta.avatar = value.publicUrl
   },
   { deep: true }
@@ -174,7 +174,7 @@ watch(
 watch(
   () => formData,
   (value: any) => {
-    console.log(value)
+    //(value)
     if (value.walletAddress !== null && value.signedDidDoc !== null) {
       updateProfileSendRequest()
     }
@@ -207,7 +207,7 @@ const updateProfile = () => {
 }
 
 const updateProfileSendRequest = () => {
-  console.log(store.userMeta)
+  //(store.userMeta)
   setTimeout(async () => {
     await store.UPDATE_USER_PROFILE({
       editMode: 'profile',
@@ -232,7 +232,7 @@ const onFileChange = async (fieldName, files) => {
   try {
     await store.FILE_UPLOAD(formData)
   } catch (e) {
-    console.log('error: ', e)
+    //('error: ', e)
   }
 }
 </script>

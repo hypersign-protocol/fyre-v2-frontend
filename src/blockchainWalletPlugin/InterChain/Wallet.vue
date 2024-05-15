@@ -51,7 +51,7 @@ const prevStep = (item) => {
 }
 
 const nextStep = (item) => {
-  console.log(item)
+  //(item)
 
   store.$patch({
     interChainObject: {

@@ -113,7 +113,7 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
+    //(result)
     inputText.value = result.proof.retweetUrl
   }
 }
@@ -121,7 +121,7 @@ const fetchResult = () => {
 watch(
   () => socialAccessToken.value,
   (value: any) => {
-    console.log(value)
+    //(value)
   },
   { deep: true }
 )
@@ -155,7 +155,7 @@ const handleTwitterLogin = () => {
         socialAccessToken.value = response.accessToken
         window.open(url, '_blank')
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )

@@ -142,11 +142,11 @@ const telegramConnection = () => {
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
-      console.log(data)
+    //
       if (data) {
         formData.tgUserId = data.id
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )
@@ -162,7 +162,7 @@ const discordConnection = () => {
       if (response) {
         formData.socialAccessToken = response.accessToken
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )
@@ -179,7 +179,7 @@ const twitterConnection = () => {
         formData.socialAccessToken = response.accessToken
       } else {
         console.error(err)
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )
@@ -188,7 +188,7 @@ const twitterConnection = () => {
 watch(
   () => formData.socialAccessToken,
   (value: any) => {
-    console.log(value)
+    //(value)
     updateSocialProfile()
   },
   { deep: true }
@@ -197,7 +197,7 @@ watch(
 watch(
   () => formData.tgUserId,
   (value: any) => {
-    console.log(value)
+    //(value)
     updateSocialProfile()
   },
   { deep: true }
@@ -206,7 +206,7 @@ watch(
 watch(
   () => store.userProfileResponse,
   (value: any) => {
-    console.log(value)
+    //(value)
     loading.value = false
     store.USER_AUTHORIZE()
   },

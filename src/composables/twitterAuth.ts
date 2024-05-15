@@ -1,6 +1,6 @@
 import auth0 from 'auth0-js'
 
-// console.log(config);
+// //(config);
 export const webAuth = new auth0.WebAuth({
   domain: import.meta.env.VITE_APP_AUTH0_DOMAIN,
   clientID: import.meta.env.VITE_APP_AUTH0_CLIENT_ID,

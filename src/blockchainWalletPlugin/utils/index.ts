@@ -90,7 +90,7 @@ export const signData = async (payload) => {
       signInId = didDoc.verificationMethod[0].id
       authentication = didDoc.authentication
     } else {
-      console.log(provider)
+      //(provider)
 
       eth = new EthereumEip712Signature2021({}, { _provider: provider })
 
@@ -102,7 +102,6 @@ export const signData = async (payload) => {
       didDoc.verificationMethod[0].publicKeyMultibase = ''
     }
 
-    console.log('checking if this fires')
 
     const proof = await jsSig.sign(didDoc, {
       suite: suiteType === 'cosmos' ? eds : eth,
@@ -143,14 +142,14 @@ export const signData = async (payload) => {
 
     return { proof }
   } catch (err) {
-    console.log(err)
+    //(err)
     emit('collectError', err)
     return { proof: null, verifed: false }
   }
 }
 
 const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
-  console.log(didDoc)
+  //(didDoc)
   const verificationMethods = didDoc.verificationMethod
 
   for (const method of verificationMethods) {
@@ -168,8 +167,8 @@ const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
 //connet wallet and add verification methods
 
 export const addWallet = async (payload) => {
-  console.log(payload)
-  console.log(store.walletOptions)
+  //(payload)
+  //(store.walletOptions)
   try {
     const signType = payload.signType
     const wallet = payload.wallet
@@ -199,7 +198,7 @@ export const addWallet = async (payload) => {
       suite = new EthereumEip712Signature2021({}, { _provider: provider })
     }
 
-    console.log(chainId)
+    //(chainId)
 
     const hsSDK = initializeDidSDK()
 
@@ -212,9 +211,9 @@ export const addWallet = async (payload) => {
 
     let localDidKey = '#key-1'
 
-    console.log(localDidKey)
+    //(localDidKey)
 
-    // console.log({
+    // //({
     //   didDocument: localDidDoc,
     //   type: wallet?.pubKey
     //     ? 'EcdsaSecp256k1VerificationKey2019'
@@ -244,7 +243,7 @@ export const addWallet = async (payload) => {
       localDidDoc.verificationMethod[length - 1]['publicKeyMultibase'] = ''
     }
 
-    console.log(localDidDoc.alsoKnownAs)
+    //(localDidDoc.alsoKnownAs)
     delete localDidDoc.service
     const proof = await jsSig.sign(localDidDoc, {
       suite,
@@ -257,7 +256,7 @@ export const addWallet = async (payload) => {
       }),
       documentLoader: wallet?.pubKey ? docloader1 : docloader
     })
-    console.log(proof)
+    //(proof)
 
     // const verifed = await jsSig.verify(proof, {
     //   suite,
@@ -273,6 +272,6 @@ export const addWallet = async (payload) => {
 
     return { proof }
   } catch (err) {
-    console.log(err)
+    //(err)
   }
 }

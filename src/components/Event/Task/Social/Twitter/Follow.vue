@@ -88,7 +88,7 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
+    //(result)
     inputText.value = result.proof
   }
 }
@@ -96,7 +96,7 @@ const fetchResult = () => {
 watch(
   () => socialAccessToken.value,
   (value: any) => {
-    console.log(value)
+    //(value)
     performAction()
   },
   { deep: true }
@@ -129,7 +129,7 @@ const handleTwitterLogin = () => {
       if (response) {
         socialAccessToken.value = response.accessToken
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )

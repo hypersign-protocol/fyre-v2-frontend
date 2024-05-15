@@ -91,7 +91,7 @@ watch(
 )
 
 onMounted(() => {
-  console.log(props.options)
+  //(props.options)
   // interChainObject.selectedExtension = 'extension'
   setTimeout(() => {
     makeConnection()
@@ -151,7 +151,7 @@ watch(
   () => interChainResultObject.walletAddress,
   async (value) => {
     if (value) {
-      console.log(`Wallet Address: ${value}`)
+      //(`Wallet Address: ${value}`)
       emit('getWalletAddress', interChainResultObject)
       if (props.options.isPerformAction) {
         signArbitrary()
@@ -165,21 +165,21 @@ watch(
 watch(
   () => store.walletOptions,
   (value) => {
-    console.log(value)
+    //(value)
   }
 )
 
 watch(
   () => interChainResultObject.signProof,
   (value) => {
-    console.log(value)
+    //(value)
   }
 )
 
 watch(
   () => interChainResultObject.isSignedVerified,
   (value) => {
-    console.log(value)
+    //(value)
     if (value) {
       loading.value = false
       emit('close')
@@ -204,7 +204,7 @@ const CONTROLLERS = {
 }
 
 const signArbitrary = async () => {
-  console.log(store.walletOptions.didDocument)
+  //(store.walletOptions.didDocument)
   try {
     loading.value = true
 
@@ -212,7 +212,7 @@ const signArbitrary = async () => {
       store.interChainObject.selectedChain
     ]
 
-    console.log(store)
+    //(store)
 
     const payload = {
       signType: 'cosmos',
@@ -222,7 +222,7 @@ const signArbitrary = async () => {
 
     const { proof, verifed } = await addWallet(payload)
 
-    console.log(proof, verifed)
+    //(proof, verifed)
 
     interChainResultObject.signProof = proof
     interChainResultObject.isSignedVerified = verifed
@@ -230,7 +230,7 @@ const signArbitrary = async () => {
     emit('getSignedData', interChainResultObject)
     emit('close')
   } catch (err) {
-    console.log(err)
+    //(err)
     alert(err.message)
   } finally {
     loading.value = false

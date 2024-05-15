@@ -106,7 +106,7 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
+    //(result)
     inputText.value = result.proof.retweetUrl
   }
 }
@@ -114,7 +114,7 @@ const fetchResult = () => {
 watch(
   () => socialAccessToken.value,
   (value: any) => {
-    console.log(value)
+    //(value)
     getUserInfo()
   },
   { deep: true }
@@ -123,7 +123,7 @@ watch(
 watch(
   () => discordId.value,
   (value: any) => {
-    console.log(value)
+    //(value)
   },
   { deep: true }
 )
@@ -147,7 +147,7 @@ watch(
 
 const getUserInfo = () => {
   webAuth.client.userInfo(socialAccessToken.value, async (err, user) => {
-    console.log(user)
+    //(user)
 
     discordId.value = user.sub.split('|')[2]
     discordUserName.value = user.name
@@ -166,7 +166,7 @@ const authenticateWithDiscord = () => {
         socialAccessToken.value = response.accessToken
         window.open(url, '_blank')
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )

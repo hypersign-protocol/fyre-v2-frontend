@@ -147,8 +147,8 @@ const closeModal = () => {
 }
 
 const collectWalletAddress = (data: any) => {
-  console.log(data)
-  console.log(store.walletOptions)
+//
+  //(store.walletOptions)
   emit('emitWalletAddress', data)
   if (data.network === 'evm') {
     // eslint-disable-next-line vue/no-mutating-props
@@ -170,7 +170,7 @@ const collectError = (data: any) => {
   loading.value = false
 }
 const collectSignedData = (data: any) => {
-  console.log(data)
+//
   emit('emitSignedData', data)
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
@@ -181,7 +181,7 @@ const collectSignedData = (data: any) => {
 const chooseProvider = (data: any) => {
   emit('emitProvider', data)
   if (data === 'evm') {
-    console.log('hhh')
+    //('hhh')
     // eslint-disable-next-line vue/no-mutating-props
     props.options.showBwModal = false
     evmModal.value = true
@@ -192,10 +192,10 @@ const chooseProvider = (data: any) => {
 }
 
 watchEffect(async () => {
-  console.log(store.walletOptions)
+  //(store.walletOptions)
   if (store.walletOptions.showBwModal) {
     if (store.walletOptions.selectedNetwork === 'evm') {
-      console.log('culprit here')
+      //('culprit here')
       props.options.showBwModal = false
       evmModal.value = true
       evmWallet.value.openModal()

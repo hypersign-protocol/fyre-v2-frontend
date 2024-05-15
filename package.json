@@ -30,6 +30,7 @@
     "keplr-ecdsasecp256k1signature2019": "github:hypersign-protocol/KeplrEcdsaSecp256k1Signature2019",
     "lodash": "^4.17.21",
     "multiformats": "^13.1.0",
+    "node-stdlib-browser": "^1.2.0",
     "roboto-fontface": "*",
     "swiper": "^11.0.7",
     "viem": "^2.9.5",

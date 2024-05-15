@@ -103,12 +103,12 @@ const closeModal = () => {
 }
 
 const collectWalletAddress = (data) => {
-  console.log(data)
+//
   emit('getWalletAddress', data)
 }
 
 const collectSignedData = (data) => {
-  console.log(data)
+//
   emit('emitSignedData', data)
   props.options.showBwModal = false
 }
@@ -159,11 +159,11 @@ wagmiConfig.subscribe((value) => {
 
 const collectProvider = async (connectionValue) => {
   const provider = await connectionValue.connector.getProvider()
-  console.log(provider)
+  //(provider)
   evmResultObject.provider = provider
 
   const { chainId, address } = getAccount(wagmiConfig)
-  console.log(chainId, address)
+  //(chainId, address)
 
   if (store.walletOptions.isPerformAction) {
     signArbitrary()
@@ -178,7 +178,7 @@ export const signArbitrary = async () => {
 
     const { chainId, address } = getAccount(wagmiConfig)
 
-    console.log(chainId, address)
+    //(chainId, address)
 
     evmResultObject.walletAddress = address
 
@@ -193,19 +193,19 @@ export const signArbitrary = async () => {
 
     const { proof } = await addWallet(payload)
 
-    console.log(proof)
+    //(proof)
 
     evmResultObject.signProof = proof
     // evmResultObject.isSignedVerified = verifed
 
-    console.log(evmResultObject)
+    //(evmResultObject)
 
     setTimeout(() => {
       emit('emitSignedData', evmResultObject)
       props.options.showBwModal = false
     }, 100)
   } catch (err) {
-    console.log(err)
+    //(err)
     alert(err.message)
   } finally {
     loading.value = false

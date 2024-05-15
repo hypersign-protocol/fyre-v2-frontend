@@ -105,7 +105,7 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
+    //(result)
     inputText.value = result.proof.retweetUrl
   }
 }
@@ -133,7 +133,7 @@ const connect = async (item) => {
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
+    //(performResult.value.tasks)
     setTimeout(() => {
       loading.value = false
       if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
@@ -150,7 +150,7 @@ watch(
 )
 
 const submit = async () => {
-  console.log(props.walletInfo)
+  //(props.walletInfo)
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,

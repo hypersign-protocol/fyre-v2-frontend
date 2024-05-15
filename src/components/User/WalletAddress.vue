@@ -104,21 +104,21 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
-  console.log(formData)
+  //(formData)
 }
 
 watch(
   () => formData,
   (value: any) => {
-    console.log(value)
+    //(value)
     if (value.walletAddress !== null && value.signedDidDoc !== null) {
       updateWallet()
     }
@@ -129,7 +129,7 @@ watch(
 watch(
   () => store.userProfileResponse,
   (value: any) => {
-    console.log(value)
+    //(value)
     loading.value = false
     fetchUserData()
     formData.walletAddress = null
@@ -176,7 +176,7 @@ const checkIfWalletExists = async (item) => {
   if (!IfExists) {
     updateWallet()
   } else {
-    console.log('Wallet Address is already connected')
+    //('Wallet Address is already connected')
   }
 }
 

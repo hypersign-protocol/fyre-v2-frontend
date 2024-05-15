@@ -146,7 +146,7 @@ const menu = ref([
 watch(
   () => authStore.challenge,
   (value: any) => {
-    console.log(value)
+    //(value)
     options.challenge = value.challenge
     document.getElementById('update-challenge').click()
   },
@@ -188,20 +188,20 @@ const getProvider = async (data) => {
   if (data) {
     await authStore.USER_LOGIN(`?provider=${data}-wallet`)
   } else {
-    console.log('Please select the provider before you proceed')
+    //('Please select the provider before you proceed')
   }
 }
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
+//
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
+//
   if (data.signProof) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
   } else {
-    console.log('Please select the provider before you proceed')
+    //('Please select the provider before you proceed')
   }
 }
 
@@ -219,6 +219,6 @@ const isActive = (item) => {
 }
 
 onMounted(() => {
-  console.log(mobile.value) // false
+  //(mobile.value) // false
 })
 </script>

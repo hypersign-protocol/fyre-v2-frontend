@@ -94,7 +94,7 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
+    //(result)
     inputText.value = result.proof.retweetUrl
   }
 }
@@ -121,12 +121,12 @@ const authenticate = () => {
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
-      console.log(data)
+    //
       if (data) {
         tgUserID.value = data.id
         window.open(url, '_blank')
       } else {
-        console.log('Som')
+        //('Som')
       }
     }
   )

@@ -177,7 +177,7 @@ watch(
 watch(
   () => options.page,
   (value: any) => {
-    console.log(value)
+    //(value)
     setTimeout(async () => {
       loadEvents()
     }, 100)

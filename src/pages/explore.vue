@@ -225,7 +225,7 @@ watch(() => options.search, searchKey)
 watch(
   () => options.page,
   (value: any) => {
-    console.log(value)
+    //(value)
     setTimeout(async () => {
       getPopularCommunities()
     }, 100)

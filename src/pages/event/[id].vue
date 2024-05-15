@@ -332,40 +332,40 @@ watch(
   () => formData,
   (value: any) => {
     if (value.walletAddress !== null && value.signedDidDoc !== null) {
-      console.log(value)
+      //(value)
     }
   },
   { deep: true }
 )
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
+//
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
 }
 
 const clearWalletInfo = async () => {
-  console.log('clear')
+  //('clear')
   formData.walletAddress = null
   formData.signedDidDoc = null
   formData.taskId = null
 }
 
 const logWallet = async (data) => {
-  console.log(authStore.userMeta)
-  console.log(typeof data.network)
-  console.log(data.network)
+  //(authStore.userMeta)
+  //(typeof data.network)
+  //(data.network)
   options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
   options.selectedNetwork = data.network
   options.showBwModal = true
   formData.taskId = data.taskId
   options.didDocument = authStore.userMeta.didDocument
-  console.log(options)
+  //(options)
 
   setTimeout(async () => {
     document.getElementById('emit-options').click()

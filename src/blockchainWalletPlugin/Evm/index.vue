@@ -99,7 +99,7 @@ const evmResultObject = reactive({
 watch(
   () => evmResultObject.signProof,
   (value) => {
-    console.log(value)
+    //(value)
     if (value) {
       setTimeout(() => {
         emit('getSignedData', evmResultObject)
@@ -118,22 +118,26 @@ watch(
   }
 )
 
-wagmiConfig.subscribe((value) => {
-  if (value.status === 'connected') {
-    const connectionValue = value.connections.get(value.current)
-    collectProvider(connectionValue)
-  }
-})
+let collectProviderInvoked = false
+  wagmiConfig.subscribe((value) => {
+    if (value.status === 'connected') {
+      const connectionValue = value.connections.get(value.current)
+      if (!collectProviderInvoked) {
+        collectProviderInvoked = true
+        collectProvider(connectionValue)
+      }
+    }
+  })
 
 const collectProvider = async (connectionValue) => {
-  console.log(store.walletOptions)
+  //(store.walletOptions)
 
   const provider = await connectionValue.connector.getProvider()
-  console.log(provider)
+  //(provider)
   evmResultObject.provider = provider
 
   const { chainId, address } = getAccount(wagmiConfig)
-  console.log(chainId, address)
+  //(chainId, address)
 
   evmResultObject.chainId = chainId
   evmResultObject.walletAddress = address
@@ -153,7 +157,7 @@ const signArbitrary = async () => {
 
     const { chainId, address } = getAccount(wagmiConfig)
 
-    console.log(chainId, address)
+    //(chainId, address)
 
     evmResultObject.walletAddress = address
 
@@ -168,19 +172,19 @@ const signArbitrary = async () => {
 
     const { proof } = await addWallet(payload)
 
-    console.log(proof)
+    //(proof)
 
     evmResultObject.signProof = proof
     // evmResultObject.isSignedVerified = verifed
 
-    console.log(evmResultObject)
+    //(evmResultObject)
 
     setTimeout(() => {
       emit('getSignedData', evmResultObject)
       props.options.showBwModal = false
     }, 100)
   } catch (err) {
-    console.log(err)
+    //(err)
     alert(err.message)
   } finally {
     loading.value = false
@@ -213,7 +217,7 @@ const openModal = () => {
 }
 
 const closeModal = () => {
-  console.log('close')
+  //('close')
   store.walletOptions.showBwModal = false
   close()
 }

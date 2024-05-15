@@ -107,7 +107,7 @@ const checkIfUserLogged = () => {
 watch(
   () => socialAccessToken.value,
   (value: any) => {
-    console.log(value)
+    //(value)
   },
   { deep: true }
 )
@@ -152,7 +152,7 @@ const handleTwitterLogin = () => {
       if (response) {
         socialAccessToken.value = response.accessToken
       } else {
-        console.log('Something went wrong')
+        //('Something went wrong')
       }
     }
   )
