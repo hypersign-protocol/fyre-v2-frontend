@@ -107,7 +107,9 @@ const interChainResultObject = reactive({
   walletObj: null,
   walletAddress: null,
   signProof: null,
-  isSignedVerified: false
+  isSignedVerified: false,
+  network: 'interchain',
+  chainId: null
 })
 
 const getRpcAndGasPriceByType = (type) => {

@@ -48,12 +48,16 @@
 
       <template v-if="isUserLoggedIn">
         <v-avatar id="menu-activator" class="cursor-pointer">
-          <v-img alt="John" src="@/assets/images/user-profile.png"></v-img>
+          <v-img v-if="userMeta.avatar" :src="userMeta.avatar"></v-img>
+          <v-img v-else src="@/assets/images/user-profile.png"></v-img>
         </v-avatar>
 
         <v-menu activator="#menu-activator">
           <v-list density="compact" class="menu__wrap">
-            <v-list-subheader class="text-center">{{ user.userName }}</v-list-subheader>
+            <v-list-subheader class="text-center" v-if="userMeta.userName"
+              >Welcome, {{ userMeta.userName }}</v-list-subheader
+            >
+            <v-list-subheader class="text-center" v-else>Welcome, User</v-list-subheader>
 
             <v-list-item
               v-for="(item, i) in userMenu"
@@ -79,6 +83,7 @@
     <BlockChainWallet
       :options="options"
       @emitProvider="getProvider"
+      @emitWalletAddress="collectWalletAddress"
       @emitSignedData="collectSignedData"
     />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
@@ -97,7 +102,7 @@ const route = useRoute()
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser } from '@/composables/jwtService.ts'
 const authStore = useAuthStore()
-const { challenge, loginRes } = storeToRefs(useAuthStore())
+const { challenge, loginRes, userMeta } = storeToRefs(useAuthStore())
 
 const user = computed(() => {
   return getUser()
@@ -184,6 +189,10 @@ const getProvider = async (data) => {
   } else {
     console.log('Please select the provider before you proceed')
   }
+}
+
+const collectWalletAddress = async (data) => {
+  console.log(data)
 }
 
 const collectSignedData = async (data) => {

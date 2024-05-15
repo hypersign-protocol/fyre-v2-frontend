@@ -102,6 +102,8 @@ export const signData = async (payload) => {
       didDoc.verificationMethod[0].publicKeyMultibase = ''
     }
 
+    console.log('checking if this fires')
+
     const proof = await jsSig.sign(didDoc, {
       suite: suiteType === 'cosmos' ? eds : eth,
       purpose: new purposes.AuthenticationProofPurpose({
@@ -142,6 +144,7 @@ export const signData = async (payload) => {
     return { proof }
   } catch (err) {
     console.log(err)
+    emit('collectError', err)
     return { proof: null, verifed: false }
   }
 }

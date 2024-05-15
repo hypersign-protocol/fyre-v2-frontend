@@ -154,8 +154,8 @@ watch(
 )
 
 onMounted(() => {
-   loading.value = true
-   getDetails()
+  loading.value = true
+  getDetails()
 })
 
 const getDetails = async () => {

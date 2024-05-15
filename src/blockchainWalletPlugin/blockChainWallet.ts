@@ -1,6 +1,6 @@
 import { useInterChainStore } from './stores/interchain.ts'
 
-export const updateChallenge = (data) => {
+export const updateChallenge = (data: any) => {
   console.log(data)
   const store = useInterChainStore()
   store.$patch({
@@ -8,7 +8,7 @@ export const updateChallenge = (data) => {
   })
 }
 
-export const receiveOptions = (data) => {
+export const receiveOptions = (data: any) => {
   console.log(data)
   const store = useInterChainStore()
   store.$patch({

@@ -7,10 +7,10 @@
     <div class="task__header">
       <div class="task__title">
         <div class="title--div">
-        <span>
-          <img src="@/assets/images/task/collect-url.png" />
-        </span>
-        <span class="text text-white-100">{{ task.title }}</span>
+          <span>
+            <img src="@/assets/images/task/collect-url.png" />
+          </span>
+          <span class="text text-white-100">{{ task.title }}</span>
         </div>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>

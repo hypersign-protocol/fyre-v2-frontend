@@ -6,6 +6,7 @@
     :communityId="communityId"
     :is="checkComponent"
     :eventParticipants="eventParticipants"
+    v-if="checkComponent"
     class="mb-10"
   />
 </template>
@@ -45,7 +46,7 @@ const checkComponent = computed(() => {
   if (task) {
     return task.path
   } else {
-    console.error(`Task with type not found.`)
+    return null
   }
 })
 </script>

@@ -41,26 +41,20 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
   }),
   actions: {
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
-
       try {
-
-
         let apiParams = `/event-participants/perform-task`
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const refValue = urlParams.get('referrer');
+
+        const urlParams = new URLSearchParams(window.location.search)
+        const refValue = urlParams.get('referrer')
         if (refValue !== null) {
           apiParams += `?referrer=${refValue}`
-        } 
+        }
 
-        const response: AxiosResponse<EventTask[]> = await axios.post(apiParams,
-          payload,
-          {
-            headers: {
-              'x-hf-social-accesstoken': payload.socialToken
-            }
+        const response: AxiosResponse<EventTask[]> = await axios.post(apiParams, payload, {
+          headers: {
+            'x-hf-social-accesstoken': payload.socialToken
           }
-        )
+        })
 
         if (response.success) {
           this.performResult = response.data

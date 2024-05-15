@@ -81,23 +81,23 @@
         cursor: pointer;
       }
 
-       @include media-respond(xs) {
-          align-items: center;
-        }
+      @include media-respond(xs) {
+        align-items: center;
+      }
     }
 
     .task__title {
       display: flex;
       align-items: center;
 
-       @include media-respond(xs) {
+      @include media-respond(xs) {
         justify-content: space-between;
         width: 100%;
       }
 
-      .title--div{
+      .title--div {
         align-items: center;
-          display: flex;
+        display: flex;
         @include media-respond(xs) {
           align-items: center;
           display: flex;

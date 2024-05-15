@@ -8,7 +8,7 @@ import './assets/style.scss'
 type PluginOptions = Partial<Props>
 
 export function blockChainWalletPlugin(options: PluginOptions) {
-  return (app) => {
+  return (app: any) => {
     options = defu(options, {
       arrow: false
     })

@@ -2,9 +2,8 @@
   <div class="bw3-modal" ref="bcWallet">
     <v-dialog v-model="options.showBwModal" max-width="340" max-height="500" persistent>
       <template v-slot:default="{ isActive }">
-        {{ walletOptions }}
         <div class="position-relative">
-          <v-card color="rgba(28, 29, 41, 1)" theme="dark" class="rounded-xl py-0">
+          <v-card color="rgba(28, 29, 41, 1)" theme="dark" class="rounded-xl py-0" v-if="!loading">
             <v-card-actions class="pa-0">
               <p class="font-weight-bold ml-5">Choose Network</p>
               <v-btn icon="mdi-close" class="ml-auto" @click="options.showBwModal = false"> </v-btn>
@@ -37,8 +36,9 @@
           </v-card>
           <v-card
             v-if="loading"
-            class="pa-5 rounded-lg d-flex flex-column align-center loading-state"
+            class="pa-5 rounded-lg d-flex flex-column align-center justify-center loading-state"
             color="rgb(28 29 41 / 70%)"
+            height="300"
           >
             <div>
               <svg
@@ -86,59 +86,45 @@
               </svg>
             </div>
             <p class="pt-4 font-15 lh-26 mx-5 text-white-100 font-weight-medium text-center">
-              Please log in to MetaMask and sign Fyre message to proceed
+              Please sign Fyre message to proceed
             </p>
           </v-card>
         </div>
       </template>
     </v-dialog>
     <InterChainModal
+      ref="interchainWallet"
       v-model="interchainModal"
-      v-if="interchainModal"
       @close="closeModal"
       :options="options"
       @getWalletAddress="collectWalletAddress"
       @getSignedData="collectSignedData"
-      @updateOptions="collectSignedData"
+      @isError="collectError"
+    />
+    <EvmModal
+      ref="evmWallet"
+      v-model="evmModal"
+      :options="options"
+      @getWalletAddress="collectWalletAddress"
+      @getSignedData="collectSignedData"
+      @isError="collectError"
     />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, inject, onMounted, onUpdated, onUnmounted } from 'vue'
-import { walletOptionsInject } from './'
+import { ref } from 'vue'
 import InterChainModal from './InterChain/index.vue'
+import EvmModal from './Evm/index.vue'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from './stores/interchain'
 const store = useInterChainStore()
-import { docloader, initializeDidSDK, signData, addWallet } from './utils'
 
-import { mainnet, bsc, polygon } from '@wagmi/core/chains'
-import { Connection, getAccount, signTypedData } from '@wagmi/core'
-
-import {
-  createWeb3Modal,
-  defaultWagmiConfig,
-  useWeb3Modal,
-  useWeb3ModalEvents,
-  useWeb3ModalState,
-  useWeb3ModalTheme
-} from '@web3modal/wagmi/vue'
-import { reconnect } from '@wagmi/core'
-import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
-import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
-
-const { challenge } = storeToRefs(store)
+const { challenge, walletOptions } = storeToRefs(store)
 
 const loading = ref(false)
 
-const emit = defineEmits([
-  'emitProvider',
-  'getSignature',
-  'getWalletAddress',
-  'getSignInProof',
-  'emitSignedData'
-])
+const emit = defineEmits(['emitProvider', 'emitWalletAddress', 'emitSignedData'])
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -151,92 +137,70 @@ const props = defineProps({
 })
 
 const interchainModal = ref(false)
-const showEvmModal = ref(false)
+const evmModal = ref(false)
 
-let reactiveConnector = reactive({
-  connector: {} as any as Connection
-})
-
-// @ts-expect-error 1. Get projectId
-const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
-if (!projectId) {
-  throw new Error('VITE_PROJECT_ID is not set')
-}
-
-// 2. Create wagmiConfig
-const chains = reactive([mainnet, bsc, polygon])
-const wagmiConfig = defaultWagmiConfig({
-  chains,
-  projectId,
-  connectors: [coinbaseWallet],
-  metadata: {
-    name: 'Web3Modal Vue Example',
-    description: 'Web3Modal Vue Example',
-    url: '',
-    icons: [],
-    verifyUrl: ''
-  }
-})
-
-// 3. Create modal
-createWeb3Modal({
-  wagmiConfig,
-  projectId,
-  chains,
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-color-mix': 'rgba(28,29,41,1)',
-    '--w3m-color-mix-strength': 30
-  }
-})
-
-// 4. Use modal composable
-const modal = useWeb3Modal()
-const state = useWeb3ModalState()
-const { setThemeMode, themeMode, themeVariables } = useWeb3ModalTheme()
-const events = useWeb3ModalEvents()
-
-const evmResultObject = reactive({
-  provider: null,
-  walletAddress: null,
-  signProof: null,
-  isSignedVerified: false,
-  wagmiConfig: null
-})
+const evmWallet = ref(null)
+const interchainWallet = ref(null)
 
 const closeModal = () => {
   interchainModal.value = false
 }
 
-const collectWalletAddress = (data) => {
+const collectWalletAddress = (data: any) => {
   console.log(data)
-  emit('getWalletAddress', data)
+  console.log(store.walletOptions)
+  emit('emitWalletAddress', data)
+  if (data.network === 'evm') {
+    // eslint-disable-next-line vue/no-mutating-props
+    props.options.showBwModal = true
+    loading.value = true
+    if (store.walletOptions.isPerformAction) {
+      evmWallet.value.signArbitrary()
+    } else {
+      evmWallet.value.generateDidDoc()
+    }
+  } else {
+  }
 }
 
-const collectSignedData = (data) => {
+const collectError = (data: any) => {
+  console.error(data)
+  // eslint-disable-next-line vue/no-mutating-props
+  props.options.showBwModal = false
+  loading.value = false
+}
+const collectSignedData = (data: any) => {
   console.log(data)
   emit('emitSignedData', data)
+  // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
+  loading.value = false
+  evmWallet.value.closeModal()
 }
 
-const chooseProvider = (data) => {
+const chooseProvider = (data: any) => {
   emit('emitProvider', data)
   if (data === 'evm') {
+    console.log('hhh')
+    // eslint-disable-next-line vue/no-mutating-props
     props.options.showBwModal = false
-    modal.open({ view: 'Networks' })
+    evmModal.value = true
+    evmWallet.value.openModal()
   } else {
     interchainModal.value = true
   }
 }
 
-store.$subscribe((mutation, state) => {
+store.$subscribe((mutation) => {
   if (mutation.payload) {
     let obj = mutation.payload?.walletOptions
     if (store.walletOptions?.isPerformAction) {
-      const onlyEvm = obj?.providers.every((element) => element === 'evm')
+      const onlyEvm = obj?.providers.every((element: any) => element === 'evm')
       if (onlyEvm) {
+        // eslint-disable-next-line vue/no-mutating-props
         props.options.showBwModal = false
-        modal.open({ view: 'Networks' })
+        evmModal.value = true
+        evmWallet.value.openModal()
       } else {
         interchainModal.value = true
         // store.$patch({
@@ -246,138 +210,4 @@ store.$subscribe((mutation, state) => {
     }
   }
 })
-
-watch(
-  () => events.data,
-  (value) => {
-    console.log(value)
-    if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected) {
-      // getConfigConnection()
-    }
-  }
-)
-
-// const getConfigConnection = async () => {
-
-//   console.log(wagmiConfig.connectors)
-
-//   const current = JSON.parse(localStorage.getItem("wagmi.store")).state.current;
-//   console.log(current)
-//   const conn = wagmiConfig.connectors.find((c) => c.uid === current);
-//   console.log(conn)
-//   const provider = await conn.getProvider();
-//   console.log(provider)
-
-//   const { chainId, address } = getAccount(wagmiConfig)
-//   console.log(chainId, address)
-//   evmResultObject.provider = provider
-
-//   if(store.walletOptions.isPerformAction){
-//     signArbitrary()
-//   }else{
-//     getSignature()
-//   }
-
-// }
-
-// watch(
-//   () => evmResultObject.signProof,
-//   (value: any) => {
-//     console.log(value)
-//     emit('getSignedData', evmResultObject)
-//     // if (value) {
-//     //   emit('getSignedData', evmResultObject)
-//     // } else {
-//     //   console.log('No signature found')
-//     // }
-//   },
-//   { deep: true }
-// )
-
-wagmiConfig.subscribe((value) => {
-  if (value.status === 'connected') {
-    const connectionValue = value.connections.get(value.current)
-    collectProvider(connectionValue)
-  }
-})
-
-const collectProvider = async (connectionValue) => {
-  const provider = await connectionValue.connector.getProvider()
-  console.log(provider)
-  evmResultObject.provider = provider
-
-  const { chainId, address } = getAccount(wagmiConfig)
-  console.log(chainId, address)
-
-  if (store.walletOptions.isPerformAction) {
-    signArbitrary()
-  } else {
-    getSignature()
-  }
-}
-
-const signArbitrary = async () => {
-  try {
-    loading.value = true
-
-    const { chainId, address } = getAccount(wagmiConfig)
-
-    console.log(chainId, address)
-
-    evmResultObject.walletAddress = address
-
-    const payload = {
-      signType: 'eip155',
-      localDidDoc: store.walletOptions.didDocument,
-      wallet: null,
-      chainId: chainId,
-      address: address,
-      provider: evmResultObject.provider
-    }
-
-    const { proof } = await addWallet(payload)
-
-    console.log(proof)
-
-    evmResultObject.signProof = proof
-    // evmResultObject.isSignedVerified = verifed
-
-    console.log(evmResultObject)
-
-    setTimeout(() => {
-      emit('emitSignedData', evmResultObject)
-      props.options.showBwModal = false
-    }, 100)
-  } catch (err) {
-    console.log(err)
-    alert(err.message)
-  } finally {
-    loading.value = false
-    props.options.showBwModal = false
-  }
-}
-
-const getSignature = async () => {
-  const { chainId, address } = getAccount(wagmiConfig)
-
-  evmResultObject.walletAddress = address
-
-  const payload = {
-    chainId: chainId,
-    address: address,
-    clientSpec: 'eth-personalSign',
-    suiteType: 'eth',
-    provider: evmResultObject.provider
-  }
-
-  const { proof, verifed } = await signData(payload)
-
-  evmResultObject.signProof = proof
-  evmResultObject.isSignedVerified = verifed
-
-  setTimeout(() => {
-    emit('emitSignedData', evmResultObject)
-    props.options.showBwModal = false
-  }, 100)
-}
 </script>
