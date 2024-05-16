@@ -133,24 +133,18 @@ const connect = async (item) => {
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
     setTimeout(() => {
       loading.value = false
       if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
         isTaskVerified.value = true
         showExpand.value = false
-      } else {
-        isTaskVerified.value = false
-        showExpand.value = true
       }
-      emit('removeFormData')
     }, 500)
   },
   { deep: true }
 )
 
 const submit = async () => {
-  console.log(props.walletInfo)
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,

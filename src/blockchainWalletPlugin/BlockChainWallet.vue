@@ -1,12 +1,12 @@
 <template>
-  <div class="bw3-modal" ref="bcWallet">
-    <v-dialog v-model="options.showBwModal" max-width="340" max-height="500" persistent>
+  <div ref="bcWallet" class="bw3-modal">
+    <v-dialog v-model="options.showBwModal" max-height="500" max-width="340" persistent>
       <template v-slot:default="{ isActive }">
         <div class="position-relative">
-          <v-card color="rgba(28, 29, 41, 1)" theme="dark" class="rounded-xl py-0" v-if="!loading">
+          <v-card v-if="!loading" class="rounded-xl py-0" color="rgba(28, 29, 41, 1)" theme="dark">
             <v-card-actions class="pa-0">
               <p class="font-weight-bold ml-5">Choose Network</p>
-              <v-btn icon="mdi-close" class="ml-auto" @click="options.showBwModal = false"> </v-btn>
+              <v-btn class="ml-auto" icon="mdi-close" @click="options.showBwModal = false"></v-btn>
             </v-card-actions>
             <v-divider></v-divider>
             <v-row class="pa-5 ma-0">
@@ -16,7 +16,7 @@
                   @click="chooseProvider('evm')"
                 >
                   <v-avatar color="#D4D7DE" size="50">
-                    <img src="./assets/images/ethereum.svg" height="40" />
+                    <img height="40" src="./assets/images/ethereum.svg" />
                   </v-avatar>
                   <div class="pt-3">EVM</div>
                 </div>
@@ -27,7 +27,7 @@
                   @click="chooseProvider('interchain')"
                 >
                   <v-avatar color="#D4D7DE" size="50">
-                    <img src="./assets/images/cosmos.svg" height="40" />
+                    <img height="40" src="./assets/images/cosmos.svg" />
                   </v-avatar>
                   <div class="pt-3">Interchain</div>
                 </div>
@@ -42,45 +42,45 @@
           >
             <div>
               <svg
-                data-v-f98baaca=""
-                data-v-7cc9fe95=""
                 id="loader-1"
+                data-v-7cc9fe95=""
+                data-v-f98baaca=""
+                enable-background="new 0 0 40 40"
+                height="40px"
                 version="1.1"
+                viewBox="0 0 40 40"
+                width="40px"
+                x="0px"
+                xml:space="preserve"
                 xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                x="0px"
                 y="0px"
-                width="40px"
-                height="40px"
-                viewBox="0 0 40 40"
-                enable-background="new 0 0 40 40"
-                xml:space="preserve"
               >
                 <path
-                  data-v-f98baaca=""
                   class="path-1"
-                  opacity="0.2"
-                  fill="#f8f9fa"
                   d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
     s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
     c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"
+                  data-v-f98baaca=""
+                  fill="#f8f9fa"
+                  opacity="0.2"
                 ></path>
                 <path
-                  data-v-f98baaca=""
                   class="path-2"
-                  fill="white"
                   d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
     C22.32,8.481,24.301,9.057,26.013,10.047z"
+                  data-v-f98baaca=""
+                  fill="white"
                 >
                   <animateTransform
-                    data-v-f98baaca=""
-                    attributeType="xml"
                     attributeName="transform"
-                    type="rotate"
-                    from="0 20 20"
-                    to="360 20 20"
+                    attributeType="xml"
+                    data-v-f98baaca=""
                     dur="0.5s"
+                    from="0 20 20"
                     repeatCount="indefinite"
+                    to="360 20 20"
+                    type="rotate"
                   ></animateTransform>
                 </path>
               </svg>
@@ -95,18 +95,18 @@
     <InterChainModal
       ref="interchainWallet"
       v-model="interchainModal"
-      @close="closeModal"
       :options="options"
-      @getWalletAddress="collectWalletAddress"
+      @close="closeModal"
       @getSignedData="collectSignedData"
+      @getWalletAddress="collectWalletAddress"
       @isError="collectError"
     />
     <EvmModal
       ref="evmWallet"
       v-model="evmModal"
       :options="options"
-      @getWalletAddress="collectWalletAddress"
       @getSignedData="collectSignedData"
+      @getWalletAddress="collectWalletAddress"
       @isError="collectError"
     />
   </div>
@@ -118,6 +118,7 @@ import EvmModal from './Evm/index.vue'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from './stores/interchain'
+
 const store = useInterChainStore()
 
 const { challenge, walletOptions } = storeToRefs(store)
@@ -147,8 +148,6 @@ const closeModal = () => {
 }
 
 const collectWalletAddress = (data: any) => {
-  console.log(data)
-  console.log(store.walletOptions)
   emit('emitWalletAddress', data)
   if (data.network === 'evm') {
     // eslint-disable-next-line vue/no-mutating-props
@@ -164,13 +163,11 @@ const collectWalletAddress = (data: any) => {
 }
 
 const collectError = (data: any) => {
-  console.error(data)
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
   loading.value = false
 }
 const collectSignedData = (data: any) => {
-  console.log(data)
   emit('emitSignedData', data)
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
@@ -181,7 +178,6 @@ const collectSignedData = (data: any) => {
 const chooseProvider = (data: any) => {
   emit('emitProvider', data)
   if (data === 'evm') {
-    console.log('hhh')
     // eslint-disable-next-line vue/no-mutating-props
     props.options.showBwModal = false
     evmModal.value = true
@@ -192,17 +188,15 @@ const chooseProvider = (data: any) => {
 }
 
 watchEffect(async () => {
-  console.log(store.walletOptions)
   if (store.walletOptions.showBwModal) {
     if (store.walletOptions.selectedNetwork === 'evm') {
-      console.log('culprit here')
       props.options.showBwModal = false
       evmModal.value = true
       evmWallet.value.openModal()
-    } else if(store.walletOptions.selectedNetwork === 'interchain') {
+    } else if (store.walletOptions.selectedNetwork === 'interchain') {
       props.options.showBwModal = false
       interchainModal.value = true
-    }else {
+    } else {
       props.options.showBwModal = true
     }
   }

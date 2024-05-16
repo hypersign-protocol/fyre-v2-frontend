@@ -134,9 +134,6 @@ watch(
       if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
         isTaskVerified.value = true
         showExpand.value = false
-      } else {
-        isTaskVerified.value = false
-        showExpand.value = true
       }
     }, 500)
   },

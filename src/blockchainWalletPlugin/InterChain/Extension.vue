@@ -91,8 +91,6 @@ watch(
 )
 
 onMounted(() => {
-  console.log(props.options)
-  // interChainObject.selectedExtension = 'extension'
   setTimeout(() => {
     makeConnection()
   }, 200)
@@ -151,7 +149,6 @@ watch(
   () => interChainResultObject.walletAddress,
   async (value) => {
     if (value) {
-      console.log(`Wallet Address: ${value}`)
       emit('getWalletAddress', interChainResultObject)
       if (props.options.isPerformAction) {
         signArbitrary()
@@ -164,22 +161,12 @@ watch(
 
 watch(
   () => store.walletOptions,
-  (value) => {
-    console.log(value)
-  }
-)
-
-watch(
-  () => interChainResultObject.signProof,
-  (value) => {
-    console.log(value)
-  }
+  (value) => {}
 )
 
 watch(
   () => interChainResultObject.isSignedVerified,
   (value) => {
-    console.log(value)
     if (value) {
       loading.value = false
       emit('close')
@@ -188,31 +175,19 @@ watch(
 )
 
 const WC_PROJECT_ID = '2b7d5a2da89dd74fed821d184acabf95'
-const SIGN_ARBITRARY_MSG = Buffer.from(
-  'Hi from CosmeES! This is a test message just to prove that the wallet is working.'
-)
-const TX_MEMO = 'signed via cosmes'
 
 const CONTROLLERS = {
-  // [WalletName.STATION]: new StationController(),
   [WalletName.KEPLR]: new KeplrController(WC_PROJECT_ID),
   [WalletName.LEAP]: new LeapController(WC_PROJECT_ID)
-  // [WalletName.COMPASS]: new CompassController(),
-  // [WalletName.COSMOSTATION]: new CosmostationController(WC_PROJECT_ID),
-  // [WalletName.METAMASK_INJECTIVE]: new MetamaskInjectiveController(),
-  // [WalletName.NINJI]: new NinjiController()
 }
 
 const signArbitrary = async () => {
-  console.log(store.walletOptions.didDocument)
   try {
     loading.value = true
 
     const wallet = Object.fromEntries(interChainResultObject.walletObj)[
       store.interChainObject.selectedChain
     ]
-
-    console.log(store)
 
     const payload = {
       signType: 'cosmos',
@@ -222,8 +197,6 @@ const signArbitrary = async () => {
 
     const { proof, verifed } = await addWallet(payload)
 
-    console.log(proof, verifed)
-
     interChainResultObject.signProof = proof
     interChainResultObject.isSignedVerified = verifed
 
@@ -231,7 +204,6 @@ const signArbitrary = async () => {
     emit('close')
   } catch (err) {
     console.log(err)
-    alert(err.message)
   } finally {
     loading.value = false
     emit('close')
