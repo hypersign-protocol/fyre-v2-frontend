@@ -144,7 +144,7 @@
                 </div>
                 <v-card class="event-task--card">
                   <template v-if="tasks.length > 0">
-                    <template v-for="(task, index) in tasks">
+                    <template v-for="(task, index) in tasks" :key="index">
                       <Task
                         :task="task"
                         :communityId="eventById.communityId"
@@ -282,7 +282,7 @@ import { useEventStore } from '@/store/event.ts'
 import { useAuthStore } from '@/store/auth.ts'
 import { isEventHappening } from '@/composables/event.ts'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
-import { getToken } from '@/composables/jwtService.ts'
+import { getToken, getUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
 
 const authStore = useAuthStore()
@@ -311,6 +311,10 @@ const token = computed(() => {
   return getToken()
 })
 
+const authUser = computed(() => {
+  return getUser()
+})
+
 const formData = reactive({
   walletAddress: null,
   signedDidDoc: null,
@@ -323,7 +327,7 @@ const options = reactive({
   chains: [''],
   isRequiredDID: false,
   isPerformAction: true,
-  didDocument: authStore.userMeta.didDocument,
+  didDocument: authUser.value.didDocument,
   addVerificationMethod: true,
   selectedNetwork: null
 })
@@ -357,14 +361,14 @@ const clearWalletInfo = async () => {
 }
 
 const logWallet = async (data) => {
-  console.log(authStore.userMeta)
+  console.log(authUser.value)
   console.log(typeof data.network)
   console.log(data.network)
   options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
   options.selectedNetwork = data.network
   options.showBwModal = true
   formData.taskId = data.taskId
-  options.didDocument = authStore.userMeta.didDocument
+  options.didDocument = authUser.value.didDocument
   console.log(options)
 
   setTimeout(async () => {
@@ -385,19 +389,12 @@ const checkEventStarted = () => {
   } else {
     isEventHappeningTrue.value = false
   }
-  fetchUserData()
 }
 
 watch(
   () => activeTab.value,
   (value: any) => {}
 )
-
-const fetchUserData = async () => {
-  setTimeout(async () => {
-    await authStore.USER_AUTHORIZE()
-  }, 200)
-}
 
 watch(
   () => eventErr.value,

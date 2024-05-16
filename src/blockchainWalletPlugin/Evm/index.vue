@@ -99,7 +99,6 @@ const evmResultObject = reactive({
 watch(
   () => evmResultObject.signProof,
   (value) => {
-    console.log(value)
     if (value) {
       setTimeout(() => {
         emit('getSignedData', evmResultObject)
@@ -118,33 +117,37 @@ watch(
   }
 )
 
+// wagmiConfig.subscribe((value) => {
+//   if (value.status === 'connected') {
+//     const connectionValue = value.connections.get(value.current)
+//     collectProvider(connectionValue)
+//   }
+// })
+
+// the damn fix
+
+let collectProviderInvoked = false
 wagmiConfig.subscribe((value) => {
   if (value.status === 'connected') {
     const connectionValue = value.connections.get(value.current)
-    collectProvider(connectionValue)
+    if (!collectProviderInvoked) {
+      collectProviderInvoked = true
+      collectProvider(connectionValue)
+    }
   }
 })
 
 const collectProvider = async (connectionValue) => {
-  console.log(store.walletOptions)
-
   const provider = await connectionValue.connector.getProvider()
-  console.log(provider)
+
   evmResultObject.provider = provider
 
   const { chainId, address } = getAccount(wagmiConfig)
-  console.log(chainId, address)
 
   evmResultObject.chainId = chainId
   evmResultObject.walletAddress = address
 
   emit('getWalletAddress', evmResultObject)
-
-  // if (store.walletOptions.isPerformAction) {
-  //   signArbitrary()
-  // } else {
-  //   getSignature()
-  // }
 }
 
 const signArbitrary = async () => {
@@ -152,8 +155,6 @@ const signArbitrary = async () => {
     loading.value = true
 
     const { chainId, address } = getAccount(wagmiConfig)
-
-    console.log(chainId, address)
 
     evmResultObject.walletAddress = address
 
@@ -166,14 +167,10 @@ const signArbitrary = async () => {
       provider: evmResultObject.provider
     }
 
-    const { proof } = await addWallet(payload)
-
-    console.log(proof)
+    const { proof, verifed } = await addWallet(payload)
 
     evmResultObject.signProof = proof
-    // evmResultObject.isSignedVerified = verifed
-
-    console.log(evmResultObject)
+    evmResultObject.isSignedVerified = verifed
 
     setTimeout(() => {
       emit('getSignedData', evmResultObject)
@@ -181,7 +178,6 @@ const signArbitrary = async () => {
     }, 100)
   } catch (err) {
     console.log(err)
-    alert(err.message)
   } finally {
     loading.value = false
     props.options.showBwModal = false
@@ -213,7 +209,6 @@ const openModal = () => {
 }
 
 const closeModal = () => {
-  console.log('close')
   store.walletOptions.showBwModal = false
   close()
 }

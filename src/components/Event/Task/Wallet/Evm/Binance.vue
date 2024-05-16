@@ -78,7 +78,6 @@ const { performResult } = storeToRefs(useEventParticipantStore())
 watch(
   () => performResult.value,
   (value: any) => {
-    console.log(performResult.value.tasks)
     if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
       isTaskVerified.value = true
     } else {
