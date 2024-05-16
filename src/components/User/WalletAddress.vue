@@ -262,7 +262,7 @@ const items = ref([
   {
     title: 'Ethereum',
     address: null,
-    image: new URL(`@/assets/images/task/archway.png`, import.meta.url).href,
+    image: new URL(`@/assets/images/task/ethereum.png`, import.meta.url).href,
     isAddress: false,
     chainId: '1',
     provider: 'eip155'
