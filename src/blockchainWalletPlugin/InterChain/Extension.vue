@@ -1,56 +1,36 @@
 <template>
-  <v-card color="rgba(28, 29, 41, 1)" theme="dark" min-height="280" class="rounded-xl py-0">
+  <v-card class="rounded-xl py-0" color="rgba(28, 29, 41, 1)" min-height="280" theme="dark">
     <v-card-actions class="pa-2 d-flex align-center justify-space-between">
       <v-btn icon="mdi-arrow-left" @click="prevStep"></v-btn>
-      <p class="font-weight-bold">{{ getWallet(interChainObject.selectedWallet).name }}</p>
-      <v-btn icon="mdi-close" @click="$emit('close')"> </v-btn>
+      <p class="font-weight-bold">{{ getWallet(interChainObject?.selectedWallet).name }}</p>
+      <v-btn icon="mdi-close" @click="$emit('close')"></v-btn>
     </v-card-actions>
     <v-divider></v-divider>
-    <div class="d-flex align-center justify-center fill-height pa-6" v-if="loading">
+    <div v-if="loading" class="d-flex align-center justify-center fill-height pa-6">
       <v-progress-circular
-        class="d-flex align-center justify-center"
         alicolor="primary"
-        size="32"
+        class="d-flex align-center justify-center"
         indeterminate
+        size="32"
       ></v-progress-circular>
     </div>
   </v-card>
 </template>
 <script lang="ts" setup>
-import { ref, watch, computed, reactive, toRef, toRefs, onMounted } from 'vue'
-import { purposes } from 'jsonld-signatures'
-import jsSig from 'jsonld-signatures'
-import { base58btc } from 'multiformats/bases/base58'
-import { EcdsaSecp256k1Signature2019 } from 'keplr-ecdsasecp256k1signature2019'
+import { onMounted, reactive, ref, watch } from 'vue'
 
-import { docloader, initializeDidSDK, signData, addWallet } from '../utils'
-import { getImageUrl } from '../composables/general.ts'
-import { getGasPrice } from '../composables/gasUtils.ts'
-import { getRpc } from '../composables/rpcUtils.ts'
+import { addWallet, signData } from '../utils'
 import { chains } from '../composables/chainsData.ts'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain'
-const store = useInterChainStore()
-
-const { interChainObject, challenge } = storeToRefs(store)
-
 import { wallets } from '../composables/walletData.ts'
 
-import {
-  CompassController,
-  ConnectedWallet,
-  CosmostationController,
-  KeplrController,
-  LeapController,
-  MetamaskInjectiveController,
-  NinjiController,
-  StationController,
-  WalletController,
-  WalletName,
-  WalletType
-} from 'cosmes/wallet'
-import { Buffer } from 'buffer'
+import { KeplrController, LeapController, WalletName } from 'cosmes/wallet'
+
+const store = useInterChainStore()
+
+const { interChainObject } = storeToRefs(store)
 
 const emit = defineEmits(['changeStep', 'close', 'getSignedData'])
 
@@ -64,7 +44,7 @@ const props = defineProps({
   }
 })
 
-const prevStep = (item) => {
+const prevStep = (item: any) => {
   store.$patch({
     interChainObject: {
       ...{
@@ -81,7 +61,7 @@ const showQrCode = ref(false)
 const loading = ref(false)
 
 watch(
-  () => store.interChainObject.selectedExtension,
+  () => store.interChainObject?.selectedExtension,
   (value) => {
     if (value) {
       showQrCode.value = value !== 'extension' ? true : false
@@ -110,7 +90,7 @@ const interChainResultObject = reactive({
   chainId: null
 })
 
-const getRpcAndGasPriceByType = (type) => {
+const getRpcAndGasPriceByType = (type: any) => {
   for (const obj of chains) {
     if (obj.type === type) {
       return {

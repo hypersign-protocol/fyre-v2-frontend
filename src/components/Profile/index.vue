@@ -97,7 +97,7 @@
             </defs>
           </svg>
         </a>
-        <a :href="`https://twitter.com/${user?.socials?.twitterHandle}`" target="_blank">
+        <a :href="`https://twitter.com/${userMeta?.socials?.twitterHandle}`" target="_blank">
           <svg
             width="24"
             height="24"

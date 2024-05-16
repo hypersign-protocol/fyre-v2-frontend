@@ -6,16 +6,15 @@
       /></a>
     </template>
     <template v-slot:append>
-      <div class="mr-6">
+      <div class="mr-6" v-if="!mobile">
         <v-btn
-          v-if="!mobile"
           class="cursor-pointer"
           v-for="(item, index) in menu"
           :key="index"
           @click="router.push({ path: `${item.link}` })"
           :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'"
-          >{{ item.title }}</v-btn
-        >
+          >{{ item.title }}
+        </v-btn>
       </div>
       <v-btn
         color="secondary"
@@ -48,17 +47,17 @@
 
       <template v-if="isUserLoggedIn">
         <v-avatar id="menu-activator" class="cursor-pointer">
-          <v-img v-if="userMeta.avatar" :src="userMeta.avatar"></v-img>
+          <v-img v-if="userMeta?.avatar" :src="userMeta?.avatar"></v-img>
           <v-img v-else src="@/assets/images/user-profile.png"></v-img>
         </v-avatar>
 
         <v-menu activator="#menu-activator">
           <v-list density="compact" class="menu__wrap">
-            <v-list-subheader class="text-center" v-if="userMeta.userName"
-              >Welcome, {{ userMeta.userName }}</v-list-subheader
-            >
-            <v-list-subheader class="text-center" v-else>Welcome, User</v-list-subheader>
-
+            <v-list-subheader class="text-center">
+              Welcome,
+              <strong v-if="userMeta?.userName">{{ userMeta?.userName }}</strong>
+              <strong v-else>User</strong>
+            </v-list-subheader>
             <v-list-item
               v-for="(item, i) in userMenu"
               :key="i"
@@ -93,16 +92,18 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch, reactive } from 'vue'
+import { ref, onMounted, computed, watch, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
-const { mobile, mdAndDown } = useDisplay()
+
+const { mobile } = useDisplay()
 const router = useRouter()
 const route = useRoute()
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser } from '@/composables/jwtService.ts'
+
 const authStore = useAuthStore()
-const { challenge, loginRes, userMeta } = storeToRefs(useAuthStore())
+const { challenge, userMeta } = storeToRefs(useAuthStore())
 
 const user = computed(() => {
   return getUser()
@@ -165,16 +166,7 @@ watch(
   { deep: true }
 )
 
-// watch(
-//   () => authStore.userMeta,
-//   (value: any) => {
-//     localStorage.setItem('user', JSON.stringify(value))
-//     location.reload()
-//   },
-//   { deep: true }
-// )
-
-const navigate = (item) => {
+const navigate = (item: any) => {
   window.location.href = `${item.link}`
 }
 
@@ -184,7 +176,7 @@ const showLogin = () => {
   document.getElementById('update-challenge').click()
 }
 
-const getProvider = async (data) => {
+const getProvider = async (data: any) => {
   if (data) {
     await authStore.USER_LOGIN(`?provider=${data}-wallet`)
   } else {
@@ -192,11 +184,11 @@ const getProvider = async (data) => {
   }
 }
 
-const collectWalletAddress = async (data) => {
+const collectWalletAddress = async (data: any) => {
   console.log(data)
 }
 
-const collectSignedData = async (data) => {
+const collectSignedData = async (data: any) => {
   console.log(data)
   if (data.signProof) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
@@ -214,8 +206,8 @@ const logout = () => {
   location.reload()
 }
 
-const isActive = (item) => {
-  return currentRouteName.value === item.link ? true : false
+const isActive = (item: any) => {
+  return currentRouteName.value === item.link
 }
 
 onMounted(() => {

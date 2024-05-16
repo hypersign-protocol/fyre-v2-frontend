@@ -148,9 +148,24 @@ const fetchUserData = async () => {
 }
 
 const updateWallet = () => {
-  setTimeout(async () => {
-    await store.UPDATE_USER_PROFILE(formData)
-  }, 100)
+  let uniqueAccounts = new Set()
+  let uniqueData = []
+
+  formData.signedDidDoc.forEach((item) => {
+    let accountId = item.blockchainAccountId
+    if (!uniqueAccounts.has(accountId)) {
+      uniqueData.push(item)
+      uniqueAccounts.add(accountId)
+    }
+  })
+
+  formData.signedDidDoc = uniqueData
+
+  console.log(formData)
+
+  // setTimeout(async () => {
+  //   await store.UPDATE_USER_PROFILE(formData)
+  // }, 100)
 }
 
 const connectWallet = async (item) => {

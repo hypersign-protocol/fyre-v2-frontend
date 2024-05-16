@@ -201,7 +201,7 @@ export const addWallet = async (payload) => {
 
     let localDidKey = '#key-1'
 
-    if (store.walletOptions.addVerificationMethod) {
+    if (store.walletOptions.addVerificationMethod && !isBlockchainAccountIdVerified) {
       localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
 
       const addVerification = await hsSDK.addVerificationMethod({

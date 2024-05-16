@@ -2,16 +2,14 @@
   <div></div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, inject, onMounted, onUpdated, onUnmounted } from 'vue'
-import { walletOptionsInject } from './'
+import { reactive, ref, watch } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain'
-const store = useInterChainStore()
-import { docloader, initializeDidSDK, signData, addWallet } from '../utils'
+import { addWallet, signData } from '../utils'
 
-import { mainnet, bsc, polygon } from '@wagmi/core/chains'
-import { Connection, getAccount, signTypedData } from '@wagmi/core'
+import { bsc, mainnet, polygon } from '@wagmi/core/chains'
+import { Connection, getAccount } from '@wagmi/core'
 
 import {
   createWeb3Modal,
@@ -21,10 +19,9 @@ import {
   useWeb3ModalState,
   useWeb3ModalTheme
 } from '@web3modal/wagmi/vue'
+import { coinbaseWallet } from '@wagmi/connectors'
 
-import { reconnect } from '@wagmi/core'
-import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
-import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
+const store = useInterChainStore()
 
 const { challenge } = storeToRefs(store)
 
@@ -41,12 +38,10 @@ const props = defineProps({
 const loading = ref(false)
 
 const emit = defineEmits(['close', 'getSignedData', 'getWalletAddress'])
-
-let reactiveConnector = reactive({
+reactive({
   connector: {} as any as Connection
 })
 
-// @ts-expect-error 1. Get projectId
 const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
 if (!projectId) {
   throw new Error('VITE_PROJECT_ID is not set')

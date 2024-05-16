@@ -50,9 +50,9 @@ export const useUserStore = defineStore('user', {
         return []
       }
     },
-    async USER_COMMUNITIES(): Promise<CommunityType[]> {
+    async USER_COMMUNITIES(filter: string): Promise<CommunityType[]> {
       try {
-        const response: AxiosResponse<CommunityType[]> = await axios.get(`/user/community`)
+        const response: AxiosResponse<CommunityType[]> = await axios.get(`/user/community${filter}`)
 
         if (response.success) {
           this.communities = response.data
