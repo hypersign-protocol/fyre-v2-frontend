@@ -249,7 +249,6 @@
     @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
-  <div id="receive-options" @click="receiveSignedData"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'

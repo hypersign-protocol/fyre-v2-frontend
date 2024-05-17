@@ -106,7 +106,7 @@
       v-model="evmModal"
       :options="options"
       @getSignedData="collectSignedData"
-      @getWalletAddress="collectWalletAddress"
+      @getEvmWalletAddress="collectEvmWalletAddress"
       @isError="collectError"
     />
   </div>
@@ -125,7 +125,30 @@ const { challenge, walletOptions } = storeToRefs(store)
 
 const loading = ref(false)
 
-const emit = defineEmits(['emitProvider', 'emitWalletAddress', 'emitSignedData'])
+const emit = defineEmits({
+  emitProvider: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  emitWalletAddress: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
+  },
+  emitSignedData: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
+  }
+})
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -147,19 +170,14 @@ const closeModal = () => {
   interchainModal.value = false
 }
 
+const collectEvmWalletAddress = (data: any) => {
+  emit('emitWalletAddress', data)
+  console.log(data)
+}
+
 const collectWalletAddress = (data: any) => {
   emit('emitWalletAddress', data)
-  if (data.network === 'evm') {
-    // eslint-disable-next-line vue/no-mutating-props
-    props.options.showBwModal = true
-    loading.value = true
-    if (store.walletOptions.isPerformAction) {
-      evmWallet.value.signArbitrary()
-    } else {
-      evmWallet.value.generateDidDoc()
-    }
-  } else {
-  }
+  console.log(data)
 }
 
 const collectError = (data: any) => {
@@ -172,7 +190,9 @@ const collectSignedData = (data: any) => {
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
   loading.value = false
-  evmWallet.value.closeModal()
+  if (data.network === 'evm') {
+    evmWallet.value.closeModal()
+  }
 }
 
 const chooseProvider = (data: any) => {
@@ -187,18 +207,22 @@ const chooseProvider = (data: any) => {
   }
 }
 
-watchEffect(async () => {
-  if (store.walletOptions.showBwModal) {
-    if (store.walletOptions.selectedNetwork === 'evm') {
-      props.options.showBwModal = false
-      evmModal.value = true
-      evmWallet.value.openModal()
-    } else if (store.walletOptions.selectedNetwork === 'interchain') {
-      props.options.showBwModal = false
-      interchainModal.value = true
-    } else {
-      props.options.showBwModal = true
+watch(
+  () => store.walletOptions,
+  (value) => {
+    if (value.showBwModal) {
+      if (value.selectedNetwork === 'evm') {
+        props.options.showBwModal = false
+        evmModal.value = true
+        evmWallet.value.openModal()
+      } else if (value.selectedNetwork === 'interchain') {
+        props.options.showBwModal = false
+        interchainModal.value = true
+      } else {
+        props.options.showBwModal = true
+      }
     }
-  }
-})
+  },
+  { deep: true }
+)
 </script>

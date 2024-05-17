@@ -142,7 +142,6 @@ const telegramConnection = () => {
   window.Telegram.Login.auth(
     { bot_id: import.meta.env.VITE_APP_TELEGRAM_BOT_ID, request_access: true },
     (data) => {
-      console.log(data)
       if (data) {
         formData.tgUserId = data.id
       } else {
@@ -188,7 +187,6 @@ const twitterConnection = () => {
 watch(
   () => formData.socialAccessToken,
   (value: any) => {
-    console.log(value)
     updateSocialProfile()
   },
   { deep: true }
@@ -197,7 +195,6 @@ watch(
 watch(
   () => formData.tgUserId,
   (value: any) => {
-    console.log(value)
     updateSocialProfile()
   },
   { deep: true }
@@ -206,7 +203,6 @@ watch(
 watch(
   () => store.userProfileResponse,
   (value: any) => {
-    console.log(value)
     loading.value = false
     store.USER_AUTHORIZE()
   },

@@ -115,9 +115,10 @@ const collectWalletAddress = async (data) => {
 
 const collectSignedData = async (data) => {
   formData.walletAddress = data.walletAddress
-  data.signProof.alsoKnownAs.push(store.userMeta.userName)
-  data.signProof.alsoKnownAs = [...new Set(data.signProof.alsoKnownAs)]
-  formData.signedDidDoc = removeDuplicatesInSignedDidDoc(data.signProof)
+  // data.signProof.alsoKnownAs.push(store.userMeta.userName)
+  // data.signProof.alsoKnownAs = [...new Set(data.signProof.alsoKnownAs)]
+  // formData.signedDidDoc = removeDuplicatesInSignedDidDoc(data.signProof)
+  formData.signedDidDoc = data.signProof
 }
 
 watch(
@@ -183,6 +184,9 @@ watch(
 
 const updateProfile = () => {
   if (store.userMeta.userName) {
+    store.userMeta.didDocument.alsoKnownAs.push(store.userMeta.userName)
+    store.userMeta.didDocument.alsoKnownAs = [...new Set(store.userMeta.didDocument.alsoKnownAs)]
+
     const vm = store.userMeta.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {

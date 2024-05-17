@@ -32,7 +32,7 @@ const store = useInterChainStore()
 
 const { interChainObject } = storeToRefs(store)
 
-const emit = defineEmits(['changeStep', 'close', 'getSignedData'])
+const emit = defineEmits(['changeStep', 'close', 'getSignedData', 'getWalletAddress'])
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -136,12 +136,8 @@ watch(
         getSignature()
       }
     }
-  }
-)
-
-watch(
-  () => store.walletOptions,
-  (value) => {}
+  },
+  { deep: true }
 )
 
 watch(
@@ -151,7 +147,8 @@ watch(
       loading.value = false
       emit('close')
     }
-  }
+  },
+  { deep: true }
 )
 
 const WC_PROJECT_ID = '2b7d5a2da89dd74fed821d184acabf95'

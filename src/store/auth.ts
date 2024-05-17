@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import axios, { AxiosError, AxiosResponse } from '@/utils/axios'
 
 import { saveUser } from '@/composables/jwtService.ts'
+import { removeDuplicatesInSignedDidDoc } from '@/composables/general.ts'
 
 import { useNotificationStore } from './notification.ts'
 
@@ -22,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         this.challenge = await axios.get(`/login${filter}`)
       } catch (error: AxiosError) {
-        await notificationStore.SHOW_NOTIFICATION({
+        notificationStore.SHOW_NOTIFICATION({
           show: true,
           type: 'error',
           message: error.message
@@ -38,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
           this.loginRes = response.data
           return response.data
         } else {
-          await notificationStore.SHOW_NOTIFICATION({
+          notificationStore.SHOW_NOTIFICATION({
             show: true,
             type: 'error',
             message: response.message
@@ -46,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        await notificationStore.SHOW_NOTIFICATION({
+        notificationStore.SHOW_NOTIFICATION({
           show: true,
           type: 'error',
           message: error.message
@@ -56,20 +57,21 @@ export const useAuthStore = defineStore('auth', {
     },
     UPDATE_USER_PROFILE: async function (payload: Object): Promise<any> {
       try {
-        const response = await Promise.all([
-          axios.patch(`/user?editMode=${payload.editMode}`, payload, {
+        const response: AxiosResponse = await axios.patch(
+          `/user?editMode=${payload.editMode}`,
+          payload,
+          {
             headers: {
               'x-hf-social-accesstoken': payload.socialAccessToken
             }
-          })
-        ])
+          }
+        )
 
         if (response.success) {
           this.userProfileResponse = response.data
-
           return response.data
         } else {
-          await notificationStore.SHOW_NOTIFICATION({
+          notificationStore.SHOW_NOTIFICATION({
             show: true,
             type: 'error',
             message: response.message
@@ -77,7 +79,7 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        await notificationStore.SHOW_NOTIFICATION({
+        notificationStore.SHOW_NOTIFICATION({
           show: true,
           type: 'error',
           message: error.error.details
@@ -92,10 +94,12 @@ export const useAuthStore = defineStore('auth', {
 
         if (response.success) {
           this.userMeta = response.data
+          const formattedDidDoc = removeDuplicatesInSignedDidDoc(response.data.didDocument)
+          response.data.didDocument = formattedDidDoc
           saveUser(response.data)
           return response
         } else {
-          await notificationStore.SHOW_NOTIFICATION({
+          notificationStore.SHOW_NOTIFICATION({
             show: true,
             type: 'error',
             message: response.message
@@ -103,7 +107,7 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        await notificationStore.SHOW_NOTIFICATION({
+        notificationStore.SHOW_NOTIFICATION({
           show: true,
           type: 'error',
           message: error.error.details
@@ -120,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
 
           return response.data
         } else {
-          await notificationStore.SHOW_NOTIFICATION({
+          notificationStore.SHOW_NOTIFICATION({
             show: true,
             type: 'error',
             message: response.message
@@ -128,7 +132,7 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        await notificationStore.SHOW_NOTIFICATION({
+        notificationStore.SHOW_NOTIFICATION({
           show: true,
           type: 'error',
           message: error.message

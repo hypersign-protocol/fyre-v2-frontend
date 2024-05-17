@@ -147,7 +147,6 @@ const menu = ref([
 watch(
   () => authStore.challenge,
   (value: any) => {
-    console.log(value)
     options.challenge = value.challenge
     document.getElementById('update-challenge').click()
   },
@@ -184,12 +183,9 @@ const getProvider = async (data: any) => {
   }
 }
 
-const collectWalletAddress = async (data: any) => {
-  console.log(data)
-}
+const collectWalletAddress = async (data: any) => {}
 
 const collectSignedData = async (data: any) => {
-  console.log(data)
   if (data.signProof) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
   } else {
@@ -209,8 +205,4 @@ const logout = () => {
 const isActive = (item: any) => {
   return currentRouteName.value === item.link
 }
-
-onMounted(() => {
-  console.log(mobile.value) // false
-})
 </script>

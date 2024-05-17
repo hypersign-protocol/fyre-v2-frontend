@@ -143,19 +143,35 @@ export const signData = async (payload) => {
   }
 }
 
-const verifyBlockchainAccountId = (didDoc, provider, chainId, chainAddress) => {
-  const verificationMethods = didDoc.verificationMethod
+const removeDuplicatesInSignedDidDoc = (data) => {
+  if (data) {
+    const verificationMethods = data.verificationMethod
+    const uniqueBlockchainAccountIds = new Set()
+    let counter = 1
 
-  for (const method of verificationMethods) {
-    if (
-      method.blockchainAccountId &&
-      method.blockchainAccountId.startsWith(`${provider}:${chainId}:${chainAddress}`)
-    ) {
-      return true // Found matching blockchainAccountId
-    }
+    const filteredVerificationMethods = verificationMethods
+      .map((method) => {
+        const blockchainAccountId = method.blockchainAccountId
+
+        if (blockchainAccountId.includes('undefined')) {
+          return null
+        }
+
+        if (uniqueBlockchainAccountIds.has(blockchainAccountId)) {
+          return null
+        }
+
+        uniqueBlockchainAccountIds.add(blockchainAccountId)
+        const idParts = method.id.split('#')
+        const newId = `${idParts[0]}#key-${counter++}`
+        return { ...method, id: newId }
+      })
+      .filter(Boolean)
+
+    data.verificationMethod = filteredVerificationMethods
+
+    return data
   }
-
-  return false // Not found
 }
 
 //connet wallet and add verification methods
@@ -192,16 +208,17 @@ export const addWallet = async (payload) => {
 
     const hsSDK = initializeDidSDK()
 
-    const isBlockchainAccountIdVerified = verifyBlockchainAccountId(
-      localDidDoc,
-      signType,
-      chainId,
-      address
+    const targetBlockchainAccountId = `${signType}:${chainId}:${address}`
+
+    const exists = localDidDoc.verificationMethod.some(
+      (method) => method.blockchainAccountId === targetBlockchainAccountId
     )
+
+    console.log(exists)
 
     let localDidKey = '#key-1'
 
-    if (store.walletOptions.addVerificationMethod && !isBlockchainAccountIdVerified) {
+    if (store.walletOptions.addVerificationMethod && !exists) {
       localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
 
       const addVerification = await hsSDK.addVerificationMethod({
@@ -217,12 +234,20 @@ export const addWallet = async (payload) => {
     }
 
     const length = localDidDoc.verificationMethod.length
+
     if (localDidDoc.verificationMethod[length - 1].publicKeyMultibase === undefined) {
       localDidDoc.verificationMethod[length - 1]['publicKeyMultibase'] = ''
     }
 
     delete localDidDoc.service
-    const proof = await jsSig.sign(localDidDoc, {
+
+    console.log(localDidDoc)
+
+    const formattedDidDoc = removeDuplicatesInSignedDidDoc(localDidDoc)
+
+    console.log(formattedDidDoc)
+
+    const proof = await jsSig.sign(formattedDidDoc, {
       suite,
       purpose: new purposes.AssertionProofPurpose({
         controller: {
@@ -245,6 +270,8 @@ export const addWallet = async (payload) => {
       }),
       documentLoader: wallet?.pubKey ? docloader1 : docloader
     })
+
+    console.log(proof)
 
     return { proof, verifed }
   } catch (err) {
