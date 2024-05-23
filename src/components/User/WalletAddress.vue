@@ -103,15 +103,23 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
+  console.log('Inside collectWalletAddress', data)
+
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
+  console.log('Inside collect Sign data method', data)
+
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
 
   if (formData.walletAddress !== null && formData.signedDidDoc !== null) {
+    console.log('Before calling update wallet')
+
     updateWallet()
+  } else {
+    console.log('formData wallet and signDiddoc is null')
   }
 }
 
@@ -135,6 +143,8 @@ watchEffect(() => {
 
 const updateWallet = () => {
   setTimeout(async () => {
+    console.log('Before calling store update user profile')
+
     await store.UPDATE_USER_PROFILE(formData)
   }, 100)
 }

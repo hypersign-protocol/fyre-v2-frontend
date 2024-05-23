@@ -53,6 +53,8 @@ const sendWalletAddress = (data) => {
   emit('getWalletAddress', data)
 }
 const sendSignedData = (data) => {
+  console.log("Inside sendSignedData  before emiting getSignedData");
+
   emit('getSignedData', data)
 }
 

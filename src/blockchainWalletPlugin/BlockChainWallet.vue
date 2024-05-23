@@ -186,6 +186,8 @@ const collectError = (data: any) => {
   loading.value = false
 }
 const collectSignedData = (data: any) => {
+  console.log("Inside collectSignedData  before emiting emitSignedData");
+  
   emit('emitSignedData', data)
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
