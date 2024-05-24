@@ -325,7 +325,7 @@ const options = reactive({
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true,
+  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true, 
   didDocument: authUser.value.didDocument,
   addVerificationMethod: true,
   selectedNetwork: null
@@ -354,10 +354,24 @@ const collectWalletAddress = async (data) => {
   formData.walletAddress = data.walletAddress
 }
 
-const collectSignedData = async (data) => {
-  console.log(data)
-  formData.walletAddress = data.walletAddress
-  formData.signedDidDoc = data.signProof
+// const collectSignedData = async (data) => {
+
+// }
+
+const collectSignedData = async (data: any) => {
+  console.log('Inside collectSignedData...')
+  if (authUser.value.didDocument) {
+
+    formData.walletAddress = data.walletAddress
+    formData.signedDidDoc = data.signProof
+  } else {
+    if (data.signProof) {
+      await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
+    } else {
+      console.log('Please select the provider before you proceed')
+    }
+  }
+
 }
 
 const clearWalletInfo = async () => {
