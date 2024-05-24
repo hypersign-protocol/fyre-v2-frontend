@@ -57,6 +57,8 @@ export const useAuthStore = defineStore('auth', {
     },
     UPDATE_USER_PROFILE: async function (payload: Object): Promise<any> {
       try {
+        console.log("Inside updateUserProfile method");
+        
         const response: AxiosResponse = await axios.patch(
           `/user?editMode=${payload.editMode}`,
           payload,

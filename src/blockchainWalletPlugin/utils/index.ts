@@ -244,8 +244,9 @@ export const addWallet = async (payload) => {
     console.log(localDidDoc)
 
     const formattedDidDoc = removeDuplicatesInSignedDidDoc(localDidDoc)
+    delete formattedDidDoc.keyAgreement
 
-    console.log(formattedDidDoc)
+    console.log({ formattedDidDoc, suite, id: `${localDidDoc.id}${localDidKey}` })
 
     const proof = await jsSig.sign(formattedDidDoc, {
       suite,

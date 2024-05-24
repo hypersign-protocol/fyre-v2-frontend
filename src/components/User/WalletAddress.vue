@@ -4,10 +4,7 @@
     <p class="title">Network Lists</p>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
-        <div
-          class="wallet__address__container base-style"
-          :class="checkIfExists(item) ? 'address' : ''"
-        >
+        <div class="wallet__address__container base-style" :class="checkIfExists(item) ? 'address' : ''">
           <div class="tag" v-if="item.address">Controller</div>
           <div class="wallet__header">
             <div class="wallet__meta">
@@ -19,26 +16,18 @@
             </div>
           </div>
           <div class="wallet__footer">
-            <v-btn v-if="!item.address" color="white" variant="flat" @click="connectWallet(item)"
-              >Connect Wallet</v-btn
-            >
+            <v-btn v-if="!item.address" color="white" variant="flat" @click="connectWallet(item)">Connect Wallet</v-btn>
             <v-btn class="base-btn" v-if="item.address" color="white" variant="text">
               {{ getAddress(item.address) }}
-              <v-icon @click="copyContent(item.address)" class="ml-2" size="15"
-                >mdi-content-copy</v-icon
-              >
+              <v-icon @click="copyContent(item.address)" class="ml-2" size="15">mdi-content-copy</v-icon>
             </v-btn>
           </div>
         </div>
       </v-col>
     </v-row>
   </div>
-  <BlockChainWallet
-    :options="options"
-    @emitProvider="getProvider"
-    @emitWalletAddress="collectWalletAddress"
-    @emitSignedData="collectSignedData"
-  />
+  <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData" />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
@@ -103,15 +92,23 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
+  console.log('Inside collectWalletAddress', data)
+
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
+  console.log('Inside collect Sign data method', data)
+
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
 
   if (formData.walletAddress !== null && formData.signedDidDoc !== null) {
+    console.log('Before calling update wallet')
+
     updateWallet()
+  } else {
+    console.log('formData wallet and signDiddoc is null')
   }
 }
 
@@ -135,6 +132,8 @@ watchEffect(() => {
 
 const updateWallet = () => {
   setTimeout(async () => {
+    console.log('Before calling store update user profile')
+
     await store.UPDATE_USER_PROFILE(formData)
   }, 100)
 }
@@ -170,10 +169,17 @@ const checkIfExists = (item) => {
   const searchString = `${item.provider}:${item.chainId}`
   const addresses = store.userMeta.didDocument.verificationMethod
   let itemFound = null
+  let blockchainAccountIdItems = "";
+  let blockchainText = "";
   for (const item of addresses) {
-    if (item.blockchainAccountId.includes(searchString)) {
-      itemFound = item
+    if (item.blockchainAccountId) {
+      blockchainAccountIdItems = item.blockchainAccountId.split(':');
+      blockchainText = `${blockchainAccountIdItems[0]}:${blockchainAccountIdItems[1]}`;
+      if (blockchainText == searchString) {
+        itemFound = item
+      }
     }
+
   }
   return itemFound
 }
@@ -196,7 +202,7 @@ const getAddress = (accountId) => {
   const lastSegment = segments[segments.length - 1]
   const firstFour = lastSegment.substring(0, 7)
   const lastFour = lastSegment.substring(lastSegment.length - 7)
-  const result = `${firstFour}....${lastFour}`
+  const result = `${firstFour}....${lastFour} `
   return result
 }
 
