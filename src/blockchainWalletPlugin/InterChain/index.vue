@@ -3,21 +3,22 @@
     <template v-slot:default="{ isActive }">
       <component
         :is="checkComponent"
+        :options="options"
         @changeStep="monitorChanges"
         @close="handleClose"
-        @getWalletAddress="sendWalletAddress"
         @getSignedData="sendSignedData"
-        :options="options"
+        @getWalletAddress="sendWalletAddress"
       />
     </template>
   </v-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { computed } from 'vue'
 import { componentsList } from './data/ImportComponent.ts'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain.ts'
+
 const store = useInterChainStore()
 const { interChainObject } = storeToRefs(store)
 

@@ -71,13 +71,25 @@
                   </v-text-field>
                 </v-col>
               </v-row> -->
-              <v-row>
+              <Loader v-if="loading" />
+              <v-row v-if="!loading && item?.communities.length > 0">
                 <template :key="index" v-for="(item, index) in item?.communities">
                   <v-col cols="12" sm="6" md="6" xl="3" lg="3">
                     <CommunityCard :communityData="item" />
                   </v-col>
                 </template>
               </v-row>
+              <div
+                class="text-center d-flex align-center justify-center my-6"
+                v-if="item?.communities.total > 8"
+              >
+                <Pagination
+                  :page="options.page"
+                  :limit="options.limit"
+                  :total="item?.communities.total"
+                  @pageChange="pageChange"
+                />
+              </div>
             </template>
             <v-row class="mt-5" v-else="item?.communities.length === 0">
               <v-col cols="12">
@@ -141,6 +153,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import _ from 'lodash'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useUserStore } from '@/store/user.ts'
 import { storeToRefs } from 'pinia'
@@ -164,6 +177,34 @@ const tabs = ref([
   //   slug: 'credentials'
   // }
 ])
+
+const options = reactive({
+  page: 1,
+  limit: 8,
+  search: ''
+})
+
+const pageChange = (page) => {
+  options.page = page
+}
+
+const searchKey = _.debounce(() => {
+  setTimeout(async () => {
+    options.page = 1
+    loadEvents()
+  })
+}, 500)
+
+watch(() => options.search, searchKey)
+
+watch(
+  () => options.page,
+  (value: any) => {
+    setTimeout(async () => {
+      userCommunities()
+    }, 100)
+  }
+)
 
 onMounted(async () => {
   loading.value = true
@@ -203,6 +244,11 @@ const userEvents = async () => {
 }
 
 const userCommunities = async () => {
-  await store.USER_COMMUNITIES()
+  let params = `?page=${options.page}&limit=${options.limit}`
+
+  if (options.search) {
+    params += `&searchString=${options.search}`
+  }
+  await store.USER_COMMUNITIES(params)
 }
 </script>

@@ -34,3 +34,28 @@ export const calculateDaysUntilExpiry = (expiryDate) => {
     return ''
   }
 }
+
+export const removeDuplicatesInSignedDidDoc = (data) => {
+  if (data) {
+    const verificationMethods = data.verificationMethod
+    const uniqueBlockchainAccountIds = new Set()
+    let counter = 1
+
+    const filteredVerificationMethods = verificationMethods
+      .map((method) => {
+        const blockchainAccountId = method.blockchainAccountId
+        if (uniqueBlockchainAccountIds.has(blockchainAccountId)) {
+          return null
+        }
+        uniqueBlockchainAccountIds.add(blockchainAccountId)
+        const idParts = method.id.split('#')
+        const newId = `${idParts[0]}#key-${counter++}`
+        return { ...method, id: newId }
+      })
+      .filter(Boolean)
+
+    data.verificationMethod = filteredVerificationMethods
+
+    return data
+  }
+}

@@ -7,6 +7,7 @@ import type { CommunityType } from '@/data/types/community/CommunityType.ts'
 import type { EventType } from '@/data/types/event/eventType.ts'
 
 import { useNotificationStore } from './notification.ts'
+
 const notificationStore = useNotificationStore()
 
 interface communityType {
@@ -18,12 +19,19 @@ interface communityType {
 }
 
 export const useCommunityStore = defineStore('community', {
-  state: (): communityType => ({
-    popularCommunities: [],
-    communityId: {},
-    communityFollow: false,
-    communityEvents: []
-  }),
+  state: (): {
+    popularCommunities: any[]
+    communityId: {}
+    communityEvents: any[]
+    communityFollow: boolean
+  } => {
+    return {
+      popularCommunities: [],
+      communityId: {},
+      communityFollow: false,
+      communityEvents: []
+    }
+  },
   actions: {
     async POPULAR_COMMUNITIES(filter: string): Promise<CommunityType[]> {
       try {

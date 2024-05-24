@@ -40,7 +40,6 @@
     @emitSignedData="collectSignedData"
   />
   <div id="emit-options" @click="emitOptions(options)"></div>
-  <div id="receive-options" @click="receiveSignedData"></div>
 </template>
 <script lang="ts" setup>
 import {
@@ -60,7 +59,7 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const store = useAuthStore()
 
-const { userMeta } = storeToRefs(useAuthStore())
+const { userMeta, userProfileResponse } = storeToRefs(useAuthStore())
 
 const loading = ref(false)
 
@@ -104,39 +103,17 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
   formData.walletAddress = data.walletAddress
   formData.signedDidDoc = data.signProof
-  console.log(formData)
+
+  if (formData.walletAddress !== null && formData.signedDidDoc !== null) {
+    updateWallet()
+  }
 }
-
-watch(
-  () => formData,
-  (value: any) => {
-    console.log(value)
-    if (value.walletAddress !== null && value.signedDidDoc !== null) {
-      updateWallet()
-    }
-  },
-  { deep: true }
-)
-
-watch(
-  () => store.userProfileResponse,
-  (value: any) => {
-    console.log(value)
-    loading.value = false
-    fetchUserData()
-    formData.walletAddress = null
-    formData.signedDidDoc = null
-  },
-  { deep: true }
-)
 
 const fetchUserData = async () => {
   setTimeout(async () => {
@@ -146,6 +123,15 @@ const fetchUserData = async () => {
     }, 100)
   }, 200)
 }
+
+watchEffect(() => {
+  if (store.userProfileResponse) {
+    loading.value = false
+    fetchUserData()
+    formData.walletAddress = null
+    formData.signedDidDoc = null
+  }
+})
 
 const updateWallet = () => {
   setTimeout(async () => {

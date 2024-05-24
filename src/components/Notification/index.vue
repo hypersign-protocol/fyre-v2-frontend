@@ -25,8 +25,9 @@ import { ElNotification } from 'element-plus'
 watch(
   () => store.response,
   (value: any) => {
-    console.log(value)
-    notify()
+    if (value.message) {
+      notify()
+    }
   },
   { deep: true }
 )

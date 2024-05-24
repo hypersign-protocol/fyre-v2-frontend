@@ -83,6 +83,7 @@ import { useAuthStore } from '@/store/auth.ts'
 import { useNotificationStore } from '@/store/notification.ts'
 
 import { getUser, saveUser } from '@/composables/jwtService.ts'
+import { removeDuplicatesInSignedDidDoc } from '@/composables/general.ts'
 import { storeToRefs } from 'pinia'
 
 const { userMeta, fileUpload } = storeToRefs(useAuthStore())
@@ -109,16 +110,15 @@ const getProvider = async (data) => {
 }
 
 const collectWalletAddress = async (data) => {
-  console.log(data)
   formData.walletAddress = data.walletAddress
 }
 
 const collectSignedData = async (data) => {
-  console.log(data)
   formData.walletAddress = data.walletAddress
+  // data.signProof.alsoKnownAs.push(store.userMeta.userName)
+  // data.signProof.alsoKnownAs = [...new Set(data.signProof.alsoKnownAs)]
+  // formData.signedDidDoc = removeDuplicatesInSignedDidDoc(data.signProof)
   formData.signedDidDoc = data.signProof
-  formData.signedDidDoc.alsoKnownAs.push(store.userMeta.userName)
-  console.log(formData)
 }
 
 watch(
@@ -172,10 +172,10 @@ watch(
 )
 
 watch(
-  () => formData,
+  () => formData.signedDidDoc,
   (value: any) => {
     console.log(value)
-    if (value.walletAddress !== null && value.signedDidDoc !== null) {
+    if (value) {
       updateProfileSendRequest()
     }
   },
@@ -184,6 +184,9 @@ watch(
 
 const updateProfile = () => {
   if (store.userMeta.userName) {
+    store.userMeta.didDocument.alsoKnownAs.push(store.userMeta.userName)
+    store.userMeta.didDocument.alsoKnownAs = [...new Set(store.userMeta.didDocument.alsoKnownAs)]
+
     const vm = store.userMeta.didDocument.verificationMethod[0]
     const chainId = vm.blockchainAccountId.split(':')[1]
     if (vm.blockchainAccountId.includes('eip')) {
@@ -207,15 +210,16 @@ const updateProfile = () => {
 }
 
 const updateProfileSendRequest = () => {
-  console.log(store.userMeta)
-  setTimeout(async () => {
-    await store.UPDATE_USER_PROFILE({
-      editMode: 'profile',
-      userName: store.userMeta.userName,
-      avatar: store.userMeta.avatar,
-      signedDidDoc: formData.signedDidDoc
-    })
-  }, 100)
+  if (formData.walletAddress !== null && formData.signedDidDoc !== null) {
+    setTimeout(async () => {
+      await store.UPDATE_USER_PROFILE({
+        editMode: 'profile',
+        userName: store.userMeta.userName,
+        avatar: store.userMeta.avatar,
+        signedDidDoc: formData.signedDidDoc
+      })
+    }, 100)
+  }
 }
 
 const openFilePicker = () => {

@@ -1,10 +1,13 @@
 // Utilities
 import { defineStore } from 'pinia'
-import axios, { AxiosResponse, AxiosError } from '@/utils/axios'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import axios, { AxiosError, AxiosResponse } from '@/utils/axios'
 
 import { saveUser } from '@/composables/jwtService.ts'
+import { removeDuplicatesInSignedDidDoc } from '@/composables/general.ts'
 
 import { useNotificationStore } from './notification.ts'
+
 const notificationStore = useNotificationStore()
 
 export const useAuthStore = defineStore('auth', {
@@ -16,16 +19,19 @@ export const useAuthStore = defineStore('auth', {
     fileUpload: {}
   }),
   actions: {
-    async USER_LOGIN(filter: string): Promise {
+    async USER_LOGIN(filter: string): Promise<any> {
       try {
-        const response: AxiosResponse = await axios.get(`/login${filter}`)
-        this.challenge = response
+        this.challenge = await axios.get(`/login${filter}`)
       } catch (error: AxiosError) {
-        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        notificationStore.SHOW_NOTIFICATION({
+          show: true,
+          type: 'error',
+          message: error.message
+        })
         return []
       }
     },
-    async USER_AUTHENTICATE(payload: Object): Promise {
+    async USER_AUTHENTICATE(payload: Object): Promise<any> {
       try {
         const response: AxiosResponse = await axios.post(`/authenticate`, payload)
 
@@ -41,11 +47,15 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        notificationStore.SHOW_NOTIFICATION({
+          show: true,
+          type: 'error',
+          message: error.message
+        })
         return []
       }
     },
-    async UPDATE_USER_PROFILE(payload: Object): Promise {
+    UPDATE_USER_PROFILE: async function (payload: Object): Promise<any> {
       try {
         const response: AxiosResponse = await axios.patch(
           `/user?editMode=${payload.editMode}`,
@@ -59,7 +69,6 @@ export const useAuthStore = defineStore('auth', {
 
         if (response.success) {
           this.userProfileResponse = response.data
-
           return response.data
         } else {
           notificationStore.SHOW_NOTIFICATION({
@@ -79,12 +88,14 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async USER_AUTHORIZE(): Promise {
+    async USER_AUTHORIZE(): Promise<any> {
       try {
         const response: AxiosResponse = await axios.post(`/authorize`)
 
         if (response.success) {
           this.userMeta = response.data
+          const formattedDidDoc = removeDuplicatesInSignedDidDoc(response.data.didDocument)
+          response.data.didDocument = formattedDidDoc
           saveUser(response.data)
           return response
         } else {
@@ -104,7 +115,7 @@ export const useAuthStore = defineStore('auth', {
         return []
       }
     },
-    async FILE_UPLOAD(payload: Object): Promise {
+    async FILE_UPLOAD(payload: Object): Promise<any> {
       try {
         const response: AxiosResponse = await axios.post(`/file-upload`, payload)
 
@@ -121,7 +132,11 @@ export const useAuthStore = defineStore('auth', {
           return []
         }
       } catch (error: AxiosError) {
-        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        notificationStore.SHOW_NOTIFICATION({
+          show: true,
+          type: 'error',
+          message: error.message
+        })
         return []
       }
     }

@@ -2,16 +2,14 @@
   <div></div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, watch, inject, onMounted, onUpdated, onUnmounted } from 'vue'
-import { walletOptionsInject } from './'
+import { reactive, ref, watch } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain'
-const store = useInterChainStore()
-import { docloader, initializeDidSDK, signData, addWallet } from '../utils'
+import { addWallet, signData } from '../utils'
 
-import { mainnet, bsc, polygon } from '@wagmi/core/chains'
-import { Connection, getAccount, signTypedData } from '@wagmi/core'
+import { bsc, mainnet, polygon } from '@wagmi/core/chains'
+import { Connection, getAccount, disconnect } from '@wagmi/core'
 
 import {
   createWeb3Modal,
@@ -22,9 +20,9 @@ import {
   useWeb3ModalTheme
 } from '@web3modal/wagmi/vue'
 
-import { reconnect } from '@wagmi/core'
-import { coinbaseWallet, walletConnect, injected } from '@wagmi/connectors'
-import { EthereumEip712Signature2021 } from 'ethereumeip712signature2021suite'
+import { coinbaseWallet } from '@wagmi/connectors'
+
+const store = useInterChainStore()
 
 const { challenge } = storeToRefs(store)
 
@@ -40,13 +38,31 @@ const props = defineProps({
 
 const loading = ref(false)
 
-const emit = defineEmits(['close', 'getSignedData', 'getWalletAddress'])
+const emit = defineEmits({
+  // Validate getWalletAddress event
+  getEvmWalletAddress: (data: any) => {
+    console.log(data)
+    if (data.walletAddress) {
+      return true
+    } else {
+      return false
+    }
+  },
 
-let reactiveConnector = reactive({
+  // Validate getSignedData event
+  getSignedData: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
+  }
+})
+
+reactive({
   connector: {} as any as Connection
 })
 
-// @ts-expect-error 1. Get projectId
 const projectId = import.meta.env.VITE_APP_WC_PROJECT_ID
 if (!projectId) {
   throw new Error('VITE_PROJECT_ID is not set')
@@ -93,7 +109,8 @@ const evmResultObject = reactive({
   isSignedVerified: false,
   wagmiConfig: null,
   chainId: null,
-  network: 'evm'
+  network: 'evm',
+  connector: null
 })
 
 watch(
@@ -113,6 +130,7 @@ watch(
   (value) => {
     if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected) {
       // getConfigConnection()
+      console.log(getAccount(wagmiConfig))
     }
   }
 )
@@ -139,31 +157,31 @@ wagmiConfig.subscribe((value) => {
 
 const collectProvider = async (connectionValue) => {
   const provider = await connectionValue.connector.getProvider()
-
   evmResultObject.provider = provider
+  evmResultObject.connector = getAccount(wagmiConfig)
+  console.log(evmResultObject.connector)
+  evmResultObject.chainId = evmResultObject.connector.chainId
+  evmResultObject.walletAddress = evmResultObject.connector.address
+  console.log(evmResultObject)
+  emit('getEvmWalletAddress', evmResultObject)
 
-  const { chainId, address } = getAccount(wagmiConfig)
-
-  evmResultObject.chainId = chainId
-  evmResultObject.walletAddress = address
-
-  emit('getWalletAddress', evmResultObject)
+  if (props.options.isPerformAction) {
+    signArbitrary()
+  } else {
+    generateDidDoc()
+  }
 }
 
 const signArbitrary = async () => {
   try {
     loading.value = true
 
-    const { chainId, address } = getAccount(wagmiConfig)
-
-    evmResultObject.walletAddress = address
-
     const payload = {
       signType: 'eip155',
       localDidDoc: store.walletOptions.didDocument,
       wallet: null,
-      chainId: chainId,
-      address: address,
+      chainId: evmResultObject.chainId,
+      address: evmResultObject.walletAddress,
       provider: evmResultObject.provider
     }
 
@@ -171,6 +189,8 @@ const signArbitrary = async () => {
 
     evmResultObject.signProof = proof
     evmResultObject.isSignedVerified = verifed
+
+    console.log(evmResultObject)
 
     setTimeout(() => {
       emit('getSignedData', evmResultObject)
@@ -185,13 +205,9 @@ const signArbitrary = async () => {
 }
 
 const generateDidDoc = async () => {
-  const { chainId, address } = getAccount(wagmiConfig)
-
-  evmResultObject.walletAddress = address
-
   const payload = {
-    chainId: chainId,
-    address: address,
+    chainId: evmResultObject.chainId,
+    address: evmResultObject.walletAddress,
     clientSpec: 'eth-personalSign',
     suiteType: 'eth',
     provider: evmResultObject.provider
@@ -199,8 +215,15 @@ const generateDidDoc = async () => {
 
   const { proof, verifed } = await signData(payload)
 
+  console.log(proof, verifed)
+
   evmResultObject.signProof = proof
   evmResultObject.isSignedVerified = verifed
+
+  setTimeout(() => {
+    emit('getSignedData', evmResultObject)
+    props.options.showBwModal = false
+  }, 100)
 }
 
 const openModal = () => {
@@ -208,9 +231,15 @@ const openModal = () => {
   open({ view: 'Networks' })
 }
 
-const closeModal = () => {
+const closeModal = async () => {
+  console.log('kkk')
+  console.log(evmResultObject.connector.connector)
+  const connector = evmResultObject.connector.connector
+  const result = await disconnect(wagmiConfig, {
+    connector
+  })
+  console.log(result)
   store.walletOptions.showBwModal = false
-  close()
 }
 
 defineExpose({
