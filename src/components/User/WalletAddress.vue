@@ -267,14 +267,14 @@ const items = ref([
     chainId: '56',
     provider: 'eip155'
   },
-  {
-    title: 'Comdex',
-    address: null,
-    image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
-    isAddress: false,
-    chainId: 'comdex-1',
-    provider: 'cosmos'
-  },
+  // {
+  //   title: 'Comdex',
+  //   address: null,
+  //   image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
+  //   isAddress: false,
+  //   chainId: 'comdex-1',
+  //   provider: 'cosmos'
+  // },
   {
     title: 'Nibiru',
     address: null,
@@ -328,7 +328,7 @@ const items = ref([
     address: null,
     image: new URL(`@/assets/images/task/osmosis.png`, import.meta.url).href,
     isAddress: false,
-    chainId: 'osmos-1',
+    chainId: 'osmosis-1',
     provider: 'cosmos'
   }
 ])

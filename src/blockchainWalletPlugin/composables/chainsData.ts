@@ -72,7 +72,7 @@ const chains: ChainData[] = [
   },
 
   {
-    type: 'osmos-1',
+    type: 'osmosis-1',
     name: 'Osmosis',
     image: new URL(`@/assets/images/task/osmosis.png`, import.meta.url).href,
     showOption: true,
