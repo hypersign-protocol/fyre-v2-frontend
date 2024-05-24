@@ -21,7 +21,8 @@ import {
 } from '@web3modal/wagmi/vue'
 
 import { coinbaseWallet } from '@wagmi/connectors'
-
+import { evmWalletsStore } from '../stores/evmchain';
+const evmStore = evmWalletsStore()
 const store = useInterChainStore()
 
 const { challenge } = storeToRefs(store)
@@ -84,7 +85,7 @@ const wagmiConfig = defaultWagmiConfig({
 })
 
 // 3. Create modal
-createWeb3Modal({
+let modal = createWeb3Modal({
   wagmiConfig,
   projectId,
   chains,
@@ -118,12 +119,24 @@ watch(
   (value) => {
     if (value) {
       setTimeout(() => {
+        console.log('watch:: Beofre emiting eve/index.js from gandchild to parent')
         emit('getSignedData', evmResultObject)
         props.options.showBwModal = false
       }, 100)
     }
   }
 )
+watch(
+  () => evmStore.evmResultObject.signProof,
+  (newCount, oldCount) => {
+    if (Object.keys(newCount).length > 0) {
+      emit('getSignedData', evmStore.evmResultObject)
+      evmStore.SET_EVM_RESULT({})
+    } else {
+      console.log("no state change");
+    }
+  }
+);
 
 watch(
   () => events.data,
@@ -144,19 +157,24 @@ watch(
 
 // the damn fix
 
-let collectProviderInvoked = false
-wagmiConfig.subscribe((value) => {
-  if (value.status === 'connected') {
-    const connectionValue = value.connections.get(value.current)
-    if (!collectProviderInvoked) {
-      collectProviderInvoked = true
-      collectProvider(connectionValue)
+modal.subscribeEvents(async (e) => {
+  console.log(e)
+  if (
+    (e.data.event == 'MODAL_CLOSE' || e.data.event == 'CONNECT_SUCCESS') &&
+    (e.data.properties.connected == true || e.data.properties.method == 'browser')
+  ) {
+    const connetor = wagmiConfig.connectors.filter((e) => e.uid == wagmiConfig.state.current)
+    if (connetor.length > 0) {
+      const provider = await Promise.resolve(connetor[0].getProvider())
+      await collectProvider(provider);
+    } else {
+      console.log('======== No connector===============')
     }
   }
 })
 
 const collectProvider = async (connectionValue) => {
-  const provider = await connectionValue.connector.getProvider()
+  const provider = connectionValue
   evmResultObject.provider = provider
   evmResultObject.connector = getAccount(wagmiConfig)
   console.log(evmResultObject.connector)
@@ -166,7 +184,7 @@ const collectProvider = async (connectionValue) => {
   emit('getEvmWalletAddress', evmResultObject)
 
   if (props.options.isPerformAction) {
-    signArbitrary()
+    await signArbitrary();
   } else {
     generateDidDoc()
   }
@@ -191,11 +209,7 @@ const signArbitrary = async () => {
     evmResultObject.isSignedVerified = verifed
 
     console.log(evmResultObject)
-
-    setTimeout(() => {
-      emit('getSignedData', evmResultObject)
-      props.options.showBwModal = false
-    }, 100)
+    evmStore.SET_EVM_RESULT(evmResultObject)
   } catch (err) {
     console.log(err)
   } finally {
