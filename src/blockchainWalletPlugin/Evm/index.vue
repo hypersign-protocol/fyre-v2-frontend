@@ -234,10 +234,12 @@ const generateDidDoc = async () => {
   evmResultObject.signProof = proof
   evmResultObject.isSignedVerified = verifed
 
-  setTimeout(() => {
-    emit('getSignedData', evmResultObject)
-    props.options.showBwModal = false
-  }, 100)
+  // evmStore.SET_EVM_RESULT(evmResultObject)
+
+  // setTimeout(() => {
+  //   emit('getSignedData', evmResultObject)
+  //   props.options.showBwModal = false
+  // }, 100)
 }
 
 const openModal = () => {
