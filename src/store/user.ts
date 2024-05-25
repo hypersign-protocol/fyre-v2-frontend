@@ -34,9 +34,9 @@ export const useUserStore = defineStore('user', {
         const response: AxiosResponse<EventType[]> = await axios.get(`/user/events`)
 
         if (response.success) {
-          this.events = response.data
+          this.events = response
 
-          return response.data
+          return response
         } else {
           notificationStore.SHOW_NOTIFICATION({
             show: true,
@@ -55,9 +55,9 @@ export const useUserStore = defineStore('user', {
         const response: AxiosResponse<CommunityType[]> = await axios.get(`/user/community${filter}`)
 
         if (response.success) {
-          this.communities = response.data
+          this.communities = response
 
-          return response.data
+          return response
         } else {
           notificationStore.SHOW_NOTIFICATION({
             show: true,
