@@ -147,7 +147,7 @@ watch(
 
 const submit = async () => {
   loading.value = true
-  await store.PERFORM_EVENT_TASK({
+  const resp = await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,
     task: {
@@ -158,5 +158,10 @@ const submit = async () => {
       }
     }
   })
+  if (!resp) {
+    walletConnected.value = false;
+  }
+  loading.value = false
 }
+
 </script>

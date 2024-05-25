@@ -379,6 +379,7 @@ const clearWalletInfo = async () => {
   formData.walletAddress = null
   formData.signedDidDoc = null
   formData.taskId = null
+  delete options.didDocument.proof;
 }
 
 const logWallet = async (data) => {
