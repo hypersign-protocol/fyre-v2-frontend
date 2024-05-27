@@ -80,7 +80,6 @@ export const signData = async (payload) => {
   const prefix = address.split('1')[0]
   const prefixDomain = 'http://example.com' // or 'https://example.com' based on your requirements
 
-  try {
     if (suiteType === 'cosmos') {
       eds = new EcdsaSecp256k1Signature2019({
         chainId,
@@ -136,11 +135,6 @@ export const signData = async (payload) => {
     })
 
     return { proof, verifed }
-  } catch (err) {
-    console.log(err)
-    emit('collectError', err)
-    return { proof: null, verifed: false }
-  }
 }
 
 const removeDuplicatesInSignedDidDoc = (data) => {
@@ -177,7 +171,7 @@ const removeDuplicatesInSignedDidDoc = (data) => {
 //connet wallet and add verification methods
 
 export const addWallet = async (payload) => {
-  try {
+ // try {
     const signType = payload.signType
     const wallet = payload.wallet
     const localDidDoc = payload.localDidDoc
@@ -275,7 +269,7 @@ export const addWallet = async (payload) => {
     console.log(proof)
 
     return { proof, verifed }
-  } catch (err) {
-    console.log(err)
-  }
+  // } catch (err) {
+  //   throw new Error(err);
+  // }
 }

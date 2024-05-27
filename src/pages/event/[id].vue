@@ -325,7 +325,7 @@ const options = reactive({
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: true,
+  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true, 
   didDocument: authUser.value.didDocument,
   addVerificationMethod: true,
   selectedNetwork: null
@@ -340,16 +340,38 @@ watch(
   },
   { deep: true }
 )
+const getProvider = async (data: any) => {
+  console.log('Inside getProvider handler for event emitProvider')
+  if (data) {
+    await authStore.USER_LOGIN(`?provider=${data}-wallet`)
+  } else {
+    console.log('Please select the provider before you proceed')
+  }
+}
 
 const collectWalletAddress = async (data) => {
   console.log(data)
   formData.walletAddress = data.walletAddress
 }
 
-const collectSignedData = async (data) => {
-  console.log(data)
-  formData.walletAddress = data.walletAddress
-  formData.signedDidDoc = data.signProof
+// const collectSignedData = async (data) => {
+
+// }
+
+const collectSignedData = async (data: any) => {
+  console.log('Inside collectSignedData...')
+  if (authUser.value.didDocument) {
+
+    formData.walletAddress = data.walletAddress
+    formData.signedDidDoc = data.signProof
+  } else {
+    if (data.signProof) {
+      await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
+    } else {
+      console.log('Please select the provider before you proceed')
+    }
+  }
+
 }
 
 const clearWalletInfo = async () => {
@@ -357,6 +379,7 @@ const clearWalletInfo = async () => {
   formData.walletAddress = null
   formData.signedDidDoc = null
   formData.taskId = null
+  delete options.didDocument.proof;
 }
 
 const logWallet = async (data) => {

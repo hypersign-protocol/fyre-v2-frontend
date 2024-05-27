@@ -92,23 +92,10 @@
         </div>
       </template>
     </v-dialog>
-    <InterChainModal
-      ref="interchainWallet"
-      v-model="interchainModal"
-      :options="options"
-      @close="closeModal"
-      @getSignedData="collectSignedData"
-      @getWalletAddress="collectWalletAddress"
-      @isError="collectError"
-    />
-    <EvmModal
-      ref="evmWallet"
-      v-model="evmModal"
-      :options="options"
-      @getSignedData="collectSignedData"
-      @getEvmWalletAddress="collectEvmWalletAddress"
-      @isError="collectError"
-    />
+    <InterChainModal ref="interchainWallet" v-model="interchainModal" :options="options" @close="closeModal"
+      @getSignedData="collectSignedData" @getWalletAddress="collectWalletAddress" @isError="collectError" />
+    <EvmModal ref="evmWallet" v-model="evmModal" :options="options" @getSignedData="collectSignedData"
+      @getEvmWalletAddress="collectEvmWalletAddress" @isError="collectError" @signMessageStarted="notifySignMessage" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -171,6 +158,8 @@ const closeModal = () => {
 }
 
 const collectEvmWalletAddress = (data: any) => {
+  props.options.showBwModal = true
+  loading.value = true;
   emit('emitWalletAddress', data)
   console.log(data)
 }
@@ -186,8 +175,6 @@ const collectError = (data: any) => {
   loading.value = false
 }
 const collectSignedData = (data: any) => {
-  console.log("Inside collectSignedData  before emiting emitSignedData");
-  
   emit('emitSignedData', data)
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
@@ -195,6 +182,11 @@ const collectSignedData = (data: any) => {
   if (data.network === 'evm') {
     evmWallet.value.closeModal()
   }
+}
+
+const notifySignMessage = (data: any) => {
+  props.options.showBwModal = true
+  loading.value = true;
 }
 
 const chooseProvider = (data: any) => {
@@ -212,7 +204,7 @@ const chooseProvider = (data: any) => {
 watch(
   () => store.walletOptions,
   (value) => {
-    if (value.showBwModal) {
+    if (value.showBwModal && (!loading)) {
       if (value.selectedNetwork === 'evm') {
         props.options.showBwModal = false
         evmModal.value = true

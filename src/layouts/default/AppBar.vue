@@ -47,7 +47,7 @@
 
       <template v-if="isUserLoggedIn">
         <v-avatar id="menu-activator" class="cursor-pointer">
-          <v-img v-if="userMeta?.avatar" :src="userMeta?.avatar"></v-img>
+          <v-img v-if="user?.avatar" :src="user?.avatar"></v-img>
           <v-img v-else src="@/assets/images/user-profile.png"></v-img>
         </v-avatar>
 
@@ -55,7 +55,7 @@
           <v-list density="compact" class="menu__wrap">
             <v-list-subheader class="text-center">
               Welcome,
-              <strong v-if="userMeta?.userName">{{ userMeta?.userName }}</strong>
+              <strong v-if="user?.userName">{{ user?.userName }}</strong>
               <strong v-else>User</strong>
             </v-list-subheader>
             <v-list-item
