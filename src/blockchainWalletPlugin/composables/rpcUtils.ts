@@ -16,8 +16,7 @@ export function getRpc(chain: string): string {
       return 'https://omniflix-rpc.polkachu.com'
     case 'secret-4':
       return 'https://secretnetwork-rpc.highstakes.ch'
-    case 'osmos-1':
-      return 'https://osmosis-rpc.polkachu.com'
+
     case 'agoric-3':
       return 'https://agoric.rpc.kjnodes.com'
     case 'juno-1':

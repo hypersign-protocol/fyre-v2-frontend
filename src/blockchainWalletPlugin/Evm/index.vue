@@ -2,7 +2,7 @@
   <div></div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, toRaw, watch } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useInterChainStore } from '../stores/interchain'
@@ -21,7 +21,7 @@ import {
 } from '@web3modal/wagmi/vue'
 
 import { coinbaseWallet } from '@wagmi/connectors'
-import { evmWalletsStore } from '../stores/evmchain';
+import { evmWalletsStore } from '../stores/evmchain'
 const evmStore = evmWalletsStore()
 const store = useInterChainStore()
 
@@ -80,9 +80,10 @@ if (!projectId) {
 }
 
 // 2. Create wagmiConfig
+
 const chains = reactive([mainnet, bsc, polygon])
 const wagmiConfig = defaultWagmiConfig({
-  chains,
+  chains: toRaw(chains),
   projectId,
   connectors: [coinbaseWallet],
   metadata: {
@@ -98,7 +99,7 @@ const wagmiConfig = defaultWagmiConfig({
 let modal = createWeb3Modal({
   wagmiConfig,
   projectId,
-  chains,
+  chains: toRaw(chains),
   themeMode: 'dark',
   themeVariables: {
     '--w3m-color-mix': 'rgba(28,29,41,1)',
@@ -113,24 +114,24 @@ const state = useWeb3ModalState()
 const { setThemeMode, themeMode, themeVariables } = useWeb3ModalTheme()
 const events = useWeb3ModalEvents()
 
-const evmResultObject = reactive({
-  provider: null,
-  walletAddress: null,
-  signProof: null,
-  isSignedVerified: false,
-  wagmiConfig: null,
-  chainId: null,
-  network: 'evm',
-  connector: null
-})
+// const evmResultObject = reactive({
+//   provider: null,
+//   walletAddress: null,
+//   signProof: null,
+//   isSignedVerified: false,
+//   wagmiConfig: null,
+//   chainId: null,
+//   network: 'evm',
+//   connector: null
+// })
 
 watch(
-  () => evmResultObject.signProof,
+  () => evmStore.evmResultObject.signProof,
   (value) => {
     if (value) {
       setTimeout(() => {
         console.log('watch:: Beofre emiting eve/index.js from gandchild to parent')
-        emit('getSignedData', evmResultObject)
+        emit('getSignedData', evmStore.evmResultObject)
         props.options.showBwModal = false
       }, 100)
     }
@@ -138,15 +139,20 @@ watch(
 )
 watch(
   () => evmStore.evmResultObject.signProof,
-  (newCount, oldCount) => {
+  (oldCount, newCount) => {
+    console.log({
+      newCount,
+      oldCount
+    })
+
     if (Object.keys(newCount).length > 0) {
       emit('getSignedData', evmStore.evmResultObject)
       evmStore.SET_EVM_RESULT({})
     } else {
-      console.log("no state change");
+      console.log('no state change')
     }
   }
-);
+)
 
 watch(
   () => evmStore.hasSigningStarted,
@@ -200,7 +206,7 @@ modal.subscribeEvents(async (e) => {
     const connetor = wagmiConfig.connectors.filter((e) => e.uid == wagmiConfig.state.current)
     if (connetor.length > 0) {
       const provider = await Promise.resolve(connetor[0].getProvider())
-      await collectProvider(provider);
+      await collectProvider(provider)
     } else {
       console.log('======== No connector===============')
     }
@@ -209,16 +215,16 @@ modal.subscribeEvents(async (e) => {
 
 const collectProvider = async (connectionValue) => {
   const provider = connectionValue
-  evmResultObject.provider = provider
-  evmResultObject.connector = getAccount(wagmiConfig)
-  console.log(evmResultObject.connector)
-  evmResultObject.chainId = evmResultObject.connector.chainId
-  evmResultObject.walletAddress = evmResultObject.connector.address
-  console.log(evmResultObject)
-  emit('getEvmWalletAddress', evmResultObject)
+  evmStore.evmResultObject.provider = provider
+  evmStore.evmResultObject.connector = getAccount(wagmiConfig)
+  console.log(evmStore.evmResultObject.connector)
+  evmStore.evmResultObject.chainId = evmStore.evmResultObject.connector.chainId
+  evmStore.evmResultObject.walletAddress = evmStore.evmResultObject.connector.address
+  console.log(evmStore.evmResultObject)
+  emit('getEvmWalletAddress', evmStore.evmResultObject)
 
   if (props.options.isPerformAction) {
-    await signArbitrary();
+    await signArbitrary()
   } else {
     generateDidDoc()
   }
@@ -232,17 +238,15 @@ const signArbitrary = async () => {
       signType: 'eip155',
       localDidDoc: store.walletOptions.didDocument,
       wallet: null,
-      chainId: evmResultObject.chainId,
-      address: evmResultObject.walletAddress,
-      provider: evmResultObject.provider
+      chainId: evmStore.evmResultObject.chainId,
+      address: evmStore.evmResultObject.walletAddress,
+      provider: evmStore.evmResultObject.provider
     }
 
     const { proof, verifed } = await addWallet(payload)
 
-    evmResultObject.signProof = proof
-    evmResultObject.isSignedVerified = verifed
-
-    console.log(evmResultObject)
+    evmStore.evmResultObject.signProof = proof
+    evmStore.evmResultObject.isSignedVerified = verifed
     evmStore.SET_EVM_RESULT(evmResultObject)
   } catch (e: any) {
     evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
@@ -253,21 +257,19 @@ const signArbitrary = async () => {
 }
 
 const generateDidDoc = async () => {
+
   try {
     const payload = {
-      chainId: evmResultObject.chainId,
-      address: evmResultObject.walletAddress,
-      clientSpec: 'eth-personalSign',
-      suiteType: 'eth',
-      provider: evmResultObject.provider
-    }
+    chainId: evmStore.evmResultObject.chainId,
+    address: evmStore.evmResultObject.walletAddress,
+    clientSpec: 'eth-personalSign',
+    suiteType: 'eth',
+    provider: evmStore.evmResultObject.provider
+  }
 
     const { proof, verifed } = await signData(payload)
-
-    evmResultObject.signProof = proof
-    evmResultObject.isSignedVerified = verifed
-
-
+  evmStore.evmResultObject.signProof = proof
+  evmStore.evmResultObject.isSignedVerified = verifed
   } catch (e: any) {
     evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
   }
@@ -280,9 +282,8 @@ const openModal = () => {
 }
 
 const closeModal = async () => {
-  console.log('kkk')
-  console.log(evmResultObject.connector.connector)
-  const connector = evmResultObject.connector.connector
+  console.log(evmStore.evmResultObject.connector)
+  const connector = toRaw(evmStore.evmResultObject.connector.connector)
   const result = await disconnect(wagmiConfig, {
     connector
   })

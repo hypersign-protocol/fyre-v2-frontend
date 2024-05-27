@@ -26,14 +26,14 @@ const chains: ChainData[] = [
     gasPrice: { amount: '0.0025', denom: 'uosmo' }
   },
 
-  {
-    type: 'comdex-1',
-    name: 'Comdex',
-    image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
-    showOption: true,
-    rpc: 'https://rpc.comdex.one',
-    gasPrice: { amount: '0.0025', denom: 'ucmdx' }
-  },
+  // {
+  //   type: 'comdex-1',
+  //   name: 'Comdex',
+  //   image: new URL(`@/assets/images/task/comdex.png`, import.meta.url).href,
+  //   showOption: true,
+  //   rpc: 'https://rpc.comdex.one',
+  //   gasPrice: { amount: '0.0025', denom: 'ucmdx' }
+  // },
 
   {
     type: 'archway-1',
@@ -72,7 +72,7 @@ const chains: ChainData[] = [
   },
 
   {
-    type: 'osmos-1',
+    type: 'osmosis-1',
     name: 'Osmosis',
     image: new URL(`@/assets/images/task/osmosis.png`, import.meta.url).href,
     showOption: true,
