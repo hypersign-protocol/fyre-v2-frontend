@@ -57,7 +57,17 @@ const emit = defineEmits({
     } else {
       return false
     }
-  }
+  },
+
+  signMessageStarted: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
+  },
+
+  isError: (data: any) => { }
 })
 
 reactive({
@@ -139,6 +149,30 @@ watch(
 );
 
 watch(
+  () => evmStore.hasSigningStarted,
+  (newVal, oldVal) => {
+    if (newVal && !oldVal) {
+      emit('signMessageStarted', 'sign message started from signArbitrary....')
+      evmStore.SET_SIGNING_STARTED(false)
+    } else {
+      console.log("no state change");
+    }
+  }
+);
+
+watch(
+  () => evmStore.error.status,
+  (newVal, oldVal) => {
+    if (newVal && !oldVal) {
+      emit('isError', evmStore.error.message);
+      evmStore.SET_ERROR({ status: false, message: "" })
+    } else {
+      console.log("no state change");
+    }
+  }
+);
+
+watch(
   () => events.data,
   (value) => {
     if (value.event === 'CONNECT_SUCCESS' || value.properties?.connected) {
@@ -192,7 +226,7 @@ const collectProvider = async (connectionValue) => {
 
 const signArbitrary = async () => {
   try {
-    loading.value = true
+    evmStore.SET_SIGNING_STARTED(true)
 
     const payload = {
       signType: 'eip155',
@@ -210,8 +244,8 @@ const signArbitrary = async () => {
 
     console.log(evmResultObject)
     evmStore.SET_EVM_RESULT(evmResultObject)
-  } catch (err) {
-    console.log(err)
+  } catch (e: any) {
+    evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
   } finally {
     loading.value = false
     props.options.showBwModal = false
@@ -219,27 +253,25 @@ const signArbitrary = async () => {
 }
 
 const generateDidDoc = async () => {
-  const payload = {
-    chainId: evmResultObject.chainId,
-    address: evmResultObject.walletAddress,
-    clientSpec: 'eth-personalSign',
-    suiteType: 'eth',
-    provider: evmResultObject.provider
+  try {
+    const payload = {
+      chainId: evmResultObject.chainId,
+      address: evmResultObject.walletAddress,
+      clientSpec: 'eth-personalSign',
+      suiteType: 'eth',
+      provider: evmResultObject.provider
+    }
+
+    const { proof, verifed } = await signData(payload)
+
+    evmResultObject.signProof = proof
+    evmResultObject.isSignedVerified = verifed
+
+
+  } catch (e: any) {
+    evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
   }
 
-  const { proof, verifed } = await signData(payload)
-
-  console.log(proof, verifed)
-
-  evmResultObject.signProof = proof
-  evmResultObject.isSignedVerified = verifed
-
-  // evmStore.SET_EVM_RESULT(evmResultObject)
-
-  // setTimeout(() => {
-  //   emit('getSignedData', evmResultObject)
-  //   props.options.showBwModal = false
-  // }, 100)
 }
 
 const openModal = () => {
