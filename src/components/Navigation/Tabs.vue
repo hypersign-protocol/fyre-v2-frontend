@@ -96,14 +96,15 @@ const tabs = ref([
     name: 'All',
     slug: 'all'
   },
-  {
-    name: 'Coming Soon',
-    slug: 'coming_soon'
-  },
-  {
-    name: 'Ends in 24h',
-    slug: 'ends_in_24h'
-  }
+  //// Hiding it for now since these functionality does not work and we dont have enough event yet - vishwas
+  // {
+  //   name: 'Coming Soon',
+  //   slug: 'coming_soon'
+  // },
+  // {
+  //   name: 'Ends in 24h',
+  //   slug: 'ends_in_24h'
+  // }
 ])
 
 const rewards = ref([
