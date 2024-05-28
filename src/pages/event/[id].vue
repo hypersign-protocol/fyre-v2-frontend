@@ -359,8 +359,6 @@ const collectWalletAddress = async (data) => {
 // }
 
 const collectError = (data: any) => {
-  debugger
-  console.error(data)
   notificationStore.SHOW_NOTIFICATION({
     show: true,
     type: 'error',
