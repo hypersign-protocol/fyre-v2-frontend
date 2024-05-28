@@ -5,8 +5,8 @@
         <div class="position-relative">
           <v-card v-if="!loading" class="rounded-xl py-0" color="rgba(28, 29, 41, 1)" theme="dark">
             <v-card-actions class="pa-0">
-              <p class="font-weight-bold ml-5">Choose Network</p>
-              <v-btn class="ml-auto" icon="mdi-close" @click="options.showBwModal = false"></v-btn>
+              <p class="font-weight-bold ml-5">Choose Ecosystem</p>
+              <v-btn class="ml-auto" icon="mdi-close" @click="closeModal()"></v-btn>
             </v-card-actions>
             <v-divider></v-divider>
             <v-row class="pa-5 ma-0">
