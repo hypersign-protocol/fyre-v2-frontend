@@ -11,8 +11,11 @@
       <div class="modal__body">
         <div class="border__dotted pa-6 d-flex flex-column align-center">
           <div class="d-flex align-center mb-2">
-            <p class="mr-2">
+            <p v-if="checkIfLoggedIn()" class="mr-2">
               {{ eventParticipants.myReferralsCount }}/{{ eventData.referral.limit }}
+            </p>
+            <p v-else class="mr-2">
+             0/{{ eventData.referral.limit }}
             </p>
             <img src="@/assets/images/user.svg" />
           </div>
@@ -23,13 +26,13 @@
             You can gain more points by referring your friends
           </p>
         </div>
-        <div class="border__dotted pa-6 d-flex flex-column align-center mt-4">
+        <div v-if="checkIfLoggedIn()" class="border__dotted pa-6 d-flex flex-column align-center mt-4">
           <p class="font-16 font-weight-medium mb-2">Your Referral Code</p>
           <v-btn class="base-btn overflow-hidden text-truncate">
             <span class="mr-2">{{ eventParticipants.myReferralInvitationCode }}</span>
           </v-btn>
         </div>
-        <v-btn
+        <v-btn v-if="checkIfLoggedIn()"
           height="53"
           block
           color="secondary"
@@ -48,6 +51,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { copyContent } from '@/composables/general.ts'
 
 const props = defineProps({
+  token: { type: String, required: true },
   eventData: {
     type: Object,
     required: true,
@@ -63,6 +67,14 @@ const props = defineProps({
     }
   }
 })
+
+const checkIfLoggedIn = () => {
+  if (props.token) {
+    return true
+  } else {
+    return false
+  }
+}
 
 const dialog = ref(true)
 
