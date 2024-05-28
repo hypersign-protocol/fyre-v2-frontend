@@ -262,8 +262,8 @@ export const addWallet = async (payload) => {
         id: `${localDidDoc.id}${localDidKey}`,
         assertionMethod: [`${localDidDoc.id}${localDidKey}`]
       }
-    })
-    // documentLoader: wallet?.pubKey ? docloader1 : docloader
+    }),
+    documentLoader: wallet?.pubKey ? docloader1 : docloader
   })
 
   const verifed = await jsSig.verify(proof, {
