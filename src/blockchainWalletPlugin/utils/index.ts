@@ -44,7 +44,7 @@ export const docloader = async (url, options) => {
     }
   }
 
-  return
+  return nodeDocumentLoader(url)
 }
 
 const nodeRestURL = 'https://api.prajna.hypersign.id/'
