@@ -15,7 +15,7 @@
               {{ eventParticipants.myReferralsCount }}/{{ eventData.referral.limit }}
             </p>
             <p v-else class="mr-2">
-             0/{{ eventData.referral.limit }}
+              0/{{ eventData.referral.limit }}
             </p>
             <img src="@/assets/images/user.svg" />
           </div>
@@ -26,21 +26,16 @@
             You can gain more points by referring your friends
           </p>
         </div>
-        <div v-if="checkIfLoggedIn()" class="border__dotted pa-6 d-flex flex-column align-center mt-4">
-          <p class="font-16 font-weight-medium mb-2">Your Referral Code</p>
+        <!-- <div v-if="checkIfLoggedIn()" class="border__dotted pa-6 d-flex flex-column align-center mt-4">
+          <p class="font-16 font-weight-medium mb-2">Your Referral Url</p>
           <v-btn class="base-btn overflow-hidden text-truncate">
-            <span class="mr-2">{{ eventParticipants.myReferralInvitationCode }}</span>
+            <span class="mr-2"> {{ getReferralUrl }}</span>
           </v-btn>
-        </div>
-        <v-btn v-if="checkIfLoggedIn()"
-          height="53"
-          block
-          color="secondary"
-          class="claim--button mt-4"
-          @click="copyContent(getReferralUrl())"
-        >
+        </div> -->
+        <v-btn v-if="checkIfLoggedIn()" height="53" block color="secondary" class="claim--button mt-4"
+          @click="copyContent(getReferralUrl())">
           <v-icon>mdi-link-variant</v-icon>
-          <span class="ml-2"> Copy Link</span>
+          <span class="ml-2"> Copy Your Referral Link</span>
         </v-btn>
       </div>
     </v-card>
@@ -49,6 +44,12 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { copyContent } from '@/composables/general.ts'
+import { getToken } from '@/composables/jwtService.ts'
+
+const authToken = computed(() => {
+  return getToken()
+})
+
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -69,7 +70,7 @@ const props = defineProps({
 })
 
 const checkIfLoggedIn = () => {
-  if (props.token) {
+  if (authToken.value) {
     return true
   } else {
     return false
