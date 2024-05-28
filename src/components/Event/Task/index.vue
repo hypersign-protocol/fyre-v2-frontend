@@ -1,16 +1,8 @@
 <template>
   <!-- <p class="text-right">{{ task.type }}</p> -->
-  <component
-    :task="task"
-    :token="token"
-    :communityId="communityId"
-    :is="checkComponent"
-    :eventParticipants="eventParticipants"
-    v-if="checkComponent"
-    class="mb-10"
-    @enableWallet="connectWallet"
-    @removeFormData="emit('removeFormData')"
-  />
+  <component :task="task" :token="token" :communityId="communityId" :is="checkComponent"
+    :eventParticipants="eventParticipants" v-if="checkComponent" class="mb-10" @enableWallet="connectWallet"
+    @removeFormData="emit('removeFormData')" />
 </template>
 <script lang="ts" setup>
 import { tasks as eventTasks } from '@/data/event/Actions.ts'

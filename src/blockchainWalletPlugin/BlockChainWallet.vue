@@ -163,6 +163,8 @@ const interchainWallet = ref(null)
 
 const closeModal = () => {
   interchainModal.value = false
+  props.options.showBwModal = false
+  emit('emitError', "User has rejected the request");
 }
 
 const collectEvmWalletAddress = (data: any) => {

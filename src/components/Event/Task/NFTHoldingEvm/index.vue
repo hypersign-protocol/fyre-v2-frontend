@@ -125,6 +125,23 @@ watch(
   { deep: true }
 )
 
+
+watch(
+  () => store.wallet_connect_error,
+  (newVal, oldVal) => {
+    if ((newVal.taskId === props.task._id) && newVal.status) {
+      isCollecting.value = false
+      walletConnected.value = false
+      loading.value = false
+      store.SET_WALLET_CONNECT_ERROR({
+        status: false,
+        message: "",
+        taskId: null
+      })
+    }
+  }
+)
+
 const connect = async (item) => {
   isCollecting.value = true
   emit('enableWallet', { network: 'evm', taskId: props.task._id })
