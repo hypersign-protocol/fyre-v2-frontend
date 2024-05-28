@@ -26,7 +26,7 @@ const CONTEXTS: any = Object.freeze({
   'https://ns.did.ai/suites/secp256k1-2019/v1': {
     ...ecdsasecp2019
   },
-  "https://ns.did.ai/suites/secp256k1-2020/v1":{
+  'https://ns.did.ai/suites/secp256k1-2020/v1': {
     ...ecdsasecp2020
   },
   'https://www.w3.org/ns/did/v1': {
@@ -35,8 +35,6 @@ const CONTEXTS: any = Object.freeze({
 })
 
 export const docloader = async (url, options) => {
-  console.log(url);
-  
   if (url in CONTEXTS) {
     return {
       contextUrl: null, // this is for a context via a link header
@@ -46,7 +44,7 @@ export const docloader = async (url, options) => {
     }
   }
 
-  return 
+  return
 }
 
 const nodeRestURL = 'https://api.prajna.hypersign.id/'

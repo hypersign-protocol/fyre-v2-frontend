@@ -64,7 +64,7 @@ dependencies:
     version: 11.2.1
   keplr-ecdsasecp256k1signature2019:
     specifier: github:hypersign-protocol/KeplrEcdsaSecp256k1Signature2019
-    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3)
+    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3)
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -13862,9 +13862,9 @@ packages:
     version: 0.0.1
     dev: false
 
-  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3):
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/f3d9d762113a82ed78f2120dbe2f0e273dbd9140}
-    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140
+  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3):
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/35f577740aa1549589ded71fada0e194e112dc26}
+    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26
     name: keplr-ecdsasecp256k1signature2019
     version: 1.0.0
     dependencies:
