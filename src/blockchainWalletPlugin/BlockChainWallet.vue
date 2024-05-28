@@ -134,6 +134,14 @@ const emit = defineEmits({
     } else {
       return false
     }
+  },
+
+  emitError: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
   }
 })
 
@@ -155,6 +163,8 @@ const interchainWallet = ref(null)
 
 const closeModal = () => {
   interchainModal.value = false
+  props.options.showBwModal = false
+  emit('emitError', "User has rejected the request");
 }
 
 const collectEvmWalletAddress = (data: any) => {
@@ -172,7 +182,8 @@ const collectWalletAddress = (data: any) => {
 const collectError = (data: any) => {
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
-  loading.value = false
+  loading.value = false;
+  emit('emitError', data);
 }
 const collectSignedData = (data: any) => {
   emit('emitSignedData', data)

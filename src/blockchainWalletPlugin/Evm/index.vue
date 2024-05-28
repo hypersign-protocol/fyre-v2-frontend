@@ -280,8 +280,6 @@ const openModal = () => {
 }
 
 const closeModal = async () => {
-  console.log('kkk')
-  console.log(evmResultObject.connector.connector)
   const connector = evmResultObject.connector.connector
   const result = await disconnect(wagmiConfig, {
     connector

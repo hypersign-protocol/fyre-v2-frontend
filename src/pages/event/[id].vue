@@ -242,16 +242,16 @@
     />
   </template>
 
-  <BlockChainWallet
-    :options="options"
-    @emitProvider="getProvider"
-    @emitWalletAddress="collectWalletAddress"
-    @emitSignedData="collectSignedData"
-  />
+  <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData" @emitError="collectError" />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useNotificationStore } from '@/store/notification.ts'
+
+
+const notificationStore = useNotificationStore()
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -342,7 +342,7 @@ watch(
 )
 const getProvider = async (data: any) => {
   console.log('Inside getProvider handler for event emitProvider')
-  if (data) {
+  if (data && !authUser.value.didDocument) {
     await authStore.USER_LOGIN(`?provider=${data}-wallet`)
   } else {
     console.log('Please select the provider before you proceed')
@@ -357,6 +357,20 @@ const collectWalletAddress = async (data) => {
 // const collectSignedData = async (data) => {
 
 // }
+
+const collectError = (data: any) => {
+  notificationStore.SHOW_NOTIFICATION({
+    show: true,
+    type: 'error',
+    message: data
+  })
+
+  eventParticipantStore.SET_WALLET_CONNECT_ERROR({
+    status: true,
+    message: data,
+    taskId: formData.taskId,
+  })
+}
 
 const collectSignedData = async (data: any) => {
   console.log('Inside collectSignedData...')

@@ -43,7 +43,7 @@ dependencies:
     version: 3.37.0
   cosmes:
     specifier: github:hypersign-protocol/cosmes#build
-    version: github.com/hypersign-protocol/cosmes/ba65cc75485abf799cc49662e2c21ddf65ad13c2(@bufbuild/protobuf@1.9.0)(@noble/hashes@1.4.0)(@noble/secp256k1@2.1.0)(@scure/base@1.1.6)(@scure/bip32@1.4.0)(@scure/bip39@1.3.0)(@walletconnect/legacy-client@2.0.0)(@walletconnect/sign-client@2.12.2)(lodash-es@4.17.21)
+    version: github.com/hypersign-protocol/cosmes/752c3c7e4e4b7fce820188ec8c9bb7afd341c51f(@bufbuild/protobuf@1.9.0)(@noble/hashes@1.4.0)(@noble/secp256k1@2.1.0)(@scure/base@1.1.6)(@scure/bip32@1.4.0)(@scure/bip39@1.3.0)(@walletconnect/legacy-client@2.0.0)(@walletconnect/sign-client@2.13.0)(lodash-es@4.17.21)
   defu:
     specifier: ^6.1.4
     version: 6.1.4
@@ -51,8 +51,8 @@ dependencies:
     specifier: ^2.6.1
     version: 2.7.2(vue@3.4.27)
   ethereumeip712signature2021suite:
-    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#7fb4ba8bcb788e85f0c97371
-    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371
+    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#tsconfig
+    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79
   hs-ssi-sdk:
     specifier: github:hypersign-protocol/hid-ssi-js-sdk#testcase/bjj
     version: github.com/hypersign-protocol/hid-ssi-js-sdk/d552c9fab0a0c777f3a236ee0fd9019a5d2914d3(@iden3/js-crypto@1.1.0)(idb-keyval@6.2.1)
@@ -64,7 +64,7 @@ dependencies:
     version: 11.2.1
   keplr-ecdsasecp256k1signature2019:
     specifier: github:hypersign-protocol/KeplrEcdsaSecp256k1Signature2019
-    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3)
+    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3)
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -4730,46 +4730,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@walletconnect/core@2.12.2:
-    resolution: {integrity: sha512-7Adv/b3pp9F42BkvReaaM4KS8NEvlkS7AMtwO3uF/o6aRMKtcfTJq9/jgWdKJh4RP8pPRTRFjCw6XQ/RZtT4aQ==}
-    dependencies:
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-provider': 1.0.13
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/jsonrpc-ws-connection': 1.0.14
-      '@walletconnect/keyvaluestorage': 1.1.1
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/relay-api': 1.0.10
-      '@walletconnect/relay-auth': 1.0.4
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2
-      '@walletconnect/utils': 2.12.2
-      events: 3.3.0
-      isomorphic-unfetch: 3.1.0
-      lodash.isequal: 4.5.0
-      uint8arrays: 3.1.1
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - ioredis
-      - uWebSockets.js
-      - utf-8-validate
-    dev: false
-
   /@walletconnect/core@2.13.0:
     resolution: {integrity: sha512-blDuZxQenjeXcVJvHxPznTNl6c/2DO4VNrFnus+qHmO6OtT5lZRowdMtlCaCNb1q0OxzgrmBDcTOCbFcCpio/g==}
     dependencies:
@@ -5152,38 +5112,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@walletconnect/sign-client@2.12.2:
-    resolution: {integrity: sha512-cM0ualXj6nVvLqS4BDNRk+ZWR+lubcsz/IHreH+3wYrQ2sV+C0fN6ctrd7MMGZss0C0qacWCx0pm62ZBuoKvqA==}
-    dependencies:
-      '@walletconnect/core': 2.12.2
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-utils': 1.0.8
-      '@walletconnect/logger': 2.1.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2
-      '@walletconnect/utils': 2.12.2
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - bufferutil
-      - encoding
-      - ioredis
-      - uWebSockets.js
-      - utf-8-validate
-    dev: false
-
   /@walletconnect/sign-client@2.13.0:
     resolution: {integrity: sha512-En7KSvNUlQFx20IsYGsFgkNJ2lpvDvRsSFOT5PTdGskwCkUfOpB33SQJ6nCrN19gyoKPNvWg80Cy6MJI0TjNYA==}
     dependencies:
@@ -5224,32 +5152,6 @@ packages:
 
   /@walletconnect/types@2.11.2:
     resolution: {integrity: sha512-p632MFB+lJbip2cvtXPBQslpUdiw1sDtQ5y855bOlAGquay+6fZ4h1DcDePeKQDQM3P77ax2a9aNPZxV6y/h1Q==}
-    dependencies:
-      '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/keyvaluestorage': 1.1.1
-      '@walletconnect/logger': 2.1.2
-      events: 3.3.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - ioredis
-      - uWebSockets.js
-    dev: false
-
-  /@walletconnect/types@2.12.2:
-    resolution: {integrity: sha512-9CmwTlPbrFTzayTL9q7xM7s3KTJkS6kYFtH2m1/fHFgALs6pIUjf1qAx1TF2E4tv7SEzLAIzU4NqgYUt2vWXTg==}
     dependencies:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
@@ -5376,40 +5278,6 @@ packages:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.11.2
-      '@walletconnect/window-getters': 1.0.1
-      '@walletconnect/window-metadata': 1.0.1
-      detect-browser: 5.3.0
-      query-string: 7.1.3
-      uint8arrays: 3.1.1
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - ioredis
-      - uWebSockets.js
-    dev: false
-
-  /@walletconnect/utils@2.12.2:
-    resolution: {integrity: sha512-zf50HeS3SfoLv1N9GPl2IXTZ9TsXfet4usVAsZmX9P6/Xzq7d/7QakjVQCHH/Wk1O9XkcsfeoZoUhRxoMJ5uJw==}
-    dependencies:
-      '@stablelib/chacha20poly1305': 1.0.1
-      '@stablelib/hkdf': 1.0.1
-      '@stablelib/random': 1.0.2
-      '@stablelib/sha256': 1.0.1
-      '@stablelib/x25519': 1.0.3
-      '@walletconnect/relay-api': 1.0.10
-      '@walletconnect/safe-json': 1.0.2
-      '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
@@ -11696,6 +11564,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -13945,8 +13814,8 @@ packages:
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
-  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371:
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/7fb4ba8bcb788e85f0c97371}
+  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79:
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/b459ce35ed768d8677ce741021d45a8bafa6ed79}
     name: ethereumeip712signature2021suite
     version: 0.0.1
     dependencies:
@@ -13993,9 +13862,9 @@ packages:
     version: 0.0.1
     dev: false
 
-  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3):
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/f3d9d762113a82ed78f2120dbe2f0e273dbd9140}
-    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140
+  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3):
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/35f577740aa1549589ded71fada0e194e112dc26}
+    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26
     name: keplr-ecdsasecp256k1signature2019
     version: 1.0.0
     dependencies:
@@ -14008,9 +13877,9 @@ packages:
       - web-streams-polyfill
     dev: false
 
-  github.com/hypersign-protocol/cosmes/ba65cc75485abf799cc49662e2c21ddf65ad13c2(@bufbuild/protobuf@1.9.0)(@noble/hashes@1.4.0)(@noble/secp256k1@2.1.0)(@scure/base@1.1.6)(@scure/bip32@1.4.0)(@scure/bip39@1.3.0)(@walletconnect/legacy-client@2.0.0)(@walletconnect/sign-client@2.12.2)(lodash-es@4.17.21):
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/cosmes/tar.gz/ba65cc75485abf799cc49662e2c21ddf65ad13c2}
-    id: github.com/hypersign-protocol/cosmes/ba65cc75485abf799cc49662e2c21ddf65ad13c2
+  github.com/hypersign-protocol/cosmes/752c3c7e4e4b7fce820188ec8c9bb7afd341c51f(@bufbuild/protobuf@1.9.0)(@noble/hashes@1.4.0)(@noble/secp256k1@2.1.0)(@scure/base@1.1.6)(@scure/bip32@1.4.0)(@scure/bip39@1.3.0)(@walletconnect/legacy-client@2.0.0)(@walletconnect/sign-client@2.13.0)(lodash-es@4.17.21):
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/cosmes/tar.gz/752c3c7e4e4b7fce820188ec8c9bb7afd341c51f}
+    id: github.com/hypersign-protocol/cosmes/752c3c7e4e4b7fce820188ec8c9bb7afd341c51f
     name: cosmes
     version: 0.0.60
     peerDependencies:
@@ -14031,7 +13900,7 @@ packages:
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
       '@walletconnect/legacy-client': 2.0.0
-      '@walletconnect/sign-client': 2.12.2
+      '@walletconnect/sign-client': 2.13.0
       lodash-es: 4.17.21
     dev: false
 

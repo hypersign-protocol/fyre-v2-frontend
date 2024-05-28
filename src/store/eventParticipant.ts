@@ -37,7 +37,12 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
   state: () => ({
     performResult: {} as PerformTaskResult,
     leaderBoard: {} as LeaderboardData,
-    eventParticipants: {}
+    eventParticipants: {},
+    wallet_connect_error: {
+      status: false, 
+      message: "",
+      taskId: null,
+    }
   }),
   actions: {
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
@@ -121,6 +126,11 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
         notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
+    },
+
+    SET_WALLET_CONNECT_ERROR(payload: any) {
+      this.wallet_connect_error = { ...payload }
     }
+
   }
 })

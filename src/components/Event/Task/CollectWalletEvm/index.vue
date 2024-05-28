@@ -81,6 +81,22 @@ const store = useEventParticipantStore()
 const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
+watch(
+  () => store.wallet_connect_error,
+  (newVal, oldVal) => {
+    if ((newVal.taskId === props.task._id) && newVal.status) {
+      isCollecting.value = false
+      walletConnected.value = false
+      loading.value = false
+      store.SET_WALLET_CONNECT_ERROR({
+        status: false,
+        message: "",
+        taskId: null
+      })
+    }
+  }
+)
+
 const user = computed(() => {
   return getUser()
 })
