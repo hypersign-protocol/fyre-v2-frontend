@@ -342,7 +342,7 @@ watch(
 )
 const getProvider = async (data: any) => {
   console.log('Inside getProvider handler for event emitProvider')
-  if (data) {
+  if (data && !authUser.value.didDocument) {
     await authStore.USER_LOGIN(`?provider=${data}-wallet`)
   } else {
     console.log('Please select the provider before you proceed')
