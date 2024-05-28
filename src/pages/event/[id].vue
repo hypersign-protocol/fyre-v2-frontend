@@ -366,6 +366,12 @@ const collectError = (data: any) => {
     type: 'error',
     message: data
   })
+
+  eventParticipantStore.SET_WALLET_CONNECT_ERROR({
+    status: true,
+    message: data,
+    taskId: formData.taskId,
+  })
 }
 
 const collectSignedData = async (data: any) => {
