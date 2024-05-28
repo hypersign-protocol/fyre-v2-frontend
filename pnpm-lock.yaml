@@ -51,8 +51,8 @@ dependencies:
     specifier: ^2.6.1
     version: 2.7.2(vue@3.4.27)
   ethereumeip712signature2021suite:
-    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#7fb4ba8bcb788e85f0c97371
-    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371
+    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#tsconfig
+    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79
   hs-ssi-sdk:
     specifier: github:hypersign-protocol/hid-ssi-js-sdk#testcase/bjj
     version: github.com/hypersign-protocol/hid-ssi-js-sdk/d552c9fab0a0c777f3a236ee0fd9019a5d2914d3(@iden3/js-crypto@1.1.0)(idb-keyval@6.2.1)
@@ -11564,6 +11564,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -13813,8 +13814,8 @@ packages:
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
-  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371:
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/7fb4ba8bcb788e85f0c97371}
+  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79:
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/b459ce35ed768d8677ce741021d45a8bafa6ed79}
     name: ethereumeip712signature2021suite
     version: 0.0.1
     dependencies:

@@ -21,7 +21,7 @@ import {
 } from '@web3modal/wagmi/vue'
 
 import { coinbaseWallet } from '@wagmi/connectors'
-import { evmWalletsStore } from '../stores/evmchain';
+import { evmWalletsStore } from '../stores/evmchain'
 const evmStore = evmWalletsStore()
 const store = useInterChainStore()
 
@@ -67,7 +67,7 @@ const emit = defineEmits({
     }
   },
 
-  isError: (data: any) => { }
+  isError: (data: any) => {}
 })
 
 reactive({
@@ -143,10 +143,10 @@ watch(
       emit('getSignedData', evmStore.evmResultObject)
       evmStore.SET_EVM_RESULT({})
     } else {
-      console.log("no state change");
+      console.log('no state change')
     }
   }
-);
+)
 
 watch(
   () => evmStore.hasSigningStarted,
@@ -155,22 +155,24 @@ watch(
       emit('signMessageStarted', 'sign message started from signArbitrary....')
       evmStore.SET_SIGNING_STARTED(false)
     } else {
-      console.log("no state change");
+      console.log('no state change')
     }
   }
-);
+)
 
 watch(
   () => evmStore.error.status,
   (newVal, oldVal) => {
+    console.log((evmStore.error))
+
     if (newVal && !oldVal) {
-      emit('isError', evmStore.error.message);
-      evmStore.SET_ERROR({ status: false, message: "" })
+      emit('isError', evmStore.error.message)
+      evmStore.SET_ERROR({ status: false, message: '' })
     } else {
-      console.log("no state change");
+      console.log('no state change')
     }
   }
-);
+)
 
 watch(
   () => events.data,
@@ -200,7 +202,7 @@ modal.subscribeEvents(async (e) => {
     const connetor = wagmiConfig.connectors.filter((e) => e.uid == wagmiConfig.state.current)
     if (connetor.length > 0) {
       const provider = await Promise.resolve(connetor[0].getProvider())
-      await collectProvider(provider);
+      await collectProvider(provider)
     } else {
       console.log('======== No connector===============')
     }
@@ -218,7 +220,7 @@ const collectProvider = async (connectionValue) => {
   emit('getEvmWalletAddress', evmResultObject)
 
   if (props.options.isPerformAction) {
-    await signArbitrary();
+    await signArbitrary()
   } else {
     generateDidDoc()
   }
@@ -245,7 +247,10 @@ const signArbitrary = async () => {
     console.log(evmResultObject)
     evmStore.SET_EVM_RESULT(evmResultObject)
   } catch (e: any) {
-    evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
+    evmStore.SET_ERROR({
+      status: true,
+      message: e['message'] ? e['message'] : 'User rejects the signature request'
+    })
   } finally {
     loading.value = false
     props.options.showBwModal = false
@@ -266,12 +271,12 @@ const generateDidDoc = async () => {
 
     evmResultObject.signProof = proof
     evmResultObject.isSignedVerified = verifed
-
-
   } catch (e: any) {
-    evmStore.SET_ERROR({ status: true, message: e['message'] ? e['message'] : 'User rejects the signature request' })
+    evmStore.SET_ERROR({
+      status: true,
+      message: e['message'] ? e['message'] : 'User rejects the signature request'
+    })
   }
-
 }
 
 const openModal = () => {
