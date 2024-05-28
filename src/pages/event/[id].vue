@@ -242,16 +242,16 @@
     />
   </template>
 
-  <BlockChainWallet
-    :options="options"
-    @emitProvider="getProvider"
-    @emitWalletAddress="collectWalletAddress"
-    @emitSignedData="collectSignedData"
-  />
+  <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData" @emitError="collectError" />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useNotificationStore } from '@/store/notification.ts'
+
+
+const notificationStore = useNotificationStore()
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
 const toggleRefer = ref(false)
@@ -357,6 +357,16 @@ const collectWalletAddress = async (data) => {
 // const collectSignedData = async (data) => {
 
 // }
+
+const collectError = (data: any) => {
+  debugger
+  console.error(data)
+  notificationStore.SHOW_NOTIFICATION({
+    show: true,
+    type: 'error',
+    message: data
+  })
+}
 
 const collectSignedData = async (data: any) => {
   console.log('Inside collectSignedData...')

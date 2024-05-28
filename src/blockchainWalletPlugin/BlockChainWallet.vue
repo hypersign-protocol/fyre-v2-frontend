@@ -134,6 +134,14 @@ const emit = defineEmits({
     } else {
       return false
     }
+  },
+
+  emitError: (data: any) => {
+    if (data) {
+      return true
+    } else {
+      return false
+    }
   }
 })
 
@@ -172,7 +180,8 @@ const collectWalletAddress = (data: any) => {
 const collectError = (data: any) => {
   // eslint-disable-next-line vue/no-mutating-props
   props.options.showBwModal = false
-  loading.value = false
+  loading.value = false;
+  emit('emitError', data);
 }
 const collectSignedData = (data: any) => {
   emit('emitSignedData', data)
