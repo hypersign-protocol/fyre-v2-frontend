@@ -205,6 +205,11 @@ modal.subscribeEvents(async (e) => {
       console.log('======== No connector===============')
     }
   }
+
+
+  if (e.data.event == 'MODAL_CLOSE') {
+    evmStore.SET_ERROR({ status: true, message: 'User rejects the signature request' })
+  }
 })
 
 const collectProvider = async (connectionValue) => {
