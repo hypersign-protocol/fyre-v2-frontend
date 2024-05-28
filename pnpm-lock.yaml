@@ -51,8 +51,8 @@ dependencies:
     specifier: ^2.6.1
     version: 2.7.2(vue@3.4.27)
   ethereumeip712signature2021suite:
-    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#7fb4ba8bcb788e85f0c97371
-    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371
+    specifier: github:hypersign-protocol/EthereumEip712Signature2021Suite#tsconfig
+    version: github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79
   hs-ssi-sdk:
     specifier: github:hypersign-protocol/hid-ssi-js-sdk#testcase/bjj
     version: github.com/hypersign-protocol/hid-ssi-js-sdk/d552c9fab0a0c777f3a236ee0fd9019a5d2914d3(@iden3/js-crypto@1.1.0)(idb-keyval@6.2.1)
@@ -64,7 +64,7 @@ dependencies:
     version: 11.2.1
   keplr-ecdsasecp256k1signature2019:
     specifier: github:hypersign-protocol/KeplrEcdsaSecp256k1Signature2019
-    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3)
+    version: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3)
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -11564,6 +11564,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -13813,8 +13814,8 @@ packages:
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
-  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/7fb4ba8bcb788e85f0c97371:
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/7fb4ba8bcb788e85f0c97371}
+  github.com/hypersign-protocol/EthereumEip712Signature2021Suite/b459ce35ed768d8677ce741021d45a8bafa6ed79:
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/EthereumEip712Signature2021Suite/tar.gz/b459ce35ed768d8677ce741021d45a8bafa6ed79}
     name: ethereumeip712signature2021suite
     version: 0.0.1
     dependencies:
@@ -13861,9 +13862,9 @@ packages:
     version: 0.0.1
     dev: false
 
-  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140(mobx@6.12.3):
-    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/f3d9d762113a82ed78f2120dbe2f0e273dbd9140}
-    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/f3d9d762113a82ed78f2120dbe2f0e273dbd9140
+  github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26(mobx@6.12.3):
+    resolution: {tarball: https://codeload.github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/tar.gz/35f577740aa1549589ded71fada0e194e112dc26}
+    id: github.com/hypersign-protocol/KeplrEcdsaSecp256k1Signature2019/35f577740aa1549589ded71fada0e194e112dc26
     name: keplr-ecdsasecp256k1signature2019
     version: 1.0.0
     dependencies:
