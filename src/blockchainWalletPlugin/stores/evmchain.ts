@@ -12,7 +12,7 @@ export const evmWalletsStore = defineStore('evmstore', {
         chainId: {},
         network: 'evm',
         connector: {}
-    },
+    } as any,
     hasSigningStarted: false, 
     error: {
       status: false,

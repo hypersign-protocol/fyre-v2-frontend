@@ -113,6 +113,7 @@ const state = useWeb3ModalState()
 const { setThemeMode, themeMode, themeVariables } = useWeb3ModalTheme()
 const events = useWeb3ModalEvents()
 
+let switchNetwork = false;
 const evmResultObject = reactive({
   provider: null,
   walletAddress: null,
@@ -121,7 +122,7 @@ const evmResultObject = reactive({
   wagmiConfig: null,
   chainId: null,
   network: 'evm',
-  connector: null
+  connector: null as any
 })
 
 watch(
@@ -192,11 +193,30 @@ watch(
 // the damn fix
 
 modal.subscribeEvents(async (e) => {
-  console.log(e)
+  console.log({
+    event: e.data.event,
+    connected: e.data.properties?.connected,
+    method: e.data.properties?.method
+
+  })
+
+  // HOT fix to solve this bug https://kanban.hypersign.id/bsi1q4e6ftpyg8jtc8o161t3ejy/vnxy7ez1ot7gkig9mkhttxtc85w/cf59jjfdw93ru9njjmjwan9fqno
+  if (e.data.event === 'SWITCH_NETWORK') {
+    switchNetwork = true;
+    return;
+  }
+
+
+  if (e.data.event == 'MODAL_CLOSE' && !e.data.properties.method && !switchNetwork) {
+    evmStore.SET_ERROR({ status: true, message: 'User rejects the signature request' })
+    return
+  }
+
   if (
     (e.data.event == 'MODAL_CLOSE' || e.data.event == 'CONNECT_SUCCESS') &&
     (e.data.properties.connected == true || e.data.properties.method == 'browser')
   ) {
+    switchNetwork = false
     const connetor = wagmiConfig.connectors.filter((e) => e.uid == wagmiConfig.state.current)
     if (connetor.length > 0) {
       const provider = await Promise.resolve(connetor[0].getProvider())
@@ -204,11 +224,7 @@ modal.subscribeEvents(async (e) => {
     } else {
       console.log('======== No connector===============')
     }
-  }
-
-
-  if (e.data.event == 'MODAL_CLOSE') {
-    evmStore.SET_ERROR({ status: true, message: 'User rejects the signature request' })
+    return
   }
 })
 
@@ -285,11 +301,13 @@ const openModal = () => {
 }
 
 const closeModal = async () => {
-  const connector = evmResultObject.connector.connector
-  const result = await disconnect(wagmiConfig, {
-    connector
-  })
-  console.log(result)
+  if (evmResultObject.connector) {
+    const connector = evmResultObject.connector.connector
+    const result = await disconnect(wagmiConfig, {
+      connector
+    })
+    console.log(result)
+  }
   store.walletOptions.showBwModal = false
 }
 

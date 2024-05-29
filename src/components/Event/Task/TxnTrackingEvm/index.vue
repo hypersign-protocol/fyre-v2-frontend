@@ -166,7 +166,7 @@ watch(
 
 const submit = async () => {
   loading.value = true
-  await store.PERFORM_EVENT_TASK({
+  const resp = await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,
     task: {
@@ -177,5 +177,11 @@ const submit = async () => {
       }
     }
   })
+  loading.value = false
+  if (!resp) {
+    isCollecting.value = false
+    walletConnected.value = false
+    emit('removeFormData');
+  }
 }
 </script>
