@@ -80,7 +80,9 @@ const checkIfLoggedIn = () => {
 const dialog = ref(true)
 
 const getReferralUrl = () => {
-  const url = window.location.href
+  const origin = window.location.origin
+  const pathname = window.location.pathname
+  const url = origin + pathname
   return `${url}?referrer=${props.eventParticipants.myReferralInvitationCode}`
 }
 </script>
