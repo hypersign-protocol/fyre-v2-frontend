@@ -5,28 +5,28 @@
 
   .logo {
     img {
-      height: 60px;
+      height: 50px;
     }
 
     @include media-respond(sm) {
       img {
-        height: 60px;
+        height: 45px;
       }
     }
     @include media-respond(xs) {
       img {
-        height: 60px;
+        height: 45px;
       }
     }
   }
 
   .login-button {
-    width: 160px !important;
-    height: 48px !important;
+    //width: 160px !important;
+    //height: 48px !important;
     border-radius: 8px !important;
-    font-size: 16px !important;
-    margin-left: 30px !important;
-    margin-right: 30px !important;
+    //font-size: 16px !important;
+    //margin-left: 30px !important;
+    margin-right: 15px !important;
 
     @include media-respond(sm) {
       width: 90px !important;
