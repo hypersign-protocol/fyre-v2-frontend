@@ -20,7 +20,7 @@
             <img src="@/assets/images/user.svg" />
           </div>
           <p class="font-16 font-weight-bold mb-2">
-            Refer and gain +{{ eventData.referral.referralXp }}XP points
+            Refer and gain +{{ eventData.referral.refereeXp }}XP points
           </p>
           <p class="font-16 font-weight-medium">
             You can gain more points by referring your friends

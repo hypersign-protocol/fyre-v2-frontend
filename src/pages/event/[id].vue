@@ -111,7 +111,7 @@
               <img src="@/assets/images/reward01.svg" class="icon" />
               <span class="content">Rewards</span>
             </v-chip>
-            <v-chip class="event__chip cursor-pointer" size="large" @click="toggleRefer = true">
+            <v-chip class="event__chip cursor-pointer" size="large" @click="validateReferral">
               <img src="@/assets/images/refer.svg" class="icon" />
               <span class="content">Refer</span>
             </v-chip>
@@ -254,7 +254,7 @@ import { useNotificationStore } from '@/store/notification.ts'
 const notificationStore = useNotificationStore()
 const toggleDescription = ref(false)
 const toggleRewards = ref(false)
-const toggleRefer = ref(false)
+let toggleRefer = ref(false)
 const toggleParticipant = ref(false)
 const rating = ref('3.2')
 const activeTab = ref('task')
@@ -370,6 +370,28 @@ const collectError = (data: any) => {
     message: data,
     taskId: formData.taskId,
   })
+}
+
+const validateReferral = () => {
+  if (!token.value) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to view your refferal settings'
+    })
+    toggleRefer.value = false
+  } else {
+    if (!eventParticipantStore.eventParticipants?.tasks) {
+      notificationStore.SHOW_NOTIFICATION({
+        show: true,
+        type: 'error',
+        message: 'Please perform atleast one task to view your refferal settings'
+      })
+      toggleRefer.value = false
+    } else {
+      toggleRefer.value = true
+    }
+  }
 }
 
 const collectSignedData = async (data: any) => {
