@@ -176,7 +176,9 @@ const submit = async () => {
   })
   loading.value = false
   if (!resp) {
-    walletConnected.value = false;
+    isCollecting.value = false
+    walletConnected.value = false
+    emit('removeFormData');
   }
 }
 </script>

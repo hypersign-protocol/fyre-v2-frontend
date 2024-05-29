@@ -6,7 +6,7 @@ export const useInterChainStore = defineStore('interchain', {
     interChainObject: {},
     interChainActiveStep: 'chain',
     challenge: null,
-    walletOptions: {},
+    walletOptions: {} as any,
     evmResultObject: {}
   }),
   actions: {

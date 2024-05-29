@@ -162,8 +162,24 @@ watch(
 )
 
 const submit = async () => {
+  if (!props.walletInfo.walletAddress) {
+    return notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Wallet is not connected for this task'
+    })
+  }
+
+  if (!props.walletInfo.signedDidDoc) {
+    return notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Wallet signature not found for this task'
+    })
+  }
+
   loading.value = true
-  await store.PERFORM_EVENT_TASK({
+  const resp = await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
     communityId: props.communityId,
     task: {
@@ -174,5 +190,12 @@ const submit = async () => {
       }
     }
   })
+
+  loading.value = false
+  if (!resp) {
+    isCollecting.value = false
+    walletConnected.value = false
+    emit('removeFormData');
+  }
 }
 </script>
