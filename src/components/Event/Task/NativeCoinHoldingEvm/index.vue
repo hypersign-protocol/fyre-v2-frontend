@@ -181,5 +181,6 @@ const submit = async () => {
   if (!resp) {
     walletConnected.value = false;
   }
+  emit('removeFormData')
 }
 </script>

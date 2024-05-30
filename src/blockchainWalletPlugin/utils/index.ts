@@ -214,27 +214,29 @@ export const addWallet = async (payload) => {
 
   const targetBlockchainAccountId = `${signType}:${chainId}:${address}`
 
-  const exists = localDidDoc.verificationMethod.some(
+  const exists = localDidDoc.verificationMethod.filter(
     (method) => method.blockchainAccountId === targetBlockchainAccountId
   )
 
   console.log(exists)
 
-  let localDidKey = '#key-1'
+  let verificationMethodId = localDidDoc.id + '#key-1'
 
-  if (store.walletOptions.addVerificationMethod && !exists) {
-    localDidKey = `#key-${localDidDoc.verificationMethod.length + 1}`
+  if (store.walletOptions.addVerificationMethod && (exists && exists.length <= 0)) {
+    verificationMethodId = `${localDidDoc.id}#key-${localDidDoc.verificationMethod.length + 1}`
 
     const addVerification = await hsSDK.addVerificationMethod({
       didDocument: localDidDoc,
       type: wallet?.pubKey
         ? 'EcdsaSecp256k1VerificationKey2019'
         : 'EcdsaSecp256k1RecoveryMethod2020',
-      id: `${localDidDoc.id}${localDidKey}`,
+      id: `${verificationMethodId}`,
       controller: localDidDoc.controller,
       blockchainAccountId,
       publicKeyMultibase: wallet?.pubKey ? base58btc.encode(wallet?.pubKey.data.key) : undefined
     })
+  } else if(exists && exists.length > 0) {
+    verificationMethodId = exists[0].id;
   }
 
   const length = localDidDoc.verificationMethod.length
@@ -250,15 +252,13 @@ export const addWallet = async (payload) => {
   const formattedDidDoc = removeDuplicatesInSignedDidDoc(localDidDoc)
   delete formattedDidDoc.keyAgreement
 
-  console.log({ formattedDidDoc, suite, id: `${localDidDoc.id}${localDidKey}` })
-
   const proof = await jsSig.sign(formattedDidDoc, {
     suite,
     purpose: new purposes.AssertionProofPurpose({
       controller: {
         '@context': ['https://w3id.org/security/v2'],
-        id: `${localDidDoc.id}${localDidKey}`,
-        assertionMethod: [`${localDidDoc.id}${localDidKey}`]
+        id: `${verificationMethodId}`,
+        assertionMethod: [`${verificationMethodId}`]
       }
     }),
     documentLoader: wallet?.pubKey ? docloader1 : docloader
@@ -269,8 +269,8 @@ export const addWallet = async (payload) => {
     purpose: new purposes.AssertionProofPurpose({
       controller: {
         '@context': ['https://w3id.org/security/v2'],
-        id: `${localDidDoc.id}${localDidKey}`,
-        assertionMethod: [`${localDidDoc.id}${localDidKey}`]
+        id: `${verificationMethodId}`,
+        assertionMethod: [`${verificationMethodId}`]
       }
     }),
     documentLoader: wallet?.pubKey ? docloader1 : docloader

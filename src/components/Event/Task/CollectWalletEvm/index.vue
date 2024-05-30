@@ -192,11 +192,12 @@ const submit = async () => {
       }
     }
   })
-  loading.value = false
+
   if (!resp) {
     isCollecting.value = false
     walletConnected.value = false
-    emit('removeFormData')
   }
+  loading.value = false
+  emit('removeFormData');
 }
 </script>
