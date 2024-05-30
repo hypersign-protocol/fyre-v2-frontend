@@ -184,6 +184,16 @@ watch(
 
 const updateProfile = () => {
   if (store.userMeta.userName) {
+
+    if (store.userMeta.userName.length > 20) {
+      notificationStore.SHOW_NOTIFICATION({
+        show: true,
+        type: 'error',
+        message: 'Name can not be longer than 20 characters'
+      })
+      return;
+    }
+
     store.userMeta.didDocument.alsoKnownAs.push(store.userMeta.userName)
     store.userMeta.didDocument.alsoKnownAs = [...new Set(store.userMeta.didDocument.alsoKnownAs)]
 
