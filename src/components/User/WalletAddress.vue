@@ -45,6 +45,7 @@ import { useAuthStore } from '@/store/auth.ts'
 import { getUser, saveUser } from '@/composables/jwtService.ts'
 import { copyContent } from '@/composables/general.ts'
 import { storeToRefs } from 'pinia'
+import { watchEffect } from 'vue'
 const router = useRouter()
 const store = useAuthStore()
 
@@ -127,6 +128,7 @@ watchEffect(() => {
     fetchUserData()
     formData.walletAddress = null
     formData.signedDidDoc = null
+    delete options.didDocument.proof;
   }
 })
 
