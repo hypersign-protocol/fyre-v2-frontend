@@ -1,14 +1,8 @@
 <template>
   <v-dialog max-width="340" persistent>
     <template v-slot:default="{ isActive }">
-      <component
-        :is="checkComponent"
-        :options="options"
-        @changeStep="monitorChanges"
-        @close="handleClose"
-        @getSignedData="sendSignedData"
-        @getWalletAddress="sendWalletAddress"
-      />
+      <component :is="checkComponent" :options="options" @changeStep="monitorChanges" @close="handleClose"
+        @getSignedData="sendSignedData" @getWalletAddress="sendWalletAddress" @justClose="handlejustClose" />
     </template>
   </v-dialog>
 </template>
@@ -22,7 +16,7 @@ import { useInterChainStore } from '../stores/interchain.ts'
 const store = useInterChainStore()
 const { interChainObject } = storeToRefs(store)
 
-const emit = defineEmits(['close', 'getSignedData', 'getWalletAddress'])
+const emit = defineEmits(['close', 'getSignedData', 'getWalletAddress', 'justClose'])
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -62,4 +56,11 @@ const handleClose = (done: () => void) => {
   store.RESET_STORE()
   emit('close')
 }
+
+const handlejustClose = (done: () => void) => {
+  store.RESET_STORE()
+  emit('justClose')
+}
+
+
 </script>
