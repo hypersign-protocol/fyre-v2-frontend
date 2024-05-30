@@ -1,8 +1,8 @@
 <template>
-  <v-toolbar fixed flat height="100" class="header__wrapper">
+  <v-toolbar fixed flat height="70" class="header__wrapper">
     <template v-slot:prepend>
       <a class="cursor-pointer logo" @click="router.push({ path: '/' })"
-        ><img src="@/assets/images/logo.svg" height="60"
+        ><img src="@/assets/images/logo.svg" height="20"
       /></a>
     </template>
     <template v-slot:append>
