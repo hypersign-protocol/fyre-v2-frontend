@@ -143,5 +143,6 @@ const performAction = async () => {
       ...props.task.options.proofConfig
     }
   })
+  loading.value = false
 }
 </script>

@@ -142,5 +142,6 @@ const performAction = async () => {
       }
     }
   })
+  loading.value = false
 }
 </script>

@@ -112,6 +112,16 @@ watch(
 )
 
 const performAction = async () => {
+
+  if (!inputText.value) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please provide a valid input text'
+    })
+    return
+  }
+
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
@@ -123,5 +133,6 @@ const performAction = async () => {
       }
     }
   })
+  loading.value = false
 }
 </script>
