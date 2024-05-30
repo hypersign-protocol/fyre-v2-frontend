@@ -105,7 +105,7 @@ import { getUser } from '@/composables/jwtService.ts'
 const authStore = useAuthStore()
 const { challenge, userMeta } = storeToRefs(useAuthStore())
 
-const user = computed(() => {
+let user = computed(() => {
   return getUser()
 })
 
@@ -163,6 +163,17 @@ watch(
     })
   },
   { deep: true }
+)
+
+watch(
+  () => authStore.userMeta,
+  (value: any, oldVal: any) => {
+    if (value) {
+      user = computed(() => {
+        return getUser()
+      })
+    }
+  }
 )
 
 const navigate = (item: any) => {
