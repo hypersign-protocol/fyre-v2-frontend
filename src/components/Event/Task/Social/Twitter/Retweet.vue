@@ -25,16 +25,17 @@
       <div class="task__input">
         <div class="task__submit mb-2">
           <v-btn
+          v-if="!isTaskVerified"
             class="base-btn"
             @click="handleTwitterLogin"
             :disabled="socialAccessToken || isTaskVerified"
           >
-            <span v-if="socialAccessToken || isTaskVerified">Authorized</span>
+            <span v-if="socialAccessToken">Authorized</span>
             <span v-else>Authorize Twitter</span>
           </v-btn>
         </div>
         <v-text-field
-          v-if="socialAccessToken"
+          v-if="socialAccessToken || isTaskVerified"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
           class="base-input"

@@ -28,7 +28,8 @@
           target="_blank"
           :disabled="isTaskVerified"
           @click="performAction"
-          >Collect Url</v-btn
+          style="text-transform: lowercase !important"
+          >{{ trim(task.options.cta.visitUrl) }}</v-btn
         >
       </div>
     </div>
@@ -65,6 +66,9 @@ const store = useEventParticipantStore()
 const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
+const trim = (arg: string) => {
+  return arg.slice(0, 40) + '....'
+}
 const checkIfUserLogged = () => {
   if (props.token) {
     showExpand.value = !showExpand.value
@@ -104,7 +108,7 @@ watch(
 const performAction = async () => {
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
-    communityId: props.task.communityId,
+    communityId: props.communityId,
     task: {
       id: props.task._id,
       proof: true

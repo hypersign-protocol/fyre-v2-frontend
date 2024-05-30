@@ -25,16 +25,17 @@
       <div class="task__input">
         <div class="task__submit mb-2">
           <v-btn
+            v-if="!isTaskVerified"
             class="base-btn"
             @click="handleTwitterLogin"
             :disabled="socialAccessToken || isTaskVerified"
           >
-            <span v-if="socialAccessToken || isTaskVerified">Authorized</span>
+            <span v-if="socialAccessToken">Authorized</span>
             <span v-else>Authorize Github</span>
           </v-btn>
         </div>
         <v-text-field
-          v-if="socialAccessToken"
+          v-if="socialAccessToken || isTaskVerified"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
           class="base-input"
@@ -62,6 +63,7 @@ import { storeToRefs } from 'pinia'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useNotificationStore } from '@/store/notification.ts'
 import { webAuth } from '@/composables/twitterAuth.ts'
+import Url from '../../CollectInput/Url.vue'
 
 const props = defineProps({
   communityId: { type: String, required: true },
@@ -155,6 +157,20 @@ const handleTwitterLogin = () => {
   )
 }
 
+const checkGithubPrUrl = (url: string) => {
+  try {
+    new URL(url)
+    const regex = /https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+/
+
+    if (!regex.test(url)) {
+      throw new Error('Regx not matched')
+    }
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
 const performAction = async () => {
   if (!inputText.value) {
     notificationStore.SHOW_NOTIFICATION({
@@ -162,7 +178,15 @@ const performAction = async () => {
       type: 'error',
       message: 'Please provide Github PR Url'
     })
-    return;
+    return
+  }
+  if (!checkGithubPrUrl(inputText.value)) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please provide Github PR Url'
+    })
+    return
   }
   loading.value = true
   await store.PERFORM_EVENT_TASK({
@@ -181,3 +205,4 @@ const performAction = async () => {
   loading.value = false
 }
 </script>
+: any: { accessToken: null }: string
