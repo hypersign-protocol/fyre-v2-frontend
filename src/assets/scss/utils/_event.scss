@@ -12,7 +12,9 @@
     border: 1px solid #fff;
   }
 }
-
+.v-avatar.v-avatar--size-small {
+  --v-avatar-height: 20px !important;
+}
 .event__wrapper {
   @include media-respond(md) {
     padding: 0px 30px !important;

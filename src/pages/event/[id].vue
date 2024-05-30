@@ -15,7 +15,7 @@
         <v-card color="transparent" class="rounded-lg">
           <div class="d-flex align-center justify-space-between pa-3 bg-black-100">
             <div
-              class="d-flex align-center cursor-pointer"
+              class="d-flex align-center cursor-pointer" 
               @click="viewCommunity(eventById.communityId)"
             >
               <div class="d-flex align-center">
@@ -33,12 +33,12 @@
                 />
               </div>
               <div class="d-flex align-center ml-2">
-                <v-avatar size="small" class="cursor-pointer mr-2">
+                <v-avatar size="small" class="cursor-pointer mr-2" >
                   <v-img alt="John" src="@/assets/images/verify-check.svg"></v-img>
                 </v-avatar>
               </div>
             </div>
-            <div class="rating__container">
+            <!-- <div class="rating__container">
               <div class="rating__review">
                 <div class="rating__item">
                   <p class="font-20 font-weight-bold">3.2</p>
@@ -60,7 +60,7 @@
                   color="white"
                 ></v-rating>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="image-container">
             <img :src="eventById.banner" alt="Your Image Description" />
