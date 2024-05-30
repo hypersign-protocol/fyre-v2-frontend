@@ -180,8 +180,11 @@ const submit = async () => {
   if (!resp) {
     isCollecting.value = false
     walletConnected.value = false
-    loading.value = false
-    emit('removeFormData');
   }
+
+  loading.value = false
+  emit('removeFormData');
+
+
 }
 </script>
