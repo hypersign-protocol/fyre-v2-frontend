@@ -12,8 +12,8 @@
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action">
-        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged"> Verify </v-btn>
+      <div class="task__action" @click="checkIfUserLogged">
+        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified
@@ -21,15 +21,26 @@
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
     </div>
-    <div class="task__body" v-if="showExpand && !isTaskVerified">
-      <div class="task__input"></div>
-      <div class="task__submit">
-        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
+    <div class="task__body" v-if="showExpand">
+      <div class="task__input mb_2">
+        <v-text-field
+          v-if="isTaskVerified"
+          v-model="inputText"
+          :placeholder="task.proof.walletAddress"
+          class="base-input"
+          variant="outlined"
+          hide-details="auto"
+          bg-color="transparent"
+          :disabled="isTaskVerified"
+        ></v-text-field>
+      </div>
+      <div class="task__submit ">
+        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected" v-if="!isTaskVerified">
           <span v-if="!walletConnected">Collect Wallet Address</span>
           <span v-if="walletConnected">Collected</span>
         </v-btn>
-        <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
-      </div>
+        <v-btn v-if="!isTaskVerified" @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>     
+      </div>      
     </div>
   </div>
 </template>
@@ -84,13 +95,13 @@ const { performResult } = storeToRefs(useEventParticipantStore())
 watch(
   () => store.wallet_connect_error,
   (newVal, oldVal) => {
-    if ((newVal.taskId === props.task._id) && newVal.status) {
+    if (newVal.taskId === props.task._id && newVal.status) {
       isCollecting.value = false
       walletConnected.value = false
       loading.value = false
       store.SET_WALLET_CONNECT_ERROR({
         status: false,
-        message: "",
+        message: '',
         taskId: null
       })
     }
@@ -122,7 +133,7 @@ const fetchResult = () => {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
     console.log(result)
-    inputText.value = result.proof.retweetUrl
+    inputText.value = result.proof.walletAddress
   }
 }
 
@@ -139,6 +150,13 @@ watch(
     }
   },
   { deep: true }
+)
+
+watch(
+  () => showExpand.value,
+  (value) => {
+    console.log(value)
+  }
 )
 
 const connect = async (item) => {
