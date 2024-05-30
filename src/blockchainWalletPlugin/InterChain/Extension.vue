@@ -7,12 +7,8 @@
     </v-card-actions>
     <v-divider></v-divider>
     <div v-if="loading" class="d-flex align-center justify-center fill-height pa-6">
-      <v-progress-circular
-        alicolor="primary"
-        class="d-flex align-center justify-center"
-        indeterminate
-        size="32"
-      ></v-progress-circular>
+      <v-progress-circular alicolor="primary" class="d-flex align-center justify-center" indeterminate
+        size="32"></v-progress-circular>
     </div>
   </v-card>
 </template>
@@ -32,7 +28,7 @@ const store = useInterChainStore()
 
 const { interChainObject } = storeToRefs(store)
 
-const emit = defineEmits(['changeStep', 'close', 'getSignedData', 'getWalletAddress'])
+const emit = defineEmits(['changeStep', 'close', 'getSignedData', 'getWalletAddress', 'justClose'])
 
 const props = defineProps({
   text: { type: String, required: false },
@@ -145,7 +141,7 @@ watch(
   (value) => {
     if (value) {
       loading.value = false
-      emit('close')
+      emit('justClose')
     }
   },
   { deep: true }
@@ -178,11 +174,9 @@ const signArbitrary = async () => {
     interChainResultObject.isSignedVerified = verifed
 
     emit('getSignedData', interChainResultObject)
-    emit('close')
+    emit('justClose')
   } catch (err) {
     console.log(err)
-  } finally {
-    loading.value = false
     emit('close')
   }
 }
@@ -207,6 +201,6 @@ const getSignature = async () => {
 
   emit('getSignedData', interChainResultObject)
 
-  emit('close')
+  emit('justClose')
 }
 </script>

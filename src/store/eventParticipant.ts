@@ -66,15 +66,11 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
           authStore.USER_AUTHORIZE()
           return response.data
         } else {
-          notificationStore.SHOW_NOTIFICATION({
-            show: true,
-            type: 'error',
-            message: response.message
-          })
-          return null
+          throw new Error(response)
         }
       } catch (error) {
-        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        const m = error.error && error.error.details && error.error.details.length > 0 ? error.error.details[0]: error.message
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: m })
         return null
       }
     },

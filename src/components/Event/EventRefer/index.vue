@@ -12,7 +12,7 @@
         <div class="border__dotted pa-6 d-flex flex-column align-center">
           <div class="d-flex align-center mb-2">
             <p v-if="checkIfLoggedIn()" class="mr-2">
-              {{ eventParticipants.myReferralsCount }}/{{ eventData.referral.limit }}
+              {{ getReferralCount() }}/{{ eventData.referral.limit }}
             </p>
             <p v-else class="mr-2">
               0/{{ eventData.referral.limit }}
@@ -33,7 +33,7 @@
           </v-btn>
         </div> -->
         <v-btn v-if="checkIfLoggedIn()" height="53" block color="secondary" class="claim--button mt-4"
-          @click="copyContent(getReferralUrl())">
+          :disabled="!getInvitationCode()" @click="copyContent(getReferralUrl())">
           <v-icon>mdi-link-variant</v-icon>
           <span class="ml-2"> Copy Your Referral Link</span>
         </v-btn>
@@ -45,6 +45,9 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { copyContent } from '@/composables/general.ts'
 import { getToken } from '@/composables/jwtService.ts'
+import { useEventParticipantStore } from '@/store/eventParticipant.ts'
+
+const eventParticipantStore = useEventParticipantStore()
 
 const authToken = computed(() => {
   return getToken()
@@ -79,8 +82,21 @@ const checkIfLoggedIn = () => {
 
 const dialog = ref(true)
 
+const getReferralCount = () => {
+  return eventParticipantStore.performResult.myReferralsCount ? eventParticipantStore.performResult.myReferralsCount : (
+    props.eventParticipants.myReferralsCount ? props.eventParticipants.myReferralsCount : 0
+  )
+}
+
+const getInvitationCode = () => {
+  const referrarCode = eventParticipantStore.performResult.myReferralInvitationCode ? eventParticipantStore.performResult.myReferralInvitationCode : props.eventParticipants.myReferralInvitationCode
+  return referrarCode
+}
 const getReferralUrl = () => {
-  const url = window.location.href
-  return `${url}?referrer=${props.eventParticipants.myReferralInvitationCode}`
+  const origin = window.location.origin
+  const pathname = window.location.pathname
+  const url = origin + pathname
+  const referrarCode = getInvitationCode();
+  return `${url}?referrer=${referrarCode}`
 }
 </script>

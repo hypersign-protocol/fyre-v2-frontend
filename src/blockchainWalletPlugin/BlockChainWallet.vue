@@ -93,7 +93,8 @@
       </template>
     </v-dialog>
     <InterChainModal ref="interchainWallet" v-model="interchainModal" :options="options" @close="closeModal"
-      @getSignedData="collectSignedData" @getWalletAddress="collectWalletAddress" @isError="collectError" />
+      @justClose="justClose" @getSignedData="collectSignedData" @getWalletAddress="collectWalletAddress"
+      @isError="collectError" />
     <EvmModal ref="evmWallet" v-model="evmModal" :options="options" @getSignedData="collectSignedData"
       @getEvmWalletAddress="collectEvmWalletAddress" @isError="collectError" @signMessageStarted="notifySignMessage" />
   </div>
@@ -162,9 +163,13 @@ const evmWallet = ref(null)
 const interchainWallet = ref(null)
 
 const closeModal = () => {
+  justClose();
+  emit('emitError', "User has rejected the request");
+}
+
+const justClose = () => {
   interchainModal.value = false
   props.options.showBwModal = false
-  emit('emitError', "User has rejected the request");
 }
 
 const collectEvmWalletAddress = (data: any) => {

@@ -159,6 +159,14 @@ const handleTwitterLogin = () => {
 }
 
 const performAction = async () => {
+  if (!inputText.value) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please provide your retweet Url'
+    })
+    return;
+  }
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     socialToken: socialAccessToken.value,
@@ -172,5 +180,6 @@ const performAction = async () => {
       }
     }
   })
+  loading.value = false
 }
 </script>

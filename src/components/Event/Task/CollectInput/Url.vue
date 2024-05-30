@@ -116,6 +116,28 @@ watch(
 )
 
 const performAction = async () => {
+
+  try {
+    if (!inputText.value) {
+      notificationStore.SHOW_NOTIFICATION({
+        show: true,
+        type: 'error',
+        message: 'Please provide a URL'
+      })
+      return
+    }
+    new URL(inputText.value)
+  } catch (e) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please provide a valid URL'
+    })
+    inputText.value = null
+    return
+  }
+
+
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
@@ -127,5 +149,6 @@ const performAction = async () => {
       }
     }
   })
+  loading.value = false
 }
 </script>

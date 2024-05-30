@@ -381,7 +381,10 @@ const validateReferral = () => {
     })
     toggleRefer.value = false
   } else {
-    if (!eventParticipantStore.eventParticipants?.tasks) {
+    const iftask = eventParticipantStore.performResult?.tasks ? true : (
+      eventParticipantStore.eventParticipants?.tasks ? true : false
+    )
+    if (!iftask) {
       notificationStore.SHOW_NOTIFICATION({
         show: true,
         type: 'error',
