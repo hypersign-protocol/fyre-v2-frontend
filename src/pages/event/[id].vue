@@ -422,9 +422,8 @@ const clearWalletInfo = async () => {
 }
 
 const logWallet = async (data) => {
-  console.log(authUser.value)
-  console.log(typeof data.network)
-  console.log(data.network)
+  // clearing before gconnecting new walelt.
+  clearWalletInfo();
   options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
   options.selectedNetwork = data.network
   options.showBwModal = true
