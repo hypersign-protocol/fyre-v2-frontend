@@ -28,8 +28,8 @@
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__submit">
         <v-btn class="base-btn" @click="authenticate" :disabled="tgUserID || isTaskVerified">
-          <span v-if="tgUserID || isTaskVerified">Joined</span>
-          <span v-else>Join our Telegram</span>
+          <span v-if="isTaskVerified">{{task.proof.tgGroupId }}</span>
+          <span v-if="!isTaskVerified">Join our Telegram</span>
         </v-btn>
       </div>
       <div class="task__submit">

@@ -111,13 +111,30 @@ watch(
   { deep: true }
 )
 
-const performAction = async () => {
+const checkIfUrl = (url) => {
+  try {
+    new URL(url)
+  
+    return true
+  } catch (error) {
+    return false
+  }
+}
 
+const performAction = async () => {
   if (!inputText.value) {
     notificationStore.SHOW_NOTIFICATION({
       show: true,
       type: 'error',
       message: 'Please provide a valid input text'
+    })
+    return
+  }
+  if (checkIfUrl(inputText.value)) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Input text should not be a url'
     })
     return
   }
