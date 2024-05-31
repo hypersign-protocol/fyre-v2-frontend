@@ -25,17 +25,19 @@
       <div class="task__input">
         <div class="task__submit mb-2">
           <v-btn
-          v-if="!isTaskVerified"
+            v-if="!isTaskVerified && !redirected"
             class="base-btn"
             @click="handleTwitterLogin"
-            :disabled="socialAccessToken || isTaskVerified"
+            :disabled="isTaskVerified"
           >
-            <span v-if="socialAccessToken">Authorized</span>
-            <span v-else>Authorize Twitter</span>
+            <span v-if="socialAccessToken" style="text-transform: none">Click here to Retweet</span>
+            <span style="text-transform: none !important" v-else
+              >Authorize Twitter / X</span
+            >
           </v-btn>
         </div>
         <v-text-field
-          v-if="socialAccessToken || isTaskVerified"
+          v-if="(socialAccessToken && redirected) || isTaskVerified"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
           class="base-input"
@@ -49,7 +51,7 @@
         <v-btn
           :loading="loading"
           @click="performAction"
-          v-if="socialAccessToken && !isTaskVerified"
+          v-if="socialAccessToken && !isTaskVerified && redirected"
         >
           Verify</v-btn
         >
@@ -65,6 +67,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { webAuth } from '@/composables/twitterAuth.ts'
 import { useNotificationStore } from '@/store/notification.ts'
 
+const redirected = ref(false)
 const props = defineProps({
   communityId: { type: String, required: true },
   token: { type: String, required: true },
@@ -83,6 +86,7 @@ const props = defineProps({
     }
   }
 })
+const userData = ref({})
 const showExpand = ref(false)
 const loading = ref(false)
 const isTaskVerified = ref(false)
@@ -114,7 +118,6 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
     inputText.value = result.proof.retweetUrl
   }
 }
@@ -142,21 +145,40 @@ watch(
 )
 
 const handleTwitterLogin = () => {
-  const url = `https://twitter.com/intent/tweet?text=${props.task.options.cta.visitUrl}`
-  webAuth.popup.authorize(
-    {
-      connection: 'twitter',
-      owp: true
-    },
-    (err, response) => {
-      if (response) {
-        socialAccessToken.value = response.accessToken
-        window.open(url, '_blank')
-      } else {
-        console.log('Something went wrong')
+  const url = `https://twitter.com/intent/tweet?text=${props.task.options.proofConfig.proof.tweetUrl}`
+  if (!socialAccessToken.value) {
+    webAuth.popup.authorize(
+      {
+        connection: 'twitter',
+        owp: true
+      },
+      (err, response) => {
+        if (response) {
+          const idTokenBody = response.idToken.split('.')[1]
+          const body = Buffer.from(idTokenBody, 'base64')
+          userData.value = JSON.parse(body.toString('utf-8'))
+
+          socialAccessToken.value = response.accessToken
+        } else {
+          console.log('Something went wrong')
+        }
       }
-    }
-  )
+    )
+  } else {
+    redirected.value = true
+    window.open(url, '_blank')
+  }
+}
+
+const checkIfaTweetPost = (url: string) => {
+  const pattern = /https:\/\/x\.com\/[A-Za-z0-9_]+\/status\/\d+/
+  const pattern1 = /https:\/\/twitter\.com\/[A-Za-z0-9_]+\/status\/\d+/
+
+  if (pattern.test(url) || pattern1.test(url)) {
+    return true
+  } else {
+    return false
+  }
 }
 
 const performAction = async () => {
@@ -166,8 +188,17 @@ const performAction = async () => {
       type: 'error',
       message: 'Please provide your retweet Url'
     })
-    return;
+    return
   }
+  if (!checkIfaTweetPost(inputText.value)) {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please provide your retweet Url'
+    })
+    return
+  }
+
   loading.value = true
   await store.PERFORM_EVENT_TASK({
     socialToken: socialAccessToken.value,
