@@ -19,7 +19,7 @@
       <div class="task__action" @click="checkIfUserLogged">
         <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
