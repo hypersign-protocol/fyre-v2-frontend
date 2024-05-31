@@ -12,7 +12,9 @@
     border: 1px solid #fff;
   }
 }
-
+.v-avatar.v-avatar--size-small {
+  --v-avatar-height: 20px !important;
+}
 .event__wrapper {
   @include media-respond(md) {
     padding: 0px 30px !important;
@@ -290,13 +292,26 @@
     }
   }
 }
+.v-card .v-card-text {
+  @include media-respond(sm) {
+    //  padding: 0px 30px !important;
+  }
 
+  @include media-respond(xs) {
+    // flex-direction: column;
+  }
+}
 .event-information {
   display: flex;
   align-items: center;
+  
+  @include media-respond(md ){
+  }
 
   @include media-respond(xs) {
     flex-direction: column;
+    padding: 1rem 1rem 0rem 1rem !important;
+    align-items: normal;
   }
 
   .partipant--sec {
