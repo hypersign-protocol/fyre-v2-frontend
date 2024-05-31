@@ -25,20 +25,12 @@
     </div>
     <div class="task__body" v-if="showExpand">
       <div class="task__input">
-        <v-text-field
-          class="base-input"
-          variant="outlined"
-          hide-details="auto"
-          bg-color="transparent"
-          v-model="inputText"
-          :placeholder="task.options.userInput.collectUrl.label"
-          :disabled="isTaskVerified"
-        ></v-text-field>
+        <v-text-field class="base-input" variant="outlined" hide-details="auto" bg-color="transparent"
+          v-model="inputText" :placeholder="task.options.userInput.collectUrl.label"
+          :disabled="isTaskVerified"></v-text-field>
       </div>
       <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified" :disabled="!token"
-          >Verify</v-btn
-        >
+        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified" :disabled="!token">Verify</v-btn>
       </div>
     </div>
   </div>
@@ -107,9 +99,6 @@ watch(
     if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
       isTaskVerified.value = true
       showExpand.value = false
-    } else {
-      isTaskVerified.value = false
-      showExpand.value = true
     }
   },
   { deep: true }
