@@ -15,7 +15,7 @@
       <div class="task__action" @click="checkIfUserLogged">
         <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
@@ -25,17 +25,27 @@
       <div class="task__input">
         <div class="task__submit mb-2">
           <v-btn
-            v-if="!isTaskVerified"
+            v-if="!socialAccessToken && !isTaskVerified && !redirected"
             class="base-btn"
             @click="handleTwitterLogin"
-            :disabled="socialAccessToken || isTaskVerified"
+            :disabled="isTaskVerified"
           >
-            <span v-if="socialAccessToken">Authorized</span>
-            <span v-else>Authorize Github</span>
+            <span 
+              >Authorize Github
+            </span>
+          </v-btn>
+          <v-btn
+            v-if="!isTaskVerified && socialAccessToken && !redirected"
+            class="base-btn"
+            @click="handleTwitterLogin"
+            :disabled="isTaskVerified"
+          >
+            <span v-if="socialAccessToken" style="text-transform: none">Provide Pull Request</span>
+         
           </v-btn>
         </div>
         <v-text-field
-          v-if="socialAccessToken || isTaskVerified"
+          v-if="redirected || isTaskVerified"
           v-model="inputText"
           :placeholder="task.options.userInput.collectUrl.label"
           class="base-input"
@@ -49,7 +59,7 @@
         <v-btn
           :loading="loading"
           @click="performAction"
-          v-if="socialAccessToken && !isTaskVerified"
+          v-if="socialAccessToken && !isTaskVerified && redirected"
         >
           Verify</v-btn
         >
@@ -84,6 +94,7 @@ const props = defineProps({
   }
 })
 
+const redirected = ref(false)
 const showExpand = ref(false)
 const loading = ref(false)
 const isTaskVerified = ref(false)
@@ -140,21 +151,33 @@ watch(
   { deep: true }
 )
 
+const findGithubOrgs = (url: string) => {
+  const orgsplit = url?.split('github.com')[1]
+
+  const secondSplit = orgsplit.split('/')[1]
+
+  return secondSplit
+}
+
 const handleTwitterLogin = () => {
-  const url = `https://twitter.com/intent/tweet?text=${props.task.options.cta.visitUrl}`
-  webAuth.popup.authorize(
-    {
-      connection: 'github',
-      owp: true
-    },
-    (err, response) => {
-      if (response) {
-        socialAccessToken.value = response.accessToken
-      } else {
-        console.log('Something went wrong')
+  if (!socialAccessToken.value) {
+    webAuth.popup.authorize(
+      {
+        connection: 'github',
+        owp: true
+      },
+      (err, response) => {
+        if (response) {
+          socialAccessToken.value = response.accessToken
+        } else {
+          console.log('Something went wrong')
+        }
       }
-    }
-  )
+    )
+  } else {
+    window.open(props.task?.options?.proofConfig?.proof?.repoUrl + '/pulls', '_blank')
+    redirected.value = true
+  }
 }
 
 const checkGithubPrUrl = (url: string) => {

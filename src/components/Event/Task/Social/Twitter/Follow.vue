@@ -15,7 +15,7 @@
       <div class="task__action" @click="checkIfUserLogged">
         <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
@@ -23,9 +23,31 @@
     </div>
     <div class="task__body" v-if="showExpand">
       <div class="task__submit">
-        <v-btn @click="handleTwitterLogin" :disabled="isTaskVerified">
+        <v-btn
+          @click="handleTwitterLogin"
+          :disabled="isTaskVerified"
+          v-if="!socialAccessToken && !isTaskVerified"
+        >
+          <span v-if="!isTaskVerified">Authorize Twitter / X</span>
+        </v-btn>
+        <v-btn
+          @click="redirectToTwitterFollowPage"
+          :disabled="isTaskVerified"
+          v-if="socialAccessToken && !redirected"
+        >
           <span v-if="!isTaskVerified">Follow @{{ task.options.cta.visitUrl }}</span>
-          <span v-if="isTaskVerified">Followed @{{ task.options.cta.visitUrl }}</span>
+        </v-btn>
+        <v-btn v-if="redirected && !isTaskVerified " @click="performAction" :disabled="isTaskVerified">
+          <span v-if="!isTaskVerified">Verify</span>
+        </v-btn>
+        <v-btn
+          v-if="isTaskVerified"
+          @click="performAction"
+          :disabled="isTaskVerified"
+        >
+          <span v-if="isTaskVerified"
+            >Followed @{{ props.task.options.proofConfig.proof.twitterHandle }}</span
+          >
         </v-btn>
       </div>
     </div>
@@ -56,7 +78,7 @@ const props = defineProps({
     }
   }
 })
-
+const redirected = ref(false)
 const showExpand = ref(false)
 const loading = ref(false)
 const isTaskVerified = ref(false)
@@ -65,6 +87,7 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
+console.log(props)
 
 const notificationStore = useNotificationStore()
 
@@ -88,16 +111,17 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-    console.log(result)
     inputText.value = result.proof
   }
 }
+
+console.log(inputText)
 
 watch(
   () => socialAccessToken.value,
   (value: any) => {
     console.log(value)
-    performAction()
+    // performAction()
   },
   { deep: true }
 )
@@ -132,6 +156,12 @@ const handleTwitterLogin = () => {
   )
 }
 
+const redirectToTwitterFollowPage = () => {
+  const handle = props.task.options.proofConfig.proof.twitterHandle
+  const url = 'https://x.com/intent/user?screen_name=' + handle
+  window.open(url, '_blank')
+  redirected.value = true
+}
 const performAction = async () => {
   loading.value = true
   await store.PERFORM_EVENT_TASK({
