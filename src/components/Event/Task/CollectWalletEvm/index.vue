@@ -12,8 +12,8 @@
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
-      <div class="task__action" @click="checkIfUserLogged">
-        <v-btn v-if="!showExpand && !isTaskVerified"> Verify </v-btn>
+      <div class="task__action">
+        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged"> Verify </v-btn>
         <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
           <v-icon>mdi-check</v-icon>
           Verified
@@ -21,18 +21,11 @@
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
     </div>
-    <div class="task__body" v-if="showExpand">
+    <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input mb_2">
-        <v-text-field
-          v-if="isTaskVerified"
-          v-model="inputText"
-          :placeholder="task.proof.walletAddress"
-          class="base-input"
-          variant="outlined"
-          hide-details="auto"
-          bg-color="transparent"
-          :disabled="isTaskVerified"
-        ></v-text-field>
+        <v-text-field v-if="isTaskVerified" v-model="inputText" :placeholder="task.proof.walletAddress"
+          class="base-input" variant="outlined" hide-details="auto" bg-color="transparent"
+          :disabled="isTaskVerified"></v-text-field>
       </div>
       <div class="task__submit ">
         <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected" v-if="!isTaskVerified">
