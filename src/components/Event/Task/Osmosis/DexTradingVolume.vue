@@ -10,7 +10,7 @@
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action">
-        <v-btn v-if="!showExpand && !isTaskVerified" @click="showExpand = !showExpand">Verify</v-btn>
+        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged()">Verify</v-btn>
         <v-btn variant="outlined" v-if="isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn>
@@ -36,6 +36,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useNotificationStore } from '@/store/notification.ts'
 const props = defineProps({
   communityId: { type: String, required: true },
+  token: { type: String, required: true },
   task: {
     type: Object,
     required: true,
@@ -68,6 +69,21 @@ watch(
   },
   { deep: true }
 )
+
+
+const checkIfUserLogged = () => {
+  debugger
+  if (props.token) {
+    showExpand.value = !showExpand.value
+  } else {
+    notificationStore.SHOW_NOTIFICATION({
+      show: true,
+      type: 'error',
+      message: 'Please login to perform action'
+    })
+  }
+}
+
 
 const performAction = async () => {
 
