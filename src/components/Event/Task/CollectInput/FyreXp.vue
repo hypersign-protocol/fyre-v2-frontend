@@ -23,7 +23,7 @@
             !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
           "
         >
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
+          <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
         <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
