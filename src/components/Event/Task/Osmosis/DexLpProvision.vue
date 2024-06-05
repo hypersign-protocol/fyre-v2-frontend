@@ -100,7 +100,6 @@ onMounted(() => {
 const getPoolInfo = async (poolId) => {
   const data = await store.FETCH_POOL_ID(poolId)
   const pool = data.pool
-  console.log(data.pool)
   pair1.value = pool.token0
   pair2.value = pool.token1
 }
