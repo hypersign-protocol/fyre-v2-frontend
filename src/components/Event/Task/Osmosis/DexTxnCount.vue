@@ -6,6 +6,9 @@
     </div>
     <div class="task__header">
       <div class="task__title">
+        <span>
+          <img :src="getImage(task.type)" />
+        </span>
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
@@ -32,6 +35,8 @@
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
+import { getImage } from '@/composables/event.ts'
+
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const props = defineProps({
   communityId: { type: String, required: true },
