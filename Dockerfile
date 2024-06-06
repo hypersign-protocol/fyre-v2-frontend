@@ -6,9 +6,8 @@ WORKDIR /app
 
 COPY ./package.json .
 
-ENV NODE_OPTIONS=--max_old_space_size=8192
 
-RUN pnpm i
+RUN pnpm install
 
 
 COPY . .
@@ -26,7 +25,7 @@ ENV VITE_APP_TELEGRAM_BOT_ID='__VITE_APP_TELEGRAM_BOT_ID__'
 
 ENV VITE_APP_WC_PROJECT_ID='__VITE_APP_WC_PROJECT_ID__'
 
-RUN pnpm run build
+RUN NODE_OPTIONS=--max-old-space-size=8192 pnpm run build
 
 
 FROM nginx:latest as stage-serve
