@@ -6,25 +6,34 @@
     </div>
     <div class="task__header">
       <div class="task__title">
+        <span>
+          <img :src="getImage(task.type)" />
+        </span>
         <span class="text text-white-100">{{ task.title }}</span>
-        <span class="points text-blue-100"> +{{ task.xp }}XP </span>
+        <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action">
-        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged()">Verify</v-btn>
-        <v-btn variant="outlined" v-if="isTaskVerified">
-          <img src="@/assets/images/blue-tick.svg" class="mr-2" />
-          Verified</v-btn>
-        <v-icon v-if="showExpand" class="cursor-pointer" color="white">mdi-close</v-icon>
+        <v-btn v-if="!showExpand && !isTaskVerified" @click="checkIfUserLogged"> Verify </v-btn>
+        <v-btn variant="outlined" v-else-if="!showExpand && isTaskVerified">
+          <v-icon>mdi-check</v-icon>
+          Verified
+        </v-btn>
+        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
       </div>
     </div>
-    <div class="task__body" v-if="showExpand">
+    <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input">
-        <v-text-field class="rounded-xl" variant="outlined" hide-details="auto" bg-color="transparent"
-          v-model="inputText" :placeholder="task.options.userInput?.collectUrl.label"
-          :disabled="isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id)"></v-text-field>
+        <span
+          >Provide liquidity between {{ pair1 }} and {{ pair2 }} . Your liquidity provision should
+          be higher than thresold
+        </span>
       </div>
-      <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn @click="performAction">Verify</v-btn>
+      <div class="task__submit">
+        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
+          <span v-if="!walletConnected">Collect Wallet Address</span>
+          <span v-if="walletConnected">Collected</span>
+        </v-btn>
+        <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
       </div>
     </div>
   </div>
@@ -32,12 +41,22 @@
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
-import { useNotificationStore } from '@/store/notification.ts'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useNotificationStore } from '@/store/notification.ts'
+import { getImage } from '@/composables/event.ts'
+import { getUser, saveUser } from '@/composables/jwtService.ts'
+
 const props = defineProps({
   communityId: { type: String, required: true },
   token: { type: String, required: true },
   task: {
+    type: Object,
+    required: true,
+    default() {
+      return {}
+    }
+  },
+  walletInfo: {
     type: Object,
     required: true,
     default() {
@@ -52,24 +71,38 @@ const props = defineProps({
     }
   }
 })
+
 const showExpand = ref(false)
+const loading = ref(false)
+const isCollecting = ref(false)
+const walletConnected = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
-const store = useEventParticipantStore()
-const { performResult } = storeToRefs(useEventParticipantStore())
-const notificationStore = useNotificationStore()
 
-watch(
-  () => performResult.value,
-  (value: any) => {
-    if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
-      isTaskVerified.value = true
-    } else {
-      isTaskVerified.value = false
-    }
-  },
-  { deep: true }
-)
+const pair1 = ref({})
+const pair2 = ref({})
+
+const store = useEventParticipantStore()
+const notificationStore = useNotificationStore()
+const { performResult } = storeToRefs(useEventParticipantStore())
+
+const emit = defineEmits(['enableWallet', 'removeFormData'])
+
+const user = computed(() => {
+  return getUser()
+})
+
+onMounted(() => {
+  fetchResult()
+  getPoolInfo(props.task.options.proofConfig.proof.poolId)
+})
+
+const getPoolInfo = async (poolId) => {
+  const data = await store.FETCH_POOL_ID(poolId)
+  const pool = data.pool
+  pair1.value = pool.token0
+  pair2.value = pool.token1
+}
 
 const checkIfUserLogged = () => {
   if (props.token) {
@@ -83,17 +116,88 @@ const checkIfUserLogged = () => {
   }
 }
 
+const fetchResult = () => {
+  if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
+    isTaskVerified.value = true
+    const result = props.eventParticipants?.tasks[props.task?._id]
+    inputText.value = result.proof.retweetUrl
+  }
+}
 
-const performAction = async () => {
-  await store.PERFORM_EVENT_TASK({
+watch(
+  () => props.walletInfo,
+  (value: any) => {
+    console.log(value)
+
+    if (
+      value.taskId === props.task._id &&
+      value.walletAddress !== null &&
+      value.signedDidDoc !== null
+    ) {
+      isCollecting.value = false
+      walletConnected.value = true
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  () => store.wallet_connect_error,
+  (newVal, oldVal) => {
+    if (newVal.taskId === props.task._id && newVal.status) {
+      setTimeout(() => {
+        isCollecting.value = false
+        walletConnected.value = false
+        loading.value = false
+        store.SET_WALLET_CONNECT_ERROR({
+          status: false,
+          message: '',
+          taskId: null
+        })
+      }, 100)
+    }
+  }
+)
+
+const connect = async (item) => {
+  isCollecting.value = true
+
+  emit('enableWallet', { network: 'interchain', taskId: props.task._id })
+}
+
+watch(
+  () => performResult.value,
+  (value: any) => {
+    setTimeout(() => {
+      loading.value = false
+      if (performResult.value.tasks.hasOwnProperty(props.task._id)) {
+        isTaskVerified.value = true
+        showExpand.value = false
+      }
+      emit('removeFormData')
+    }, 500)
+  },
+  { deep: true }
+)
+
+const submit = async () => {
+  loading.value = true
+  const resp = await store.PERFORM_EVENT_TASK({
     eventId: props.task.eventId,
-    communityId: '65e43eca9a3b5d2bd597e43b',
+    communityId: props.communityId,
     task: {
       id: props.task._id,
       proof: {
-        userUrlInput: inputText.value
+        walletAddress: props.walletInfo.walletAddress,
+        signedDidDocument: props.walletInfo.signedDidDoc
       }
     }
   })
+  loading.value = false
+  if (!resp) {
+    isCollecting.value = false
+    walletConnected.value = false
+  }
+  emit('removeFormData')
 }
 </script>

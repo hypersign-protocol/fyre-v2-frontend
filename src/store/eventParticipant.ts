@@ -39,12 +39,55 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
     leaderBoard: {} as LeaderboardData,
     eventParticipants: {},
     wallet_connect_error: {
-      status: false, 
-      message: "",
-      taskId: null,
+      status: false,
+      message: '',
+      taskId: null
     }
   }),
   actions: {
+    async PERFORM_IBCDENOM_TRACE(ibcDenom: string): Promise<any> {
+      const denom = ibcDenom.split('/')[1]
+      const url = 'https://lcd.osmosis.zone/ibc/apps/transfer/v1/denom_traces/' + denom
+      try {
+        const response = await fetch(url)
+        const json = await response.json()
+
+        if (response.ok) {
+          return json
+        } else {
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: json.message
+          })
+          return []
+        }
+      } catch (error) {
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        return
+      }
+    },
+    async FETCH_POOL_ID(poolId: number): Promise<any> {
+      const url = 'https://lcd.osmosis.zone/osmosis/poolmanager/v1beta1/pools/' + poolId
+      try {
+        const response = await fetch(url)
+        const json = await response.json()
+
+        if (response.ok) {
+          return json
+        } else {
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: json.message
+          })
+          return []
+        }
+      } catch (error) {
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        return
+      }
+    },
     async PERFORM_EVENT_TASK(payload: string): Promise<EventTask[]> {
       try {
         let apiParams = `/event-participants/perform-task`
@@ -127,6 +170,5 @@ export const useEventParticipantStore = defineStore('eventParticipant', {
     SET_WALLET_CONNECT_ERROR(payload: any) {
       this.wallet_connect_error = { ...payload }
     }
-
   }
 })
