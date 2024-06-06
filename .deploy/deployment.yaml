@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fyre-v2-ui
+  name: fyre-new-ui
   namespace: hypermine-development
 spec:
   selector:
     matchLabels:
-      app: fyre-v2-ui
+      app: fyre-new-ui
   template:
     metadata:
       labels:
-        app: fyre-v2-ui
+        app: fyre-new-ui
     spec:
       containers:
-        - name: fyre-v2-ui
-          image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/fyre-v2-ui:__LATEST_RELEASE_TAG__
+        - name: fyre-new-ui
+          image: __GOOGLE_ARTIFACT_URL__/__GOOGLE_PROJECT_ID__/__GOOGLE_ARTIFACT_REPO__/fyre-new-ui:__LATEST_RELEASE_TAG__
           imagePullPolicy: Always
           resources:
             limits:
@@ -45,13 +45,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fyre-v2-ui-svc
+  name: fyre-new-ui-svc
   namespace: hypermine-development
 
 spec:
   type: NodePort
   selector:
-    app: fyre-v2-ui
+    app: fyre-new-ui
   ports:
     - port: 9002
       targetPort: 80

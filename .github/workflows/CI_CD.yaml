@@ -56,9 +56,9 @@ jobs:
 
           find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_WC_PROJECT_ID__#${{ vars.VITE_APP_WC_PROJECT_ID }}#" {} \;
 
-          docker build -t $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-v2-ui:${{ env.LATEST_RELEASE_TAG }}  .
+          docker build -t $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-new-ui:${{ env.LATEST_RELEASE_TAG }}  .
 
-          docker push $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-v2-ui:${{ env.LATEST_RELEASE_TAG }}
+          docker push $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-new-ui:${{ env.LATEST_RELEASE_TAG }}
 
   Deploy-Pipeline:
     needs: [Build-Pipeline]
@@ -83,6 +83,7 @@ jobs:
 
       - name: 'Configure kubectl'
         run: gcloud container clusters get-credentials hypermine-gke --region=asia-south1
+
       - name: Replace tags
         run: find .deploy/deployment.yaml -type f -exec sed  -i -e "s#__LATEST_RELEASE_TAG__#${{ env.LATEST_RELEASE_TAG }}#" {} \;
 
