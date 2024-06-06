@@ -22,25 +22,6 @@ spec:
               cpu: '500m'
           ports:
             - containerPort: 9002
-          env:
-            - name: NODE_ENV
-              value: __NODE_ENV__
-            - name: VUE_APP_DESC
-              value: __VUE_APP_DESC__
-            - name: VUE_APP_EXPLORER_BASE_URL
-              value: __VUE_APP_EXPLORER_BASE_URL__
-            - name: VUE_APP_NODE_SERVER_BASE_URL_REST
-              value: __VUE_APP_NODE_SERVER_BASE_URL_REST__
-            - name: VUE_APP_STUDIO_SERVER_BASE_URL
-              value: __VUE_APP_STUDIO_SERVER_BASE_URL__
-            - name: VUE_APP_STUDIO_SERVER_BASE_WS
-              value: __VUE_APP_STUDIO_SERVER_BASE_WS__
-            - name: VUE_APP_TITLE
-              value: __VUE_APP_TITLE__
-            - name: VUE_APP_VERSION
-              value: __VUE_APP_VERSION__
-            - name: VUE_APP_WEB_WALLET_ADDRESS
-              value: __VUE_APP_WEB_WALLET_ADDRESS__
 ---
 apiVersion: v1
 kind: Service
