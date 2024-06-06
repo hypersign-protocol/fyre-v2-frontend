@@ -1,3 +1,57 @@
+#iframe_container {
+  position: relative;
+  width: 100%;
+  height: 188px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+#iframe_content {
+  position: absolute;
+  border: aliceblue;
+  pointer-events: none;
+  top: -99px;
+  left: -4px;
+  height: 100vh;
+  width: 100%;
+}
+
+@include media-respond(sm) {
+  #iframe_container {
+    height: 139px !important;
+  }
+}
+
+@include media-respond(md) {
+  #iframe_container {
+    height: 139px !important;
+  }
+}
+
+#div_iframe {
+  position: relative;
+  width: 100%;
+  height: 329px;
+  overflow: hidden;
+  margin: 10px;
+  border-radius: 20px;
+}
+
+#frame {
+  position: absolute;
+  top: -288px;
+  left: -4px;
+  height: 100vh;
+  width: 100%;
+}
+
+@include media-respond(xs) {
+  #frame {
+    top: -381px !important;
+  }
+}
+
+
 .event__chip {
   background: rgb(255 255 255 / 1%) !important;
   width: 160px;

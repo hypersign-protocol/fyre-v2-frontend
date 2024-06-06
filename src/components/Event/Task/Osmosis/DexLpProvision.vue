@@ -23,21 +23,31 @@
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input">
-        <span
-          >Provide liquidity between {{ pair1 }} and {{ pair2 }} . Your liquidity provision should
-          be higher than thresold
+        <span>
+          <a :href="pool_url" target="_blank">
+            <div id="iframe_container">
+              <iframe id="iframe_content" :src="pool_url" frameborder="0" scrolling="no" border="0" cellspacing="0">
+              </iframe>
+            </div>
+          </a>
         </span>
       </div>
       <div class="task__submit">
-        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
-          <span v-if="!walletConnected">Collect Wallet Address</span>
-          <span v-if="walletConnected">Collected</span>
-        </v-btn>
-        <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
+        <v-btn @click="redirectToOsmosisLp()" :loading="loading" :disabled="isTaskVerified" v-if="!redirected">Provide
+          LP</v-btn>
+        <div v-else>
+          <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
+            <span v-if="!walletConnected">Collect Wallet Address</span>
+            <span v-if="walletConnected">Collected</span>
+          </v-btn>
+          <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
+        </div>
+
       </div>
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
@@ -78,9 +88,13 @@ const isCollecting = ref(false)
 const walletConnected = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
+const redirected = ref(false)
+const pool_url = ref("")
 
-const pair1 = ref({})
-const pair2 = ref({})
+const redirectToOsmosisLp = () => {
+  window.open(pool_url.value, '_blank')
+  redirected.value = true
+}
 
 const store = useEventParticipantStore()
 const notificationStore = useNotificationStore()
@@ -98,10 +112,7 @@ onMounted(() => {
 })
 
 const getPoolInfo = async (poolId) => {
-  const data = await store.FETCH_POOL_ID(poolId)
-  const pool = data.pool
-  pair1.value = pool.token0
-  pair2.value = pool.token1
+  pool_url.value = 'https://app.osmosis.zone/pool/' + poolId
 }
 
 const checkIfUserLogged = () => {
@@ -115,6 +126,8 @@ const checkIfUserLogged = () => {
     })
   }
 }
+
+
 
 const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
@@ -161,7 +174,6 @@ watch(
 
 const connect = async (item) => {
   isCollecting.value = true
-
   emit('enableWallet', { network: 'interchain', taskId: props.task._id })
 }
 
