@@ -1,7 +1,7 @@
 FROM node:18 as stage-build
 
 RUN npm i pnpm -g
-RUN npx patch-package  -y 
+RUN pnpm i patch-package -g
 
 WORKDIR /app
 
