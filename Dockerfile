@@ -1,7 +1,6 @@
 FROM node:18 as stage-build
 
 RUN npm i pnpm -g
-RUN pnpm i patch-package -g
 RUN npm i patch-package -g
 
 
