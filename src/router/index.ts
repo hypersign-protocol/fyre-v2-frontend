@@ -5,12 +5,12 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
+import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { isTokenExpired, isAuthRequired } from '@/utils/tokenCheck.ts'
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
   extendRoutes: setupLayouts,
   scrollBehavior(to, from, savedPosition) {
     // always scroll to top

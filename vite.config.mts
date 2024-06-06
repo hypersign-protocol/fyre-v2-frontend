@@ -14,7 +14,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base:'/',
   plugins: [
+  
     VueRouter(),
     Layouts(),
     Vue({
@@ -68,7 +70,8 @@ export default defineConfig({
     port: 9002,
   },
   build:{
-    commonjsOptions: { transformMixedEsModules: true } 
+    commonjsOptions: { transformMixedEsModules: true } ,
+    
 
   },
 })
