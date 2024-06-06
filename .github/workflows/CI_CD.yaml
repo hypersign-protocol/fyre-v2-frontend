@@ -61,7 +61,7 @@ jobs:
           docker push $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-v2-ui:${{ env.LATEST_RELEASE_TAG }}
 
   Deploy-Pipeline:
-    needs: [Deploy-Pipeline]
+    needs: [Build-Pipeline]
     runs-on: ubuntu-latest
     environment: prod
     steps:
