@@ -1,6 +1,7 @@
-FROM node:20 as stage-build
+FROM node:18 as stage-build
 
 RUN npm i pnpm -g
+RUN npx patch-package  -y 
 
 WORKDIR /app
 
