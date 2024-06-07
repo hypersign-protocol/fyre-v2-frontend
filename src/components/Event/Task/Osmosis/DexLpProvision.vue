@@ -37,8 +37,8 @@
           LP</v-btn>
         <div v-else>
           <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
-            <span v-if="!walletConnected">Collect Wallet Address</span>
-            <span v-if="walletConnected">Collected</span>
+            <span v-if="!walletConnected">Connect Wallet</span>
+            <span v-if="walletConnected">Connected</span>
           </v-btn>
           <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
         </div>
