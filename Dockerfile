@@ -1,4 +1,4 @@
-FROM node:20 as stage-build
+FROM node:20 as prod-build
 
 RUN npm i pnpm -g
 RUN npm i patch-package -g
@@ -30,8 +30,8 @@ ENV VITE_APP_WC_PROJECT_ID='__VITE_APP_WC_PROJECT_ID__'
 RUN NODE_OPTIONS=--max-old-space-size=8192 pnpm run build
 
 
-FROM nginx:latest as stage-serve
-COPY --from=stage-build /app/dist /usr/share/nginx/html
+FROM nginx:latest as prod-serve
+COPY --from=prod-build /app/dist /usr/share/nginx/html
 COPY default.conf  /etc/nginx/conf.d/default.conf
 
 
