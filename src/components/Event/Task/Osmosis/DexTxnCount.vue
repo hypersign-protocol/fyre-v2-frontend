@@ -17,7 +17,7 @@
         <v-btn variant="outlined" v-if="isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn>
-        <v-icon v-if="showExpand" class="cursor-pointer" color="white">mdi-close</v-icon>
+          <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand">
@@ -85,4 +85,7 @@ const performAction = async () => {
     }
   })
 }
+
+const makeshowExpandFalse = () => { showExpand.value = false } 
+
 </script>

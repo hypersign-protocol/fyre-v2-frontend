@@ -18,7 +18,7 @@
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
@@ -33,7 +33,7 @@
           Trading</v-btn>
         <div v-else>
           <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
-            <span v-if="!walletConnected">Connect Wallet</span>
+            <span v-if="!walletConnected">Connect Wallet</span>111
             <span v-if="walletConnected">Connected</span>
           </v-btn>
           <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
@@ -102,10 +102,13 @@ const redirectToOsmosisLp = () => {
   window.open(pool_url.value, '_blank')
   redirected.value = true
 }
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 onMounted(() => {
   fetchResult()
-  ibcDenomTrace()
+  setTimeout(()=>{
+    ibcDenomTrace()
+  },5000)
 
 })
 

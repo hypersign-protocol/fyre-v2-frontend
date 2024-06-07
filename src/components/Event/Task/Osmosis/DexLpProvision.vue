@@ -18,7 +18,7 @@
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
@@ -127,7 +127,7 @@ const checkIfUserLogged = () => {
   }
 }
 
-
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
