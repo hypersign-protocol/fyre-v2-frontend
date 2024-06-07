@@ -31,8 +31,9 @@ RUN NODE_OPTIONS=--max-old-space-size=8192 pnpm run build
 
 
 FROM nginx:latest as stage-serve
-COPY --from=stage-build /app/default  /etc/nginx/sites-available/default 
 COPY --from=stage-build /app/dist /usr/share/nginx/html
+COPY default.conf  /etc/nginx/conf.d/default.conf
+
 
 
 EXPOSE 80
