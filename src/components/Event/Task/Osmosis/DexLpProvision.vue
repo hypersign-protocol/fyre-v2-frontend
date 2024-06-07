@@ -34,7 +34,7 @@
       </div>
       <div class="task__submit">
         <v-btn @click="redirectToOsmosisLp()" :loading="loading" :disabled="isTaskVerified" v-if="!redirected">Provide
-          LP</v-btn>
+          Liquidity</v-btn>
         <div v-else>
           <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
             <span v-if="!walletConnected">Connect Wallet</span>
