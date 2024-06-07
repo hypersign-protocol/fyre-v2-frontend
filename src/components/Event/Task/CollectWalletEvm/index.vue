@@ -29,11 +29,11 @@
       </div>
       <div class="task__submit ">
         <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected" v-if="!isTaskVerified">
-          <span v-if="!walletConnected">Collect Wallet Address</span>
-          <span v-if="walletConnected">Collected</span>
+          <span v-if="!walletConnected">Connect Wallet</span>
+          <span v-if="walletConnected">Connected</span>
         </v-btn>
-        <v-btn v-if="!isTaskVerified" @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>     
-      </div>      
+        <v-btn v-if="!isTaskVerified" @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
+      </div>
     </div>
   </div>
 </template>

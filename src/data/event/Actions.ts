@@ -158,17 +158,17 @@ const tasks: Array<ITask> = [
     )
   },
   {
-    types: ['OSMOSIS_DEX_TRADING_VOLUME'],
+    types: ['DEX_TRADING_VOLUME_OSMOSIS'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/Osmosis/DexTradingVolume.vue'))
   },
   {
-    types: ['OSMOSIS_DEX_LP_PROVISON'],
+    types: ['DEX_LP_PROVISON_OSMOSIS'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/Osmosis/DexLpProvision.vue'))
-  },
-  {
-    types: ['OSMOSIS_DEX_TXN_COUNT'],
-    path: defineAsyncComponent(() => import('@/components/Event/Task/Osmosis/DexTxnCount.vue'))
-  }
+   },
+  // {
+  //   types: ['DEX_TXN_COUNT_OSMOSIS'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/Osmosis/DexTxnCount.vue'))
+  // }
 ]
 
 export { ITask, tasks }
