@@ -22,13 +22,22 @@
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
-      <div class="task__input"></div>
+      <div class="task__input">
+        <div id='div_iframe'>
+          <iframe id='frame' scrolling="no" frameborder="0" border="0" cellspacing="0" :src='pool_url'
+            style="pointer-events: none;"></iframe>
+        </div>
+      </div>
       <div class="task__submit">
-        <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
-          <span v-if="!walletConnected">Collect Wallet Address</span>
-          <span v-if="walletConnected">Collected</span>
-        </v-btn>
-        <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
+        <v-btn @click="redirectToOsmosisLp()" :loading="loading" :disabled="isTaskVerified" v-if="!redirected">Start
+          Trading</v-btn>
+        <div v-else>
+          <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
+            <span v-if="!walletConnected">Connect Wallet</span>
+            <span v-if="walletConnected">Connected</span>
+          </v-btn>
+          <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
+        </div>
       </div>
     </div>
   </div>
@@ -80,14 +89,44 @@ const inputText = ref(null)
 const store = useEventParticipantStore()
 const notificationStore = useNotificationStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+const ibcToken0DenomRef = ref(null)
+const ibcToken1DenomRef = ref(null)
+const pool_url = ref("")
+const redirected = ref(false)
 
 const user = computed(() => {
   return getUser()
 })
 
+const redirectToOsmosisLp = () => {
+  window.open(pool_url.value, '_blank')
+  redirected.value = true
+}
+
 onMounted(() => {
   fetchResult()
+  ibcDenomTrace()
+
 })
+
+const getPoolInfo = async () => {
+  const data = await store.FETCH_POOL_ID(props.task.options.poolId)
+  const pool = data.pool
+  return pool
+}
+
+
+const ibcDenomTrace = async () => {
+  const pool = await getPoolInfo();
+  const token0 = await store.PERFORM_IBCDENOM_TRACE(pool.token0)
+  ibcToken0DenomRef.value = token0.denom_trace.base_denom.substr(1, token0.denom_trace.base_denom.length).toUpperCase()
+
+  const token1 = await store.PERFORM_IBCDENOM_TRACE(pool.token1)
+  ibcToken1DenomRef.value = token1.denom_trace.base_denom.substr(1, token1.denom_trace.base_denom.length).toUpperCase()
+
+  pool_url.value = `https://app.osmosis.zone/?from=${ibcToken1DenomRef.value}&to=${ibcToken0DenomRef.value}`
+  console.log(pool_url.value)
+}
 
 const checkIfUserLogged = () => {
   if (props.token) {
