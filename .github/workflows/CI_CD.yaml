@@ -1,0 +1,101 @@
+name: Fyre frontend Build and Deploy Pipeline
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]-rc.[0-9]+'
+
+jobs:
+  Build-Pipeline:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v3
+
+      - name: Set Latest Tag
+        run: echo "LATEST_RELEASE_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+      - name: install gcloud cli tools
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{secrets.GOOGLE_PROJECT_ID}}
+          service_account_key: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+          install_components: 'gke-gcloud-auth-plugin'
+          export_default_credentials: true
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: 'Docker Auth'
+        run: gcloud auth configure-docker ${{secrets.GOOGLE_ARTIFACT_URL}}
+      - name: Replace vars
+        env:
+          VITE_API_ENDPOINT: ${{vars.VITE_API_ENDPOINT}}
+          VITE_API_TOKEN: ${{vars.VITE_API_TOKEN}}
+          VITE_APP_AUTH0_CLIENT_ID: ${{ vars.VITE_APP_AUTH0_CLIENT_ID }}
+          VITE_APP_AUTH0_DOMAIN: ${{vars.VITE_APP_AUTH0_DOMAIN}}
+          VITE_APP_TELEGRAM_BOT_ID: ${{vars.VITE_APP_TELEGRAM_BOT_ID}}
+          VITE_APP_WC_PROJECT_ID: ${{vars.VITE_APP_WC_PROJECT_ID}}
+        run:
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_API_ENDPOINT__#${{ vars.VITE_API_ENDPOINT }}#" {} \;
+
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_API_TOKEN__#${{ vars.VITE_API_TOKEN }}#" {} \;
+
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_AUTH0_DOMAIN__#${{ vars.VITE_APP_AUTH0_DOMAIN }}#" {} \;
+
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_AUTH0_CLIENT_ID__#${{ vars.VITE_APP_AUTH0_CLIENT_ID }}#" {} \;
+
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_TELEGRAM_BOT_ID__#${{ vars.VITE_APP_TELEGRAM_BOT_ID }}#" {} \;
+
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_WC_PROJECT_ID__#${{ vars.VITE_APP_WC_PROJECT_ID }}#" {} \;
+
+      - name: 'Docker Build and Push'
+        env:
+          GOOGLE_PROJECT_ID: ${{secrets.GOOGLE_PROJECT_ID}}
+          GOOGLE_ARTIFACT_URL: ${{secrets.GOOGLE_ARTIFACT_URL}}
+          GOOGLE_ARTIFACT_REPO: ${{secrets.GOOGLE_ARTIFACT_REPO}}
+
+        run:
+          docker build -t $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-new-ui:${{env.LATEST_RELEASE_TAG}}  .
+
+          docker push $GOOGLE_ARTIFACT_URL/$GOOGLE_PROJECT_ID/$GOOGLE_ARTIFACT_REPO/fyre-new-ui:${{env.LATEST_RELEASE_TAG}}
+
+  Deploy-Pipeline:
+    needs: [Build-Pipeline]
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v3
+      - name: Set Latest Tag
+        run: echo "LATEST_RELEASE_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+      - name: install gcloud cli tools
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{secrets.GOOGLE_PROJECT_ID}}
+          service_account_key: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+          install_components: 'gke-gcloud-auth-plugin'
+          export_default_credentials: true
+
+      - name: 'Configure kubectl'
+        run: gcloud container clusters get-credentials hypermine-gke --region=asia-south1
+
+      - name: Replace tags
+        run: find .deploy/deployment.yaml -type f -exec sed  -i -e "s#__LATEST_RELEASE_TAG__#${{ env.LATEST_RELEASE_TAG }}#" {} \;
+
+      - name: 'Replace secrets'
+        run: find .deploy/deployment.yaml -type f -exec sed  -i ''s/__GOOGLE_ARTIFACT_URL__/${{ secrets.GOOGLE_ARTIFACT_URL }}/g'' {} \;
+      - name: 'Replace secrets'
+        run: find .deploy/deployment.yaml -type f -exec sed  -i ''s/__GOOGLE_ARTIFACT_REPO__/${{ secrets.GOOGLE_ARTIFACT_REPO }}/g'' {} \;
+      - name: 'Replace secrets'
+        run: find .deploy/deployment.yaml -type f -exec sed  -i ''s/__GOOGLE_PROJECT_ID__/${{ secrets.GOOGLE_PROJECT_ID }}/g'' {} \;
+      - name: 'Deploy to GKE'
+        run: kubectl apply -f .deploy/deployment.yaml
