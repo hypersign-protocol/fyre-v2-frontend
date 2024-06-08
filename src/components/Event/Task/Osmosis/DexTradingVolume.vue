@@ -18,7 +18,7 @@
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
@@ -105,7 +105,9 @@ const user = computed(() => {
 
 onMounted(async () => {
   fetchResult()
-  ibcDenomTrace()
+  setTimeout(()=>{
+    ibcDenomTrace()
+  },4000)
 })
 
 const checkIfUserLogged = () => {
@@ -120,6 +122,7 @@ const checkIfUserLogged = () => {
   }
 }
 
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 const getPoolInfo = async () => {
   const data = await store.FETCH_POOL_ID(props.task.options.proofConfig.proof.poolId)

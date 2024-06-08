@@ -24,7 +24,7 @@
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
       <div class="task__action" v-if="isTaskVerified">
         <v-btn variant="outlined">
@@ -88,6 +88,7 @@ const getWalletAddress = async () => {
     walletAddress.value = res[0]
   }
 }
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 watch(
   () => walletAddress.value,

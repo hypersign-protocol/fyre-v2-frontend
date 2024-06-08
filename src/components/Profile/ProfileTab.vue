@@ -60,7 +60,9 @@
         </v-card>
       </v-window-item>
       <v-window-item :eager="true" value="credentials">
-        <v-card class="bg__card tab__card">
+        <Loader v-if="loading" />
+        <v-card class="bg__card tab__card" v-if="!loading">
+          <Loader v-if="loading" />
           <v-row class="py-4">
             <v-col cols="12" md="6">
               <v-text-field hide-details density="compact" class="rounded-pill is-border-radius"
@@ -71,28 +73,51 @@
               </v-text-field>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="12" sm="6" md="6" xl="3" lg="3" v-for="(item, index) in 5" :key="index">
+          <v-row v-if="!loading && credentialsData.length > 0">
+            <v-col cols="12" sm="6" md="6" xl="3" lg="3" v-for="(item, index) in credentialsData" :key="index">
               <div class="credentials__card">
                 <div class="header">
                   <div class="tittle__card">
-                    <h1>Discord Join</h1>
-                    <p>VC: HID...DXDFSDF21DS21</p>
+                    <h1>{{ parseActionCategory(item.credential.type[1]) }}</h1>
+                    <p> {{ formateDID(item.credential.id) }}</p>
                   </div>
                   <div class="image">
-                    <img src="@/assets/images/skill-icons_discord.svg" />
+                    <img :src="getActionCategoryIconUrl(item.credential.type[1])" height=40 />
                   </div>
                 </div>
                 <div class="footer">
                   <div>
                     <label>Curated By</label>
-                    <p>Taskonxyz</p>
+                    <!-- <p>{{ item.community.communityName }}</p> -->
+                    <div class="d-flex align-center cursor-pointer">
+                      <div class="d-flex align-center">
+                        <div
+                          class="v-avatar v-theme--custom v-avatar--density-default v-avatar--size-default v-avatar--variant-flat cursor-pointer mr-2">
+                          <div class="v-responsive v-img" aria-label="John" role="img">
+                            <div class="v-responsive__sizer" style="padding-bottom: 105.469%;"></div>
+                            <img class="v-img__img v-img__img--cover" :src="item.community.avatar" alt="John">
+                          </div><span class="v-avatar__underlay"></span>
+                        </div>
+                        <p class="mr-2 font-14 lh-16 cursor-pointer"><a href="#">{{ item.community.communityName }}</a>
+                        </p>
+                        <!--v-if-->
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <label>Validity</label>
-                    <p>08/21</p>
+                    <p>{{ formatExpiryDate(item.credential.expirationDate) }}</p>
                   </div>
                 </div>
+              </div>
+            </v-col>
+          </v-row>
+          <v-row class="mt-5" v-else="credentialsData.length === 0">
+            <v-col cols="12">
+              <div class="d-flex align-center justify-center height-200">
+                <p class="font-25 lh-26 mx-5 purple-linear-gradient-text font-weight-medium">
+                  No credentials found!
+                </p>
               </div>
             </v-col>
           </v-row>
@@ -106,12 +131,46 @@ import _ from 'lodash'
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useUserStore } from '@/store/user.ts'
 import { storeToRefs } from 'pinia'
+import { images as actionIcons } from '@/data/event/Images.ts'
+
 const store = useUserStore()
 const router = useRouter()
 const loading = ref(false)
 const eventData = computed(() => store.getUserEvents)
 const communityData = computed(() => store.getUserCommunities)
+const credentialsData = computed(() => store.getUserCredentials)
 const activeTab = ref('events')
+
+const parseActionCategory = (actionType) => {
+  console.log(actionType)
+  const result = actionType.replace(/([a-z])([A-Z])/g, '$1 $2');
+  return result
+}
+
+const getActionCategoryIconUrl = (actionType) => {
+  const result = parseActionCategory(actionType)
+  const category: string = result.split(' ')[0].toLowerCase();
+  const url = actionIcons[category];
+  console.log({
+    result,
+    category,
+    url
+  })
+  return url;
+}
+
+const formatExpiryDate = (expDate: string) => {
+  const date = new Date(expDate);
+  const formattedDate = date.getMonth() + '/' + date.getFullYear();
+  return formattedDate;
+}
+
+const formateDID = (did: string) => {
+  const first = did.substring(0, 12)
+  const last = did.substring(did.length - 5, did.length)
+  return (first + '...' + last).toUpperCase();
+}
+
 const tabs = ref([
   {
     title: 'Participated Events',
@@ -120,11 +179,11 @@ const tabs = ref([
   {
     title: 'Communities Joined',
     slug: 'communities'
+  },
+  {
+    title: 'Credentials',
+    slug: 'credentials'
   }
-  // {
-  //   title: 'Credentials',
-  //   slug: 'credentials'
-  // }
 ])
 
 const options = reactive({
@@ -166,6 +225,10 @@ const handleTab = (item, index) => {
     userEvents()
   } else if (item.slug == 'communities') {
     userCommunities()
+  } else if (item.slug == 'credentials') {
+    userCredentials()
+  } else {
+    loading.value = false
   }
 }
 
@@ -175,6 +238,15 @@ watch(
     setTimeout(async () => {
       loading.value = false
       // await store.USER_AUTH()
+    }, 1000)
+  }
+)
+
+watch(
+  () => credentialsData.value,
+  (value: any) => {
+    setTimeout(async () => {
+      loading.value = false
     }, 1000)
   }
 )
@@ -199,5 +271,18 @@ const userCommunities = async () => {
     params += `&searchString=${options.search}`
   }
   await store.USER_COMMUNITIES(params)
+}
+
+const userCredentials = async () => {
+
+  // let params = `?page=${options.page}&limit=${options.limit}`
+
+  // if (options.search) {
+  //   params += `&searchString=${options.search}`
+  // }
+  const resp = await store.USER_CREDENTIALS("")
+  if (!resp || resp.length === 0) {
+    loading.value = false;
+  }
 }
 </script>
