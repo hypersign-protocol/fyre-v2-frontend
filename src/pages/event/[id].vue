@@ -156,8 +156,8 @@
                       <p class="text-center font-16 lh-18">No Tasks found!</p>
                     </template>
                   </template>
-                  <template v-if="tasks.length === 0">
-                    <p class="text-center font-16 lh-18">No Tasks found!</p>
+                  <template v-else>
+                    <p class="text-center font-16 lh-18">The Event Is Finished!</p>
                   </template>
                 </v-card>
               </v-window-item>
