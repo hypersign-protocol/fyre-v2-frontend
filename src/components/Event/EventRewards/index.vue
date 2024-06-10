@@ -33,7 +33,7 @@
               <div class="d-flex align-center justify-space-between mb-4">
                 <p>
                   <span class="text-green font-20 font-weight-bold">{{ item.winnerCount }}</span> <span
-                    class="text-white font-15 font-weight-bold">winners</span>
+                    class="text-white font-15 font-weight-bold">winner(s)</span>
                 </p>
               </div>
 
