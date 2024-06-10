@@ -282,6 +282,8 @@ import { isEventHappening } from '@/composables/event.ts'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { getToken, getUser } from '@/composables/jwtService.ts'
 import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
 
 const authStore = useAuthStore()
 
@@ -298,6 +300,10 @@ const loading = ref(true)
 const isEventHappeningTrue = ref(true)
 const dialog = ref(true)
 const errorMessage = ref('')
+
+const title = ref('Welcome to fyre')
+const bannerImage = ref('https://samplebanner.img')
+const description=ref('sample description')
 
 const tasks = computed(() => eventStore.getEventTasksList)
 
@@ -324,7 +330,7 @@ const options = reactive({
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true, 
+  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true,
   didDocument: authUser.value.didDocument,
   addVerificationMethod: true,
   selectedNetwork: null
@@ -372,7 +378,7 @@ const collectError = (data: any) => {
   eventParticipantStore.SET_WALLET_CONNECT_ERROR({
     status: true,
     message: data,
-    taskId: formData.taskId,
+    taskId: formData.taskId
   })
 }
 
@@ -385,9 +391,11 @@ const validateReferral = () => {
     })
     toggleRefer.value = false
   } else {
-    const iftask = eventParticipantStore.performResult?.tasks ? true : (
-      eventParticipantStore.eventParticipants?.tasks ? true : false
-    )
+    const iftask = eventParticipantStore.performResult?.tasks
+      ? true
+      : eventParticipantStore.eventParticipants?.tasks
+        ? true
+        : false
     if (!iftask) {
       notificationStore.SHOW_NOTIFICATION({
         show: true,
@@ -404,7 +412,6 @@ const validateReferral = () => {
 const collectSignedData = async (data: any) => {
   console.log('Inside collectSignedData...')
   if (authUser.value.didDocument) {
-
     formData.walletAddress = data.walletAddress
     formData.signedDidDoc = data.signProof
   } else {
@@ -414,7 +421,6 @@ const collectSignedData = async (data: any) => {
       console.log('Please select the provider before you proceed')
     }
   }
-
 }
 
 const clearWalletInfo = async () => {
@@ -422,12 +428,12 @@ const clearWalletInfo = async () => {
   formData.walletAddress = null
   formData.signedDidDoc = null
   formData.taskId = null
-  delete options.didDocument.proof;
+  delete options.didDocument.proof
 }
 
 const logWallet = async (data) => {
   // clearing before gconnecting new walelt.
-  clearWalletInfo();
+  clearWalletInfo()
   options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
   options.selectedNetwork = data.network
   options.showBwModal = true
@@ -442,7 +448,8 @@ const logWallet = async (data) => {
 
 onMounted(async () => {
   loading.value = true
-  loadEventTasks()
+  await loadEventTasks()
+  updateMetaTags()
 })
 
 const checkEventStarted = () => {
@@ -531,5 +538,38 @@ const getOtherEvents = async () => {
 
 const loadEventTasks = async () => {
   await eventStore.GET_EVENT_BY_ID(route.params.id)
+}
+
+const updateMetaTags = () => {
+  console.log(eventById.value);
+  
+  title.value = eventById.value.eventName
+  description.value=eventById.value.description
+  bannerImage.value=eventById.value.banner
+  useHead({
+    title: title.value,
+    meta: [
+      {
+        property:'og:description',
+        content:description.value
+      },
+      {
+        property: 'og:title',
+        content: title.value
+      },
+      {
+        property:'og:image',
+        content:bannerImage.value
+      }
+      ,{
+        property:'og:type',
+        content:'website'
+      },
+      {
+        property:'og:url',
+        content:window.location.href
+      }
+    ]
+  })
 }
 </script>
