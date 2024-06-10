@@ -157,7 +157,7 @@
                     </template>
                   </template>
                   <template v-else>
-                    <p class="text-center font-16 lh-18">The Event Is Finished!</p>
+                    <p class="text-center font-16 lh-18">The Event Is Over!</p>
                   </template>
                 </v-card>
               </v-window-item>
