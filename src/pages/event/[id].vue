@@ -15,7 +15,7 @@
         <v-card color="transparent" class="rounded-lg">
           <div class="d-flex align-center justify-space-between pa-3 bg-black-100">
             <div
-              class="d-flex align-center cursor-pointer" 
+              class="d-flex align-center cursor-pointer"
               @click="viewCommunity(eventById.communityId)"
             >
               <div class="d-flex align-center">
@@ -33,7 +33,7 @@
                 />
               </div>
               <div class="d-flex align-center ml-2">
-                <v-avatar size="small" class="cursor-pointer mr-2" >
+                <v-avatar size="small" class="cursor-pointer mr-2">
                   <v-img alt="John" src="@/assets/images/verify-check.svg"></v-img>
                 </v-avatar>
               </div>
@@ -95,7 +95,9 @@
             <div class="event-time">
               <EventStatus :eventData="eventById" />
             </div>
-            <div class="event-status" v-if="!checkEventEnded()"><span class="text-green-100">Active</span></div>
+            <div class="event-status" v-if="!checkEventEnded()">
+              <span class="text-green-100">Active</span>
+            </div>
             <div class="event-status" v-else><span class="text-red-100">InActive</span></div>
           </v-card-text>
           <v-card-title class="event-title">{{ eventById.eventName }} </v-card-title>
@@ -147,9 +149,16 @@
                   <template v-if="!checkEventEnded()">
                     <template v-if="tasks.length > 0">
                       <template v-for="(task, index) in tasks" :key="index">
-                        <Task :task="task" :communityId="eventById.communityId" :eventParticipants="eventParticipants"
-                          :token="token" :walletInfo="formData" class="mb-5" @emitShowWallet="logWallet"
-                          @removeFormData="clearWalletInfo" />
+                        <Task
+                          :task="task"
+                          :communityId="eventById.communityId"
+                          :eventParticipants="eventParticipants"
+                          :token="token"
+                          :walletInfo="formData"
+                          class="mb-5"
+                          @emitShowWallet="logWallet"
+                          @removeFormData="clearWalletInfo"
+                        />
                       </template>
                     </template>
                     <template v-if="tasks.length === 0">
@@ -241,14 +250,18 @@
     />
   </template>
 
-  <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
-    @emitSignedData="collectSignedData" @emitError="collectError" />
+  <BlockChainWallet
+    :options="options"
+    @emitProvider="getProvider"
+    @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData"
+    @emitError="collectError"
+  />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useNotificationStore } from '@/store/notification.ts'
-
 
 const notificationStore = useNotificationStore()
 const toggleDescription = ref(false)
@@ -303,7 +316,7 @@ const errorMessage = ref('')
 
 const title = ref('Welcome to fyre')
 const bannerImage = ref('https://samplebanner.img')
-const description=ref('sample description')
+const description = ref('sample description')
 
 const tasks = computed(() => eventStore.getEventTasksList)
 
@@ -541,33 +554,29 @@ const loadEventTasks = async () => {
 }
 
 const updateMetaTags = () => {
-  console.log(eventById.value);
-  
+  console.log(eventById.value)
+
   title.value = eventById.value.eventName
-  description.value=eventById.value.description
-  bannerImage.value=eventById.value.banner
+  description.value = eventById.value.description
+  bannerImage.value = eventById.value.banner
   useHead({
     title: title.value,
     meta: [
       {
-        property:'og:description',
-        content:description.value
+        property: 'og:description',
+        content: description.value
       },
       {
         property: 'og:title',
         content: title.value
       },
       {
-        property:'og:image',
-        content:bannerImage.value
-      }
-      ,{
-        property:'og:type',
-        content:'website'
+        property: 'og:image',
+        content: bannerImage.value
       },
       {
-        property:'og:url',
-        content:window.location.href
+        property: 'og:url',
+        content: window.location.href
       }
     ]
   })
