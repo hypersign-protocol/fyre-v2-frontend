@@ -89,7 +89,7 @@
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import _ from 'lodash'
 const loading = ref(false)
-const activeTab = ref('coming_soon')
+const activeTab = ref('all')
 const rewardFilter = ref(null)
 const tabs = ref([
   {
@@ -135,7 +135,7 @@ const options = reactive({
   page: 1,
   limit: 8,
   search: '',
-  filter: 'coming_soon'
+  filter: 'all'
 })
 
 const events = computed(() => eventStore.getTabEvents)
