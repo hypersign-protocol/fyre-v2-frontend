@@ -95,7 +95,8 @@
             <div class="event-time">
               <EventStatus :eventData="eventById" />
             </div>
-            <div class="event-status"><span class="text-green-100">Active</span></div>
+            <div class="event-status" v-if="!checkEventEnded()"><span class="text-green-100">Active</span></div>
+            <div class="event-status" v-else><span class="text-red-100">InActive</span></div>
           </v-card-text>
           <v-card-title class="event-title">{{ eventById.eventName }} </v-card-title>
           <v-card-text class="event-meta">
@@ -143,18 +144,16 @@
                   </p>
                 </div>
                 <v-card class="event-task--card">
-                  <template v-if="tasks.length > 0">
-                    <template v-for="(task, index) in tasks" :key="index">
-                      <Task
-                        :task="task"
-                        :communityId="eventById.communityId"
-                        :eventParticipants="eventParticipants"
-                        :token="token"
-                        :walletInfo="formData"
-                        class="mb-5"
-                        @emitShowWallet="logWallet"
-                        @removeFormData="clearWalletInfo"
-                      />
+                  <template v-if="!checkEventEnded()">
+                    <template v-if="tasks.length > 0">
+                      <template v-for="(task, index) in tasks" :key="index">
+                        <Task :task="task" :communityId="eventById.communityId" :eventParticipants="eventParticipants"
+                          :token="token" :walletInfo="formData" class="mb-5" @emitShowWallet="logWallet"
+                          @removeFormData="clearWalletInfo" />
+                      </template>
+                    </template>
+                    <template v-if="tasks.length === 0">
+                      <p class="text-center font-16 lh-18">No Tasks found!</p>
                     </template>
                   </template>
                   <template v-if="tasks.length === 0">
@@ -352,6 +351,11 @@ const getProvider = async (data: any) => {
 const collectWalletAddress = async (data) => {
   console.log(data)
   formData.walletAddress = data.walletAddress
+}
+
+const checkEventEnded = () => {
+  const res = isEventHappening(eventById.value.startDate, eventById.value.endDate)
+  return !res.eventInProgress ? true : false
 }
 
 // const collectSignedData = async (data) => {
