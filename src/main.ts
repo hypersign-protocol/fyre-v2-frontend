@@ -18,8 +18,10 @@ import { blockChainWalletPlugin } from './blockchainWalletPlugin'
 
 // Composable
 import { createApp } from 'vue'
+import { createHead } from '@vueuse/head'
 
 const app = createApp(App)
+const head = createHead()
 
 app.config.errorHandler = (error, vm, info) => {
   console.error('An error occurred:', error)
@@ -31,6 +33,7 @@ app.config.errorHandler = (error, vm, info) => {
 
 app.use(ElementPlus)
 app.use(blockChainWalletPlugin())
+app.use(head)
 
 registerPlugins(app)
 
