@@ -12,6 +12,7 @@
     "@bufbuild/protobuf": "^1.8.0",
     "@mdi/font": "^7.0.96",
     "@noble/secp256k1": "^2.1.0",
+    "@vueuse/head": "^2.0.0",
     "@wagmi/connectors": "^4.1.22",
     "@wagmi/core": "^2.6.13",
     "@wagmi/vue": "^0.0.5",

@@ -27,7 +27,45 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-import { useDisplay } from 'vuetify'
-const { mobile } = useDisplay()
-const router = useRouter()
+import { ref, watch } from 'vue'
+import { useHead } from '@vueuse/head'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const title = ref('Dynamic Page Title')
+const description = ref('This is a dynamically generated description for the page.')
+const imageUrl = ref('https://example.com/image.jpg')
+const type=ref('website')
+const url=ref(window.location.href)
+watch(route, () => {
+  title.value = `Fyre`
+  description.value = `Quest Hub For The Interchain`
+  imageUrl.value = `https://i.ibb.co/Sty0F7b/Screenshot-2024-06-09-at-10-04-53-AM.png`
+  
+  useHead({
+    title: title.value,
+    meta: [
+      {
+        property: 'og:title',
+        content: title.value,
+      },
+      {
+        property: 'og:description',
+        content: description.value,
+      },
+      {
+        property: 'og:image',
+        content: imageUrl.value,
+      },
+      {
+        property:'og:type',
+        content:type.value
+      },{
+        property:'og:url',
+        content:url.value
+      }
+    ],
+  })
+}, { immediate: true })
 </script>
