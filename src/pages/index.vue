@@ -15,20 +15,13 @@
         <h1 class="homepage__section__title">Explore Communities</h1>
         <div class="explore__community_wrapper">
           <div class="row_wrap">
-            <div
-              class="explore-community-card"
-              style="cursor: pointer"
-              v-for="(item, index) in communities?.data"
-              @click="viewCommunity(item._id)"
-            >
+            <div class="explore-community-card" style="cursor: pointer" v-for="(item, index) in communities?.data"
+              @click="viewCommunity(item._id)">
               <img :src="item.avatar" />
               <p>{{ item.communityName }}</p>
             </div>
           </div>
-          <div
-            class="d-flex align-center justify-center my-5"
-            @click="router.push({ path: `/explore` })"
-          >
+          <div class="d-flex align-center justify-center my-5" @click="router.push({ path: `/explore` })">
             <v-btn class="base-btn" variant="outlined" rounded>See more</v-btn>
           </div>
         </div>
@@ -148,7 +141,7 @@ const router = useRouter()
 const communities = computed(() => communityStore.getPopularCommunities)
 
 onMounted(async () => {
-  await communityStore.POPULAR_COMMUNITIES(`?page=2&limit=10`)
+  await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
 })
 
 const viewCommunity = (id) => {
