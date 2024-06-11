@@ -7,7 +7,7 @@
         <span>{{ leaderBoardList.length }}</span>
       </p>
     </div>
-    <v-card class="event-task--card">
+    <v-card class="overflow-y-auto event-task--card" height="400">
       <div
         class="d-flex align-center justify-space-between bg-black-100 pa-2 rounded-10 mb-4"
         v-for="(item, index) in leaderBoardList"
