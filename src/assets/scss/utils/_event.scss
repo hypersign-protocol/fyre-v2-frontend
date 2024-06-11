@@ -70,6 +70,7 @@
   --v-avatar-height: 20px !important;
 }
 .event__wrapper {
+  max-width: 900px !important;
   @include media-respond(md) {
     padding: 0px 30px !important;
   }
