@@ -104,6 +104,14 @@
                   height="45"
                 />
               </a>
+              <a v-if="communityById.domainUrl"
+              :href="`${communityById.domainUrl}`" target="_blank">
+                <img
+                  class="mr-2 cursor-pointer"
+                  src="@/assets/images/globe.svg"
+                  height="53"
+                />
+              </a>
             </div>
           </v-card-text>
           <v-card-text>

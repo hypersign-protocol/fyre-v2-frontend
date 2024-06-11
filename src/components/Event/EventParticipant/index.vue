@@ -7,7 +7,7 @@
       <div class="modal__header">
         <p class="modal__title">Participants({{ leaderBoardList.length }})</p>
       </div>
-      <div class="modal__body">
+      <div class="modal__body overflow-y-auto" style="max-height: 400px;">
         <div
           class="d-flex align-center justify-space-between my-4"
           v-for="(item, index) in leaderBoardList"

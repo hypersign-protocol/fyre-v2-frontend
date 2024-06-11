@@ -23,14 +23,14 @@
         <v-container fluid class="background-center">
           <h2 class="homepage__section__title">Popular Events</h2>
           <div class="homepage-section">
-            <div class="section-content">
+            <div class="section-content" >
               <PopularEvents />
             </div>
           </div>
         </v-container>
         <div class="homepage-section padding-global-y">
-          <div class="section-content">
-            <Tabs />
+          <div class="section-content" >
+            <Tabs  />
           </div>
         </div>
       </v-window-item>
@@ -145,6 +145,7 @@
             </v-row>
             <div
               class="text-center d-flex align-center justify-center my-6"
+              v-if="activeTab == 'communities'"
             >
               <Pagination
                 :page="options.page"

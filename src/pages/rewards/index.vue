@@ -64,7 +64,7 @@
                   </div>
                   <div>
                     <h1>Daily Check-In</h1>
-                    <p>Get 10Xp Points Daily</p>
+                    <p>Get 10XP Points Daily</p>
                     <span>Check In</span>
                   </div>
                 </div>

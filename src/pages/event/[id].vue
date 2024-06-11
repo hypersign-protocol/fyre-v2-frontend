@@ -554,8 +554,6 @@ const loadEventTasks = async () => {
 }
 
 const updateMetaTags = () => {
-  console.log(eventById.value)
-
   title.value = eventById.value.eventName
   description.value = eventById.value.description
   bannerImage.value = eventById.value.banner

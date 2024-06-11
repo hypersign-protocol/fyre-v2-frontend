@@ -31,8 +31,8 @@
             class="green--chip mr-2"
             v-if="getRewards(eventData).token.length > 0"
           >
-            {{ numberToWords(Number(getRewards(eventData).token[0][1])) }}
-            {{ getRewards(eventData).token[0][0] }}
+            {{ numberToWords(Number(getRewards(eventData).token?.at(0)?.at(1))) }}
+            {{ getRewards(eventData).token?.at(0)?.at(0) }}
           </v-chip>
           <v-chip
             size="small"
@@ -40,8 +40,8 @@
             class="green--chip mr-2"
             v-if="getRewards(eventData).token.length > 1"
           >
-            {{ numberToWords(Number(getRewards(eventData).token[1][1])) }}
-            {{ getRewards(eventData).token[1][0] }}
+            {{ numberToWords(Number(getRewards(eventData).token?.at(1)?.at(1))) }}
+            {{ getRewards(eventData).token?.at(1)?.at(0) }}
           </v-chip>
 
           <v-chip
@@ -50,8 +50,8 @@
             class="purple--chip mr-2"
             v-if="getRewards(eventData).nft.length > 0"
           >
-            {{ numberToWords(Number(getRewards(eventData).nft[0][1])) }}
-            {{ getRewards(eventData).nft[0][0] }}
+            {{ numberToWords(Number(getRewards(eventData).nft?.at(0).at(1))) }}
+            {{ getRewards(eventData).nft?.at(0).at(0) }}
           </v-chip>
           <v-chip
             size="small"
@@ -59,8 +59,8 @@
             class="purple--chip mr-2"
             v-if="getRewards(eventData).nft.length > 1"
           >
-            {{ numberToWords(Number(getRewards(eventData).nft[1][1])) }}
-            {{ getRewards(eventData).nft[1][0] }}
+            {{ numberToWords(Number(getRewards(eventData).nft?.at(1)?.at(1))) }}
+            {{ getRewards(eventData).nft?.at(1).at(0) }}
           </v-chip>
         </div>
         <p class="my-2">
