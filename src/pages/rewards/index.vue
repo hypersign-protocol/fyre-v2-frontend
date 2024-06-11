@@ -12,8 +12,9 @@
                   <p class="xp">{{ userMeta.totalXps }} XP</p>
                   <p class="level">Level {{ userMeta.levelReached }}</p>
                   <v-progress-linear
-                    :model-value="userMeta.levelReached"
+                    :model-value="userMeta.totalXps"
                     :height="12"
+                    :max="userMeta.xpRequiredForNextLevel + userMeta.totalXps"
                   ></v-progress-linear>
                   <p class="points">
                     Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level
