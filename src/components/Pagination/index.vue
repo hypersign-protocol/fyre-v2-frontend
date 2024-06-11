@@ -1,8 +1,8 @@
 <template>
-  <div class="text-center d-flex align-center justify-center my-6" v-if="total > 8">
+  <div class="text-center d-flex align-center justify-center my-6" v-if="total >8">
     <v-pagination
       v-model="currentPage"
-      :length="total / limit"
+      :length="Math.ceil(total / limit)"
       @update:modelValue="$emit('pageChange', currentPage)"
     ></v-pagination>
   </div>

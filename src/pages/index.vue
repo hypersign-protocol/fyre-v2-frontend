@@ -133,7 +133,7 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
-import { useCommunityStore } from '@/store/community.ts'
+import { useCommunityStore } from '@/store/community'
 
 const communityStore = useCommunityStore()
 const router = useRouter()

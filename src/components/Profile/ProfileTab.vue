@@ -63,7 +63,7 @@
         <Loader v-if="loading" />
         <v-card class="bg__card tab__card" v-if="!loading">
           <Loader v-if="loading" />
-          <v-row class="py-4">
+          <!-- <v-row class="py-4">
             <v-col cols="12" md="6">
               <v-text-field hide-details density="compact" class="rounded-pill is-border-radius"
                 placeholder="Search Credentials" variant="solo" height="53" flat>
@@ -72,7 +72,7 @@
                 </template>
               </v-text-field>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row v-if="!loading && credentialsData.length > 0">
             <v-col cols="12" sm="6" md="6" xl="3" lg="3" v-for="(item, index) in credentialsData" :key="index">
               <div class="credentials__card">
