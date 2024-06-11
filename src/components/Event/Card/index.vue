@@ -155,12 +155,10 @@ function numberToWords(n) {
   const belowHundred = ['20', '30', '40', '50', '60', '70', '80', '90']
   const largeNumbers = [
     '',
-    '1000',
-    ' Million',
-    ' Billion',
-    ' Trillion',
-    ' Quadrillion',
-    ' Quintillion'
+    'K',
+    'M',
+    'B',
+    'T',
   ]
 
   // Handle zero

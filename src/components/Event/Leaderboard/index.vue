@@ -22,7 +22,8 @@
             <div class="number">{{ index + 1 }}</div>
           </div>
           <v-avatar size="large" class="mr-2">
-            <v-img src="@/assets/images/avatar01.png"> </v-img>
+            <v-img :src="item.avatar" v-if="item.avatar"> </v-img>
+            <v-img src="@/assets/images/avatar01.png" v-else> </v-img>
           </v-avatar>
           <p class="ml-2 font-22 font-weight-bold">{{ item.userName }}</p>
         </div>
