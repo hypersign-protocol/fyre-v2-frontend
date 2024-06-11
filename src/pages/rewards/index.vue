@@ -9,7 +9,7 @@
               <v-col cols="12" md="6">
                 <div class="rewards__wrapper">
                   <p class="title">Your total experience points</p>
-                  <p class="xp">{{ userMeta.totalXps }} XP</p>
+                  <p class="xp">{{ numberToWords(userMeta.totalXps) }} XP</p>
                   <p class="level">Level {{ userMeta.levelReached }}</p>
                   <v-progress-linear
                     :model-value="userMeta.totalXps"
@@ -124,6 +124,8 @@
   </template>
 </template>
 <script lang="ts" setup>
+import { numberToWords } from '@/utils/numberToWords'
+
 import {
   defineComponent,
   ref,
