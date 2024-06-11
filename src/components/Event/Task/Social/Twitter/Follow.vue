@@ -87,7 +87,6 @@ const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
 
 const socialAccessToken = ref(null)
-console.log(props)
 
 const notificationStore = useNotificationStore()
 
@@ -115,12 +114,11 @@ const fetchResult = () => {
   }
 }
 
-console.log(inputText)
 
 watch(
   () => socialAccessToken.value,
   (value: any) => {
-    console.log(value)
+    // console.log(value)
     // performAction()
   },
   { deep: true }

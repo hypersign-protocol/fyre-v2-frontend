@@ -289,11 +289,11 @@ const tabs = ref([
   }
 ])
 
-import { useEventStore } from '@/store/event.ts'
-import { useAuthStore } from '@/store/auth.ts'
-import { isEventHappening } from '@/composables/event.ts'
-import { useEventParticipantStore } from '@/store/eventParticipant.ts'
-import { getToken, getUser } from '@/composables/jwtService.ts'
+import { useEventStore } from '@/store/event'
+import { useAuthStore } from '@/store/auth'
+import { isEventHappening } from '@/composables/event'
+import { useEventParticipantStore } from '@/store/eventParticipant'
+import { getToken, getUser } from '@/composables/jwtService'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useHead } from '@vueuse/head'

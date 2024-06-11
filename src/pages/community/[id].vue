@@ -66,7 +66,7 @@
           <v-card-text>
             <p class="font-20 font-weight-medium mb-5">Social Links</p>
             <div class="d-flex align-start justify-start" v-if="communityById.socials">
-              <a
+              <a v-if="communityById.socials.twitterHandle"
                 :href="`https://twitter.com/${communityById.socials.twitterHandle}`"
                 target="_blank"
               >
@@ -76,7 +76,7 @@
                   height="45"
                 />
               </a>
-              <a
+              <a v-if="communityById.socials.discordHandle"
                 :href="`https://discord.com/${communityById.socials.discorHandle}`"
                 target="_blank"
               >
@@ -86,8 +86,8 @@
                   height="45"
                 />
               </a>
-              <a
-                :href="`https://telegram.org/${communityById.socials.telegramHandle}`"
+              <a v-if="communityById.socials.telegramHandle"
+                :href="`https://t.me/${communityById.socials.telegramHandle}`"
                 target="_blank"
               >
                 <img
@@ -96,11 +96,12 @@
                   height="45"
                 />
               </a>
-              <a :href="`https://github.com/${communityById.socials.githubHandle}`" target="_blank">
+              <a v-if="communityById.socials.githubHandle"
+              :href="`https://github.com/${communityById.socials.githubHandle}`" target="_blank">
                 <img
                   class="mr-2 cursor-pointer"
-                  src="@/assets/images/fi-rr-globe.svg"
-                  height="53"
+                  src="@/assets/images/task/github.svg"
+                  height="45"
                 />
               </a>
             </div>

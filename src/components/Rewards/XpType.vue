@@ -6,7 +6,12 @@
           <v-col md="6">
             <p class="d-flex align-center">
               <img src="@/assets/images/trophy.svg" class="mr-2" />
-              {{ item.reward.distributionMediumType }}
+              {{
+                beautifyRewardDistributionType(
+                  item.reward.distributionMediumType,
+                  'PLATFORM_ACTION_'
+                )
+              }}
             </p>
           </v-col>
           <v-col md="2">
@@ -19,13 +24,12 @@
             </p>
           </v-col>
           <v-col md="2">
-            {{ (new Date(item.createdAt)).toLocaleDateString() }}
+            {{ new Date(item.createdAt).toLocaleDateString() }}
           </v-col>
           <v-col md="2">
             <p class="text-green-accent-3" v-if="item.hasClaimed">Claimed</p>
             <v-btn class="bg-blue-accent-3 font-12" v-if="!item.hasClaimed"> Claim Now </v-btn>
           </v-col>
-
         </v-row>
       </v-card>
     </div>
@@ -50,8 +54,6 @@ import {
 
 import { calculateDaysUntilExpiry } from '@/composables/general.ts'
 
-
-
 const props = defineProps({
   userRewards: {
     type: Array,
@@ -61,4 +63,13 @@ const props = defineProps({
     }
   }
 })
+
+const beautifyRewardDistributionType = (
+  text: string,
+  replacePrefix: { [Symbol.replace](string: string, replaceValue: string): string }
+) => {
+  text = text.replace(replacePrefix, '')
+  text = text.split('_').join(' ')
+  return text
+}
 </script>
