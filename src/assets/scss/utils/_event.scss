@@ -51,6 +51,11 @@
   }
 }
 
+//Event Reward Carousal
+/* Override the height of v-carousel */
+.v-carousel {
+  height: auto !important; /* Set height to auto or your desired value */
+}
 
 .event__chip {
   background: rgb(255 255 255 / 1%) !important;

@@ -8,7 +8,7 @@
         <img class="modal__title__img ml-2" src="@/assets/images/gift.svg" height="24" />
       </div>
       <div class="modal__body">
-        <v-carousel show-arrows="hover" hide-delimiter-background>
+        <v-carousel show-arrows="hover" hide-delimiters hide-delimiter-background>
 
           <v-carousel-item v-for="(item, index) in eventData.rewards">
 
