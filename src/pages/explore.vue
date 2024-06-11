@@ -145,7 +145,6 @@
             </v-row>
             <div
               class="text-center d-flex align-center justify-center my-6"
-              v-if="communities.total > 8"
             >
               <Pagination
                 :page="options.page"

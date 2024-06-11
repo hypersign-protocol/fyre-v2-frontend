@@ -43,7 +43,7 @@
                 <CommunityCard :communityData="item" />
               </v-col>
             </template>
-            <div class="text-center d-flex align-center justify-center my-6" v-if="communityData.total > 8">
+            <div class="text-center d-flex align-center justify-center my-6">
               <Pagination :page="options.page" :limit="options.limit" :total="communityData.total"
                 @pageChange="pageChange" />
             </div>

@@ -73,7 +73,7 @@
             </div>
           </v-col>
         </v-row>
-        <div class="text-center d-flex align-center justify-center my-6" v-if="events.total > 8">
+        <div class="text-center d-flex align-center justify-center my-6">
           <Pagination
             :page="options.page"
             :limit="options.limit"
@@ -144,7 +144,7 @@ onMounted(async () => {
   loadEvents()
 })
 
-const pageChange = (page) => {
+const pageChange = (page) => {  
   options.page = page
 }
 
