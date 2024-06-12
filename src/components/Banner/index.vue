@@ -11,7 +11,7 @@
               50+ Trusted Communties
             </v-btn>
             <v-btn variant="outlined" height="53" class="rounded-lg cursor-pointer"
-              @click="navigate({ link: 'https://t.me/fyredrops' })">
+              @click="navigate({ link: 'https://calendly.com/hypersign' })">
               Create Your Community
             </v-btn>
           </div>
