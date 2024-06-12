@@ -197,3 +197,33 @@
     background: linear-gradient(90deg, rgb(30, 80, 255, 90%), rgb(255, 255, 255));
   }
 }
+
+.community-header-desktop {
+  
+
+  @include media-respond(md) {
+    display: block;
+  }
+  @include media-respond(sm) {
+    display: block ;
+  }
+  @include media-respond(xs) {
+    display: none ;
+  }
+}
+
+
+.community-header-mobile {
+  display: none;
+  
+  @include media-respond(md) {
+    display: none;
+  }
+  @include media-respond(sm) {
+    display: none ;
+  }
+  @include media-respond(xs) {
+    display: block ;
+  }
+}
+
