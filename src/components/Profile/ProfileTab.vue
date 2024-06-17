@@ -149,13 +149,13 @@ const parseActionCategory = (actionType) => {
 
 const getActionCategoryIconUrl = (actionType) => {
   const result = parseActionCategory(actionType)
-  const category: string = result.split(' ')[0].toLowerCase();
-  const url = actionIcons[category];
-  console.log({
-    result,
-    category,
-    url
-  })
+  const actionSplit=  result.split(' ')
+  let category: string =actionSplit[0].toLowerCase();
+  let url = actionIcons[category];
+  if(!url){
+   category =actionSplit[actionSplit.length-1].toLowerCase();
+   url = actionIcons[category];
+  }
   return url;
 }
 
