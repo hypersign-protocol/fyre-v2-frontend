@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="loading" />
   <div class="profile__setting__container" v-if="!loading">
-    <p class="title">Network Lists</p>
+    <p class="title">Socials</p>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="4" xl="4" v-for="(item, index) in items">
         <div class="wallet__address__container base-style" :class="item.handle ? 'address' : ''">
