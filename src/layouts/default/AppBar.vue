@@ -95,6 +95,7 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted, computed, watch, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
+import { useGtag } from "vue-gtag-next";
 
 const { mobile } = useDisplay()
 const router = useRouter()
@@ -108,6 +109,7 @@ const { challenge, userMeta } = storeToRefs(useAuthStore())
 let user = computed(() => {
   return getUser()
 })
+const { event } = useGtag()
 
 const options = reactive({
   showBwModal: false,
@@ -177,10 +179,19 @@ watch(
 )
 
 const navigate = (item: any) => {
+  console.log('item.link')
+  event('navigate', {
+    'event_category': 'Navigation',
+    'event_label': item.link
+  })
   window.location.href = `${item.link}`
 }
 
 const showLogin = () => {
+  event('showLogin', {
+        'event_category' : 'Login',
+        'event_label' : 'showLogin'
+      })
   options.showBwModal = true
   document.getElementById('emit-options').click()
   document.getElementById('update-challenge').click()
