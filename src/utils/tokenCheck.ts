@@ -24,7 +24,8 @@ export function isAuthRequired(routeName): boolean {
     routeName === '/' ||
     routeName === '/explore' ||
     routeName.startsWith('/community/') ||
-    routeName.startsWith('/event/')
+    routeName.startsWith('/event/') ||
+    routeName.startsWith('/gauth')
   ) {
     return false
   }
