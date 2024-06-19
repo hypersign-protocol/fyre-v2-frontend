@@ -40,6 +40,7 @@ jobs:
           VITE_APP_AUTH0_DOMAIN: ${{vars.VITE_APP_AUTH0_DOMAIN}}
           VITE_APP_TELEGRAM_BOT_ID: ${{vars.VITE_APP_TELEGRAM_BOT_ID}}
           VITE_APP_WC_PROJECT_ID: ${{vars.VITE_APP_WC_PROJECT_ID}}
+          VITE_APP_GOOGLE_CLIENT_ID: ${{vars.VITE_APP_GOOGLE_CLIENT_ID}}
         run:
           find Dockerfile -type f -exec sed  -i -e "s#__VITE_API_ENDPOINT__#${{ vars.VITE_API_ENDPOINT }}#" {} \;
 
@@ -53,6 +54,7 @@ jobs:
 
           find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_WC_PROJECT_ID__#${{ vars.VITE_APP_WC_PROJECT_ID }}#" {} \;
 
+          find Dockerfile -type f -exec sed  -i -e "s#__VITE_APP_GOOGLE_CLIENT_ID__#${{ vars.VITE_APP_GOOGLE_CLIENT_ID }}#" {} \;
       - name: 'Docker Build and Push'
         env:
           GOOGLE_PROJECT_ID: ${{secrets.GOOGLE_PROJECT_ID}}

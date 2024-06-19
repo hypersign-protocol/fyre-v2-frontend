@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Auth: typeof import('./src/components/User/Auth.vue')['default']
     Banner: typeof import('./src/components/Banner/index.vue')['default']
     Binance: typeof import('./src/components/Event/Task/Wallet/Evm/Binance.vue')['default']
     Card: typeof import('./src/components/Event/Card/index.vue')['default']
@@ -29,6 +30,8 @@ declare module 'vue' {
     Follow: typeof import('./src/components/Event/Task/Social/Twitter/Follow.vue')['default']
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     FyreXp: typeof import('./src/components/Event/Task/CollectInput/FyreXp.vue')['default']
+    Gauth: typeof import('./src/components/Auth/gauth/index.vue')['default']
+    Google: typeof import('./src/components/Auth/Google/index.vue')['default']
     Leaderboard: typeof import('./src/components/Event/Leaderboard/index.vue')['default']
     Like: typeof import('./src/components/Event/Task/Social/Twitter/Like.vue')['default']
     Loader: typeof import('./src/components/Loader/index.vue')['default']
@@ -62,6 +65,7 @@ declare module 'vue' {
     Tabs: typeof import('./src/components/Navigation/Tabs.vue')['default']
     Task: typeof import('./src/components/Event/Task/index.vue')['default']
     TelegramJoin: typeof import('./src/components/Event/Task/Social/TelegramJoin.vue')['default']
+    Test: typeof import('./src/components/Test.vue')['default']
     Text: typeof import('./src/components/Event/Task/CollectInput/Text.vue')['default']
     TokenHoldingCosmos: typeof import('./src/components/Event/Task/TokenHoldingCosmos/index.vue')['default']
     TokenHoldingEvm: typeof import('./src/components/Event/Task/TokenHoldingEvm/index.vue')['default']
