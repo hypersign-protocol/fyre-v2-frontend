@@ -1,20 +1,27 @@
+<!-- Callback.vue -->
 <template>
-    <!-- <div>
-        <button type="button" class="btn btn-primary" @click="login()">Login With Google</button>
-    </div> -->
+    <div>
+        <p>Callback Page</p>
+    </div>
 </template>
-
 <script lang="ts" setup>
-
-import { onMounted, reactive, ref, watch } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const handleAuthorizationCode = () => {
+    debugger
+    let currentPathObject = router.currentRoute.value;
+    const code = currentPathObject.query.code
+    if (code) {
+        console.log('gauth:indexvue:: Authorization Code:', code)
+        window.opener.postMessage({ code }, window.location.origin);
+        window.close()
+    } else {
+        console.error('Authorization code not found.')
+    }
+}
 
 onMounted(() => {
-    const data = {
-        message: 'success',
-        token: '123123123-tokens'
-    }
-    window.opener.postMessage(data, window.location.origin);
-    window.close()
+    handleAuthorizationCode()
 })
-
 </script>
