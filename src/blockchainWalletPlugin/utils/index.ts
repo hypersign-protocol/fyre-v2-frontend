@@ -155,7 +155,7 @@ const removeDuplicatesInSignedDidDoc = (data) => {
 
     const filteredVerificationMethods = verificationMethods
       .map((method) => {
-        const blockchainAccountId = method.blockchainAccountId
+        const blockchainAccountId = method.blockchainAccountId ? method.blockchainAccountId: method.publicKeyMultibase
 
         if (blockchainAccountId.includes('undefined')) {
           return null
@@ -215,7 +215,13 @@ export const addWallet = async (payload) => {
   const targetBlockchainAccountId = `${signType}:${chainId}:${address}`
 
   const exists = localDidDoc.verificationMethod.filter(
-    (method) => method.blockchainAccountId === targetBlockchainAccountId
+    (method) => {
+      if(method.blockchainAccountId) {
+        return method.blockchainAccountId === targetBlockchainAccountId
+      } else {
+        return false
+      }
+    }
   )
 
   console.log(exists)

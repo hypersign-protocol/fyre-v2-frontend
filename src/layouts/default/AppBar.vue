@@ -1,28 +1,18 @@
 <template>
   <v-toolbar fixed flat height="70" class="header__wrapper">
     <template v-slot:prepend>
-      <a class="cursor-pointer logo" @click="router.push({ path: '/' })"
-        ><img src="@/assets/images/logo.svg" height="20"
-      /></a>
+      <a class="cursor-pointer logo" @click="router.push({ path: '/' })"><img src="@/assets/images/logo.svg"
+          height="20" /></a>
     </template>
     <template v-slot:append>
       <div class="mr-6" v-if="!mobile">
-        <v-btn
-          class="cursor-pointer"
-          v-for="(item, index) in menu"
-          :key="index"
-          @click="router.push({ path: `${item.link}` })"
-          :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'"
-          >{{ item.title }}
+        <v-btn class="cursor-pointer" v-for="(item, index) in menu" :key="index"
+          @click="router.push({ path: `${item.link}` })" :class="isActive(item) ? 'text-blue-100' : 'text-gray-100'">{{
+            item.title }}
         </v-btn>
       </div>
-      <v-btn
-        color="secondary"
-        variant="flat"
-        class="cursor-pointer login-button"
-        @click="showLogin"
-        v-if="!isUserLoggedIn"
-      >
+      <v-btn color="secondary" variant="flat" class="cursor-pointer login-button" @click="showLogin"
+        v-if="!isUserLoggedIn">
         Login
       </v-btn>
 
@@ -31,14 +21,8 @@
 
         <v-menu activator="#website-menu-activator">
           <v-list density="compact" class="menu__wrap">
-            <v-list-item
-              v-for="(item, i) in menu"
-              :key="i"
-              :value="item"
-              color="white"
-              base-color="#ADB9C7"
-              @click="navigate(item)"
-            >
+            <v-list-item v-for="(item, i) in menu" :key="i" :value="item" color="white" base-color="#ADB9C7"
+              @click="navigate(item)">
               <v-list-item-title class="font-14" v-text="item.title"></v-list-item-title>
             </v-list-item>
           </v-list>
@@ -58,14 +42,8 @@
               <strong v-if="user?.userName">{{ user?.userName }}</strong>
               <strong v-else>User</strong>
             </v-list-subheader>
-            <v-list-item
-              v-for="(item, i) in userMenu"
-              :key="i"
-              :value="item"
-              color="white"
-              base-color="#ADB9C7"
-              @click="navigate(item)"
-            >
+            <v-list-item v-for="(item, i) in userMenu" :key="i" :value="item" color="white" base-color="#ADB9C7"
+              @click="navigate(item)">
               <template v-slot:prepend>
                 <v-icon class="pr-2" :icon="item.icon"></v-icon>
               </template>
@@ -79,12 +57,9 @@
     </template>
   </v-toolbar>
   <template v-if="!isUserLoggedIn">
-    <BlockChainWallet
-      :options="options"
-      @emitProvider="getProvider"
-      @emitWalletAddress="collectWalletAddress"
-      @emitSignedData="collectSignedData"
-    />
+    <Loader v-if="loading" />
+    <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
+      @emitSignedData="collectSignedData" @emitSendGoogleCode="collectGoogleCode" />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
     <div id="emit-options" @click="emitOptions(options)"></div>
   </template>
@@ -100,6 +75,7 @@ import { useGtag } from "vue-gtag-next";
 const { mobile } = useDisplay()
 const router = useRouter()
 const route = useRoute()
+const loading = ref(false)
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser } from '@/composables/jwtService.ts'
 
@@ -113,14 +89,16 @@ const { event } = useGtag()
 
 const options = reactive({
   showBwModal: false,
-  providers: ['evm', 'interchain'],
+  providers: ['evm', 'interchain', 'google'],
   chains: [],
   isAuth: true,
   isRequiredDID: true,
   isPerformAction: false,
   didDocument: user.value.didDocument,
   addVerificationMethod: false,
-  selectedNetwork: null
+  selectedNetwork: null,
+  googleClientId: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
+  googleCallBackUrl: window.location.origin + '/gauth-cb'
 })
 
 const isUserLoggedIn = computed(() => {
@@ -205,11 +183,22 @@ const getProvider = async (data: any) => {
   }
 }
 
-const collectWalletAddress = async (data: any) => {}
+const collectWalletAddress = async (data: any) => { }
 
 const collectSignedData = async (data: any) => {
-  if (data.signProof) {
+  if (data) {
     await authStore.USER_AUTHENTICATE({ signedDid: data.signProof })
+  } else {
+    console.log('Please select the provider before you proceed')
+  }
+}
+
+const collectGoogleCode = async (data: any) => {
+  console.log('AppBar:: collectGoogleCode code ' + data);
+  if (data) {
+    loading.value = true;
+    await authStore.USER_AUTHENTICATE({ code: data }, { provider: 'google' })
+    loading.value = false
   } else {
     console.log('Please select the provider before you proceed')
   }
