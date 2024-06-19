@@ -57,6 +57,7 @@
     </template>
   </v-toolbar>
   <template v-if="!isUserLoggedIn">
+    <Loader v-if="loading" />
     <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
       @emitSignedData="collectSignedData" @emitSendGoogleCode="collectGoogleCode" />
     <div id="update-challenge" @click="postChallenge(challenge)"></div>
@@ -73,6 +74,7 @@ import { useDisplay } from 'vuetify'
 const { mobile } = useDisplay()
 const router = useRouter()
 const route = useRoute()
+const loading = ref(false)
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser } from '@/composables/jwtService.ts'
 
@@ -183,7 +185,9 @@ const collectSignedData = async (data: any) => {
 const collectGoogleCode = async (data: any) => {
   console.log('AppBar:: collectGoogleCode code ' + data);
   if (data) {
+    loading.value = true;
     await authStore.USER_AUTHENTICATE({ code: data }, { provider: 'google' })
+    loading.value = false
   } else {
     console.log('Please select the provider before you proceed')
   }
