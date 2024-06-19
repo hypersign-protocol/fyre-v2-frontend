@@ -31,9 +31,9 @@ export const useAuthStore = defineStore('auth', {
         return []
       }
     },
-    async USER_AUTHENTICATE(payload: Object): Promise<any> {
+    async USER_AUTHENTICATE(payload: Object, params?: Object): Promise<any> {
       try {
-        const response: AxiosResponse = await axios.post(`/authenticate`, payload)
+        const response: AxiosResponse = await axios.post(`/authenticate`, payload, { params: {...params}})
 
         if (response.success) {
           this.loginRes = response.data
