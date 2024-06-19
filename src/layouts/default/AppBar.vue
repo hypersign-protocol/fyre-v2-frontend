@@ -95,7 +95,7 @@ const options = reactive({
   didDocument: user.value.didDocument,
   addVerificationMethod: false,
   selectedNetwork: null,
-  googleClientId: '777246753954-8bfp8l4d70c6hrpaj1pempmdt3a0rh5o.apps.googleusercontent.com',
+  googleClientId: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
   googleCallBackUrl: window.location.origin + '/gauth-cb'
 })
 
