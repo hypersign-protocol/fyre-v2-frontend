@@ -37,8 +37,9 @@
                   <v-avatar size="x-small" class="mr-2">
                     <v-img src="@/assets/images/gift.svg" height="30"></v-img>
                   </v-avatar>
-                  <p class="purple-linear-gradient-text text-one">3040 BXX</p>
-                  <p class="text-one text-blue-100">10XP</p>
+                  
+                  <p class="purple-linear-gradient-text text-one">{{ numberToWords( getRewards(event).token?.at(0)?.at(1)) }} {{ getRewards(event).token?.at(0)?.at(0) }}</p>
+                  <p class="text-one text-blue-100">{{ event.totalEventXp }} XP</p>
                 </div>
               </div>
             </div>
@@ -49,10 +50,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useEventStore } from '@/store/event.ts'
+import { useEventStore } from '@/store/event'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { getRewards } from '@/utils/calculateRewards'
+import {numberToWords} from '@/utils/numberToWords'
 import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
 const router = useRouter()

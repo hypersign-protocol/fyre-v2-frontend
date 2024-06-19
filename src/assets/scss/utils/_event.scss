@@ -51,6 +51,11 @@
   }
 }
 
+//Event Reward Carousal
+/* Override the height of v-carousel */
+.v-carousel {
+  height: auto !important; /* Set height to auto or your desired value */
+}
 
 .event__chip {
   background: rgb(255 255 255 / 1%) !important;
@@ -70,6 +75,7 @@
   --v-avatar-height: 20px !important;
 }
 .event__wrapper {
+  max-width: 900px !important;
   @include media-respond(md) {
     padding: 0px 30px !important;
   }
@@ -497,5 +503,45 @@
     top: 50%;
     left: 43%;
     translate: -50% -50%;
+  }
+}
+
+
+
+.leaderboard-title {
+  @include media-respond(xs) {
+    p {
+      font-size: small !important;
+    }
+
+    div {
+      text-align: center !important;
+    }
+  }
+}
+
+.leaderboard-listitem {
+  .leader-slot img {
+    height: 25px;
+  }
+
+  p {
+    font-size: medium !important;
+  }
+  div {
+    font-size: medium !important;
+  }
+
+
+  @include media-respond(xs) {
+    p {
+      font-size: smaller !important;
+    }
+    div {
+      font-size: small !important;
+    }
+    .leader-slot img {
+      height: 20px;
+    }
   }
 }

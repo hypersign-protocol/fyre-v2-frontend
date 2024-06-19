@@ -86,8 +86,8 @@ const wagmiConfig = defaultWagmiConfig({
   projectId,
   connectors: [coinbaseWallet],
   metadata: {
-    name: 'Web3Modal Vue Example',
-    description: 'Web3Modal Vue Example',
+    name: 'Fyre Login',
+    description: 'Connect your wallet to login',
     url: '',
     icons: [],
     verifyUrl: ''

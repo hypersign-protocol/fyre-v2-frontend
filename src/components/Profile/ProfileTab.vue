@@ -43,7 +43,7 @@
                 <CommunityCard :communityData="item" />
               </v-col>
             </template>
-            <div class="text-center d-flex align-center justify-center my-6" v-if="communityData.total > 8">
+            <div class="text-center d-flex align-center justify-center my-6">
               <Pagination :page="options.page" :limit="options.limit" :total="communityData.total"
                 @pageChange="pageChange" />
             </div>
@@ -63,7 +63,7 @@
         <Loader v-if="loading" />
         <v-card class="bg__card tab__card" v-if="!loading">
           <Loader v-if="loading" />
-          <v-row class="py-4">
+          <!-- <v-row class="py-4">
             <v-col cols="12" md="6">
               <v-text-field hide-details density="compact" class="rounded-pill is-border-radius"
                 placeholder="Search Credentials" variant="solo" height="53" flat>
@@ -72,7 +72,7 @@
                 </template>
               </v-text-field>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row v-if="!loading && credentialsData.length > 0">
             <v-col cols="12" sm="6" md="6" xl="3" lg="3" v-for="(item, index) in credentialsData" :key="index">
               <div class="credentials__card">
@@ -149,13 +149,13 @@ const parseActionCategory = (actionType) => {
 
 const getActionCategoryIconUrl = (actionType) => {
   const result = parseActionCategory(actionType)
-  const category: string = result.split(' ')[0].toLowerCase();
-  const url = actionIcons[category];
-  console.log({
-    result,
-    category,
-    url
-  })
+  const actionSplit=  result.split(' ')
+  let category: string =actionSplit[0].toLowerCase();
+  let url = actionIcons[category];
+  if(!url){
+   category =actionSplit[actionSplit.length-1].toLowerCase();
+   url = actionIcons[category];
+  }
   return url;
 }
 

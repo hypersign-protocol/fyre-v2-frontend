@@ -135,7 +135,7 @@
           <div class="points__sec base-style">
             <div class="left">
               <p>Total Experience Points Collected</p>
-              <p>{{ userMeta.totalXps }} XP</p>
+              <p>{{ numberToWords(userMeta.totalXps) }} XP</p>
             </div>
             <div class="right">
               <v-btn class="base-btn" @click="router.push({ path: `/rewards` })"
@@ -148,8 +148,9 @@
           <div class="level__sec base-style">
             <p>Level {{ userMeta.levelReached }}</p>
             <v-progress-linear
-              :model-value="userMeta.levelReached"
+              :model-value="userMeta.totalXps"
               :height="12"
+              :max="userMeta.xpRequiredForNextLevel + userMeta.totalXps"
             ></v-progress-linear>
             <p>Need {{ userMeta.xpRequiredForNextLevel }} points to reach the next level</p>
           </div>
@@ -163,6 +164,8 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useAuthStore } from '@/store/auth.ts'
 import { storeToRefs } from 'pinia'
 const authStore = useAuthStore()
+import { numberToWords } from '@/utils/numberToWords'
+
 const loading = ref(false)
 const { userMeta } = storeToRefs(useAuthStore())
 const router = useRouter()

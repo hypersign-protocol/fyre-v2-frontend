@@ -8,7 +8,7 @@
         <img class="modal__title__img ml-2" src="@/assets/images/gift.svg" height="24" />
       </div>
       <div class="modal__body">
-        <v-carousel show-arrows="hover" hide-delimiter-background>
+        <v-carousel show-arrows="hover" hide-delimiters hide-delimiter-background>
 
           <v-carousel-item v-for="(item, index) in eventData.rewards">
 
@@ -22,7 +22,7 @@
 
               <div class="d-flex align-center justify-space-between">
                 <p class="">
-                  <span class="text-gradient-blue font-22 font-weight-bold">{{ item.rewardPerPerson }}</span>&nbsp;
+                  <span class="text-gradient-blue font-22 font-weight-bold">{{ numberToWords( item.rewardPerPerson) }}</span>&nbsp;
                   <span class="text-white font-20 font-weight-bold">{{
                     item.denomination
                     }}</span><span class="font-15 font-weight-bold">/Winner</span>
@@ -82,6 +82,8 @@
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { getImage, resolveConnectWalletTaskType } from '@/composables/event.ts'
+import {numberToWords} from '@/utils/numberToWords'
+
 const props = defineProps({
   eventData: {
     type: Object,
