@@ -158,6 +158,7 @@
                           class="mb-5"
                           @emitShowWallet="logWallet"
                           @removeFormData="clearWalletInfo"
+                          @click="logGtag(task.title,'taskClicked')"
                         />
                       </template>
                     </template>
@@ -217,7 +218,7 @@
           <h4 class="homepage__section__title text-left">Explore other Events</h4>
           <v-row class="mt-5">
             <v-col v-for="(event, index) in popular.slice(0, 4)" cols="12" sm="6" md="6" lg="3">
-              <Card :eventData="event" />
+              <Card :eventData="event" @click="logGtag(event.eventName,'ExploreOtherPage')" />
             </v-col>
           </v-row>
           <div
@@ -288,6 +289,7 @@ const tabs = ref([
     slug: 'reward'
   }
 ])
+import logGtag from '@/utils/gTag'
 
 import { useEventStore } from '@/store/event'
 import { useAuthStore } from '@/store/auth'
@@ -297,8 +299,10 @@ import { getToken, getUser } from '@/composables/jwtService'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useHead } from '@vueuse/head'
+import { useGtag } from "vue-gtag-next";
 
 const authStore = useAuthStore()
+const { event } = useGtag()
 
 const eventStore = useEventStore()
 const eventParticipantStore = useEventParticipantStore()
@@ -358,6 +362,17 @@ watch(
   },
   { deep: true }
 )
+
+watch(toggleRewards, (newX) => {
+  logGtag(newX,'rewardClicked')
+})
+
+watch(toggleParticipant, (newX) => {
+  logGtag(newX,'participantClicked')  
+})
+
+//GTAG
+
 const getProvider = async (data: any) => {
   console.log('Inside getProvider handler for event emitProvider')
   if (data && !authUser.value.didDocument) {
@@ -396,6 +411,8 @@ const collectError = (data: any) => {
 }
 
 const validateReferral = () => {
+  logGtag('referralClicked','referralClicked')
+
   if (!token.value) {
     notificationStore.SHOW_NOTIFICATION({
       show: true,
@@ -477,7 +494,9 @@ const checkEventStarted = () => {
 
 watch(
   () => activeTab.value,
-  (value: any) => {}
+  (value: any) => {
+    logGtag(activeTab.value,'eventTabClicked')
+  }
 )
 
 watch(

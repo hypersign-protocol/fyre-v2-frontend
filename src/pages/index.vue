@@ -1,11 +1,11 @@
 <template>
-  <Banner />
-  <Slider />
+  <Banner @click="logGtag(null,'HomePage','BannerClicked')"/>
+  <Slider @click="logGtag(null,'HomePage','SliderClicked')"/>
   <v-container fluid class="background-left">
     <h1 class="homepage__section__title">Top Campaigns</h1>
     <div class="homepage-section">
       <div class="section-content">
-        <Tabs />
+        <Tabs @click="logGtag(null,'HomePage','TopCampaignsClicked')"/>
       </div>
     </div>
   </v-container>
@@ -126,15 +126,15 @@
       </div>
     </div>
   </v-container>
-  <SupportedChain />
+  <SupportedChain @click="logGtag(null,'HomePage','SupportedChainClicked')"/>
 
-  <Faq />
+  <Faq @click="logGtag(null,'HomePage','FaqClicked')"/>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
 import { useCommunityStore } from '@/store/community'
-
+import logGtag from '@/utils/gTag'
 const communityStore = useCommunityStore()
 const router = useRouter()
 
@@ -145,6 +145,7 @@ onMounted(async () => {
 })
 
 const viewCommunity = (id) => {
+  logGtag(null,'HomePage','viewCommunityClicked')
   router.replace({ path: `/community/${id}` })
 }
 </script>
