@@ -158,7 +158,7 @@
                           class="mb-5"
                           @emitShowWallet="logWallet"
                           @removeFormData="clearWalletInfo"
-                          @click="logGtag(task.title,'taskClicked')"
+                          @click="logGtag(task.title,'eventPage','taskClicked')"
                         />
                       </template>
                     </template>
@@ -299,10 +299,8 @@ import { getToken, getUser } from '@/composables/jwtService'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useHead } from '@vueuse/head'
-import { useGtag } from "vue-gtag-next";
 
 const authStore = useAuthStore()
-const { event } = useGtag()
 
 const eventStore = useEventStore()
 const eventParticipantStore = useEventParticipantStore()
@@ -364,11 +362,11 @@ watch(
 )
 
 watch(toggleRewards, (newX) => {
-  logGtag(newX,'rewardClicked')
+  logGtag(newX,'eventPage','rewardClicked')
 })
 
 watch(toggleParticipant, (newX) => {
-  logGtag(newX,'participantClicked')  
+  logGtag(newX,'eventPage','participantClicked')  
 })
 
 //GTAG
@@ -411,7 +409,7 @@ const collectError = (data: any) => {
 }
 
 const validateReferral = () => {
-  logGtag('referralClicked','referralClicked')
+  logGtag(null,'eventPage','referralClicked')
 
   if (!token.value) {
     notificationStore.SHOW_NOTIFICATION({
@@ -495,7 +493,7 @@ const checkEventStarted = () => {
 watch(
   () => activeTab.value,
   (value: any) => {
-    logGtag(activeTab.value,'eventTabClicked')
+    logGtag(activeTab.value,'eventPage','eventTabClicked')
   }
 )
 
