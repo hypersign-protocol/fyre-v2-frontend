@@ -76,6 +76,7 @@ import { storeToRefs } from 'pinia'
 import { useInterChainStore } from './stores/interchain'
 
 const store = useInterChainStore()
+import logGtag from '@/utils/gTag'
 
 const { challenge, walletOptions } = storeToRefs(store)
 
@@ -190,6 +191,8 @@ const notifySignMessage = (data: any) => {
 }
 
 const chooseProvider = (data: any) => {
+  //GA
+  logGtag(data,'Login','chooseProvider')
   emit('emitProvider', data)
   if (data === 'evm') {
     // eslint-disable-next-line vue/no-mutating-props

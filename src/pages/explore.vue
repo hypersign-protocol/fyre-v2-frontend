@@ -24,7 +24,7 @@
           <h2 class="homepage__section__title">Popular Events</h2>
           <div class="homepage-section">
             <div class="section-content" >
-              <PopularEvents />
+              <PopularEvents @click="logGtag(null,'eventPage','PopularEventClicked')"/>
             </div>
           </div>
         </v-container>
@@ -66,7 +66,6 @@
                     <img
                       class="mr-4"
                       size="16"
-                      @click="socials"
                       src="@/assets/images/telegram_out.svg"
                     />
                     <img class="mr-4" size="16" src="@/assets/images/twitter_out.svg" />
@@ -169,6 +168,7 @@ import paginate from '@/utils/paginate'
 
 import { useEventStore } from '@/store/event.ts'
 import { useCommunityStore } from '@/store/community.ts'
+import logGtag from '@/utils/gTag'
 
 const tabs = ref([
   {
@@ -209,6 +209,14 @@ watch(
   }
 )
 
+//GA
+watch(
+  () => activeTab.value,
+  (value: any) => {
+    logGtag(activeTab.value,'explorePage','exploreTabClicked')
+  }
+)
+
 const pageChange = (page) => {
   options.page = page
 }
@@ -233,6 +241,7 @@ watch(
 )
 
 const viewCommunity = (event) => {
+  logGtag(event._id,'eventPage','popularCommunityClicked')
   router.push({ path: `/community/${event._id}` })
 }
 

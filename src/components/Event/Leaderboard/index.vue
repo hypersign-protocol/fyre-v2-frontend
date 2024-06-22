@@ -6,7 +6,7 @@
       </div>
       <div class="v-col-6 text-right">
         <p class="font-16 font-weight--bold">
-          <span class="text-blue-100">Total Participants </span>
+          <span class="text-blue-100">Top Participants </span>
           <span>{{ leaderBoardList.length }}</span>
         </p>
       </div>
