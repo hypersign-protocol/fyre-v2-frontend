@@ -38,7 +38,7 @@
                     <v-img src="@/assets/images/gift.svg" height="30"></v-img>
                   </v-avatar>
                   
-                  <p class="purple-linear-gradient-text text-one">{{ numberToWords( getRewards(event).token?.at(0)?.at(1)) }} {{ getRewards(event).token?.at(0)?.at(0) }}</p>
+                  <p class="purple-linear-gradient-text text-one" v-if="event.rewards.length>0">{{ numberToWords( getRewards(event).token?.at(0)?.at(1)) }} {{ getRewards(event).token?.at(0)?.at(0) }}</p>
                   <p class="text-one text-blue-100">{{ event.totalEventXp }} XP</p>
                 </div>
               </div>
