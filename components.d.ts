@@ -14,6 +14,7 @@ declare module 'vue' {
     CollectWalletCosmos: typeof import('./src/components/Event/Task/CollectWalletCosmos/index.vue')['default']
     CollectWalletEvm: typeof import('./src/components/Event/Task/CollectWalletEvm/index.vue')['default']
     CommunityCard: typeof import('./src/components/CommunityCard/index.vue')['default']
+    CommunityFollow: typeof import('./src/components/Event/Task/Social/Fyre/CommunityFollow.vue')['default']
     DeleteModal: typeof import('./src/components/User/DeleteModal.vue')['default']
     DexLpProvision: typeof import('./src/components/Event/Task/Osmosis/DexLpProvision.vue')['default']
     DexTradingVolume: typeof import('./src/components/Event/Task/Osmosis/DexTradingVolume.vue')['default']

@@ -27,6 +27,10 @@ const tasks: Array<ITask> = [
     path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Twitter/Follow.vue'))
   },
   {
+    types: ['SOCIAL_COMMUNITY_FOLLOW'],
+    path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Fyre/CommunityFollow.vue'))
+  },
+  {
     types: ['SOCIAL_TWITTER_LIKE'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Twitter/Like.vue'))
   },
