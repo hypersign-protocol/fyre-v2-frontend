@@ -22,7 +22,7 @@
                         </v-col-1> -->
                     </v-row>
                 </div>
-                <div class="base-style mb-1" v-else>
+                <div class="base-style mb-1 pt-3 pb-3 pl-3" v-else>
                     <h2>All good, no notificaiton(s) found!</h2>
                 </div>
             </div>
