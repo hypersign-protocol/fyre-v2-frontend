@@ -4,7 +4,8 @@
         <div class="homepage-section background-center pt-10">
             <div class="section-content" style="max-width: 700px;">
                 <div class="base-style mb-1" v-if="usernotifications && (usernotifications.length > 0)"
-                    v-for="eachNotification in usernotifications" style="display: block; padding:24px; cursor: pointer;"
+                    v-for="eachNotification in usernotifications"
+                    style="display: block; padding:24px;     word-wrap: break-word; cursor: pointer;"
                     @click="callToaction(eachNotification.actionUrl)">
                     <v-row>
                         <v-col-2 style="padding:15px">
