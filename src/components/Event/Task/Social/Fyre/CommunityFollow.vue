@@ -7,7 +7,7 @@
     <div class="task__header">
       <div class="task__title">
         <span>
-          <img src="@/assets/images/task/fyreCommunity.png" />
+          <img src="@/assets/images/task/community-follow.png" />
         </span>
         <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
@@ -24,13 +24,16 @@
     <div class="task__body" v-if="showExpand">
       <div class="task__submit">
         <v-btn @click="redirectToCommunityFollowPage" :disabled="isTaskVerified" v-if="!redirected && !isTaskVerified">
-          <span v-if="!isTaskVerified">Follow @{{ props.task.options.communityId }}</span>
+          <span v-if="!isTaskVerified">Follow @{{ props.task.options.communityHandle }}</span>
         </v-btn>
-        <v-btn v-if="redirected && !isTaskVerified" @click="performAction" :disabled="isTaskVerified">
+
+        <v-btn :loading="loading" v-if="redirected && !isTaskVerified" @click="performAction"
+          :disabled="isTaskVerified">
           <span v-if="!isTaskVerified">Verify</span>
         </v-btn>
+
         <v-btn v-if="isTaskVerified" @click="performAction" :disabled="isTaskVerified">
-          <span v-if="isTaskVerified">Followed @{{ props.task.options.communityId }}</span>
+          <span v-if="isTaskVerified">Followed @{{ props.task.options.communityHandle }}</span>
         </v-btn>
       </div>
     </div>
