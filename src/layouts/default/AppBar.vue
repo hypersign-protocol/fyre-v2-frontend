@@ -30,7 +30,8 @@
       </template>
 
       <template v-if="isUserLoggedIn">
-        <v-btn class="text-none" v-if="!mobile" stacked @click="router.push({ path: `inappNotification` })">
+        <v-btn class="text-none" v-if="!mobile && isUserLoggedIn" stacked
+          @click="router.push({ path: `inappNotification` })">
           <v-badge color="error" :content="userNotificaionSize">
             <v-icon>mdi-bell-outline</v-icon>
           </v-badge>
@@ -90,17 +91,28 @@ import { getUser } from '@/composables/jwtService.ts'
 const authStore = useAuthStore()
 const { challenge, userMeta } = storeToRefs(useAuthStore())
 
-const usernotifications = computed(() => userStore.getUserNotifcations)
+
+
+const usernotifications = computed(() => {
+  if (isUserLoggedIn) {
+    return userStore.getUserNotifcations
+  } else {
+    return []
+  }
+})
 
 const userNotificaionSize = computed(() => {
-  const num = usernotifications.value.length
-  if (num >= 1e6) {
-    return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-  } else if (num >= 1e3) {
-    return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
-  } else {
-    return num;
+  if (isUserLoggedIn) {
+    const num = usernotifications.value.length
+    if (num >= 1e6) {
+      return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+    } else {
+      return num;
+    }
   }
+
 })
 
 
@@ -190,9 +202,9 @@ const navigate = (item: any) => {
 
 const showLogin = () => {
   event('showLogin', {
-        'event_category' : 'Login',
-        'event_label' : 'showLogin'
-      })
+    'event_category': 'Login',
+    'event_label': 'showLogin'
+  })
   options.showBwModal = true
   document.getElementById('emit-options').click()
   document.getElementById('update-challenge').click()
