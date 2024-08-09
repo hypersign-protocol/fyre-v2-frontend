@@ -30,6 +30,13 @@
       </template>
 
       <template v-if="isUserLoggedIn">
+        <v-btn class="text-none" v-if="!mobile && isUserLoggedIn" stacked
+          @click="navigate({ link: '/inappNotification' })">
+          <v-badge color="error" :content="userNotificaionSize">
+            <v-icon transition="fab-transition">mdi-bell-outline</v-icon>
+          </v-badge>
+        </v-btn>
+
         <v-avatar id="menu-activator" class="cursor-pointer">
           <v-img v-if="user?.avatar" :src="user?.avatar"></v-img>
           <v-img v-else src="@/assets/images/user-profile.png"></v-img>
@@ -71,16 +78,47 @@ import { ref, onMounted, computed, watch, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useGtag } from "vue-gtag-next";
+import { useUserStore } from '@/store/user.ts'
 
 const { mobile } = useDisplay()
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const loading = ref(false)
 import { useAuthStore } from '@/store/auth.ts'
 import { getUser } from '@/composables/jwtService.ts'
 
 const authStore = useAuthStore()
 const { challenge, userMeta } = storeToRefs(useAuthStore())
+
+
+
+const usernotifications = computed(() => {
+  if (isUserLoggedIn) {
+    return userStore.getUserNotifcations
+  } else {
+    return []
+  }
+})
+
+setInterval(() => {
+  userStore.USER_NOTIFICATIONS()
+}, 10000)
+
+const userNotificaionSize = computed(() => {
+  if (isUserLoggedIn) {
+    const num = usernotifications.value.length
+    if (num >= 1e6) {
+      return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+    } else {
+      return num;
+    }
+  }
+
+})
+
 
 let user = computed(() => {
   return getUser()
@@ -108,7 +146,8 @@ const isUserLoggedIn = computed(() => {
 const userMenu = ref([
   { title: 'Home', icon: 'mdi-home-outline', link: '/' },
   { title: 'My Profile', icon: 'mdi-account-outline', link: '/profile' },
-  { title: 'My Rewards', icon: 'mdi-gift-outline', link: '/rewards' }
+  { title: 'My Rewards', icon: 'mdi-gift-outline', link: '/rewards' },
+  { title: 'My Notifications', icon: 'mdi-bell-outline', link: '/inappNotification' }
 ])
 
 const menu = ref([
@@ -167,9 +206,9 @@ const navigate = (item: any) => {
 
 const showLogin = () => {
   event('showLogin', {
-        'event_category' : 'Login',
-        'event_label' : 'showLogin'
-      })
+    'event_category': 'Login',
+    'event_label': 'showLogin'
+  })
   options.showBwModal = true
   document.getElementById('emit-options').click()
   document.getElementById('update-challenge').click()
