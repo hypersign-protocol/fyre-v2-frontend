@@ -93,32 +93,6 @@ const { challenge, userMeta } = storeToRefs(useAuthStore())
 
 
 
-const usernotifications = computed(() => {
-  if (isUserLoggedIn) {
-    return userStore.getUserNotifcations
-  } else {
-    return []
-  }
-})
-
-setInterval(() => {
-  userStore.USER_NOTIFICATIONS()
-}, 10000)
-
-const userNotificaionSize = computed(() => {
-  if (isUserLoggedIn) {
-    const num = usernotifications.value.length
-    if (num >= 1e6) {
-      return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-    } else if (num >= 1e3) {
-      return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
-    } else {
-      return num;
-    }
-  }
-
-})
-
 
 let user = computed(() => {
   return getUser()
@@ -247,9 +221,45 @@ const currentRouteName = computed(() => {
   return route.name
 })
 
+const nofiticaionPolls = setInterval(() => {
+  if (isUserLoggedIn.value == null) {
+    //eslint-disable-next-line
+    clearInterval(nofiticaionPolls)
+  } else {
+    userStore.USER_NOTIFICATIONS()
+    console.log(`User loggedIn: Fettching notiifcation ... ` + new Date().toString())
+  }
+}, 10000)
+
+
+const usernotifications = computed(() => {
+  if (isUserLoggedIn.value) {
+    return userStore.getUserNotifcations
+  } else {
+    return []
+  }
+})
+
+
+const userNotificaionSize = computed(() => {
+  if (isUserLoggedIn.value) {
+    const num = usernotifications.value.length
+    if (num >= 1e6) {
+      return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+    } else {
+      return num;
+    }
+  }
+
+})
+
 const logout = () => {
+  clearInterval(nofiticaionPolls)
   localStorage.clear()
   location.reload()
+
 }
 
 const isActive = (item: any) => {
