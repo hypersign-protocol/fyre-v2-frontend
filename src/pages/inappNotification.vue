@@ -79,27 +79,27 @@ const getNotificationIcon = (notificationType: InAppNotificationType) => {
     let src = ""
     switch (notificationType) {
         case InAppNotificationType.FOLLOW_COMMUNITY: {
-            src = "src/assets/images/task/community-follow.png"
+            src = new URL(`@/assets/images/task/community-follow.png`, import.meta.url).href
             break;
         }
         case InAppNotificationType.CUSTOM: {
-            src = "src/assets/images/custom-notification.png"
+            src = new URL(`@/assets/images/custom-notification.png`, import.meta.url).href
             break;
         }
         case InAppNotificationType.NEW_EVENT: {
-            src = "src/assets/images/new-campaign.png"
+            src = new URL(`@/assets/images/new-campaign.png`, import.meta.url).href
             break;
         }
         case InAppNotificationType.NEW_COMMUNITY_CREATED: {
-            src = "src/assets/images/community-created.png"
+            src = new URL(`@/assets/images/community-created.png`, import.meta.url).href
             break;
         }
         case InAppNotificationType.EARN_XP: {
-            src = "src/assets/images/trophy.svg"
+            src = new URL(`@/assets/images/trophy.svg`, import.meta.url).href
             break;
         }
         default: {
-            src = "src/assets/images/custom-notification.png"
+            src = new URL(`@/assets/images/custom-notification.png`, import.meta.url).href
         }
     }
     return src
