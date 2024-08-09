@@ -136,7 +136,6 @@ const subscribeBrowerNotification = async () => {
     }
 
     //eslint-disable-next-line
-    debugger;
     if ("Notification" in window && navigator.serviceWorker) {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {

@@ -9,7 +9,6 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } fro
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const handleAuthorizationCode = () => {
-    debugger
     let currentPathObject = router.currentRoute.value;
     const code = currentPathObject.query.code
     if (code) {

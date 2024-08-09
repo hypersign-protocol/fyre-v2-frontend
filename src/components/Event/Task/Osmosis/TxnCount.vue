@@ -74,7 +74,6 @@ watch(
 )
 
 const checkIfUserLogged = () => {
-  debugger
   if (props.token) {
     showExpand.value = !showExpand.value
   } else {
