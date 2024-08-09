@@ -10,10 +10,10 @@ const tasks: Array<ITask> = [
     types: ['COLLECT_INPUT_URL'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Url.vue'))
   },
-  // {
-  //   types: ['COLLECT_INPUT_QUIZ'],
-  //   path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Quiz.vue'))
-  // },
+  {
+    types: ['COLLECT_INPUT_QUIZ'],
+    path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Quiz.vue'))
+  },
   {
     types: ['COLLECT_INPUT_TEXT'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/Text.vue'))
@@ -23,8 +23,24 @@ const tasks: Array<ITask> = [
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/VisitUrl.vue'))
   },
   {
+    types: ['SUBSCRIBE_NOTIFICATION_WEBPUSH'],
+    path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/Webpush.vue'))
+  },
+  // {
+  //   types: ['SUBSCRIBE_NOTIFICATION_EMAIL'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/Email.vue'))
+  // },
+  // {
+  //   types: ['SUBSCRIBE_NOTIFICATION_INAPP'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/InApp.vue'))
+  // },
+  {
     types: ['SOCIAL_TWITTER_FOLLOW'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Twitter/Follow.vue'))
+  },
+  {
+    types: ['SOCIAL_COMMUNITY_FOLLOW'],
+    path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Fyre/CommunityFollow.vue'))
   },
   {
     types: ['SOCIAL_TWITTER_LIKE'],

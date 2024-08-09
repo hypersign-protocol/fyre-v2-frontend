@@ -14,12 +14,30 @@ interface RewardType {
   userId: string
 }
 
+export enum InAppNotificationType {
+  COMMUNITY_OWNER = 'COMMUNITY_OWNER',
+  FOLLOW_COMMUNITY = 'FOLLOW_COMMUNITY',
+  NEW_EVENT = 'NEW_EVENT',
+  CUSTOM = 'CUSTOM',
+  NEW_COMMUNITY_CREATED = 'NEW_COMMUNITY_CREATED',
+  EARN_XP = 'EARN_XP'
+}
+
+interface InAppNotification {
+  _id: string
+  actionUrl: string
+  message: string
+  createdAt: string
+  type: InAppNotificationType
+}
+
 interface eventType {
   events: EventType[]
   userRewards: RewardType[]
   communities: CommunityType[],
   crdentials: Object[],
-  errors: unknown
+  errors: unknown,
+  notifications: InAppNotification[]
 }
 
 export const useUserStore = defineStore('user', {
@@ -28,7 +46,8 @@ export const useUserStore = defineStore('user', {
     communities: [],
     userRewards: [],
     errors: {},
-    crdentials: []
+    crdentials: [],
+    notifications: []
   }),
   actions: {
     async USER_EVENTS(): Promise<EventType[]> {
@@ -369,6 +388,27 @@ export const useUserStore = defineStore('user', {
         return []
       }
     },
+    async USER_NOTIFICATIONS(): Promise<EventType[]> {
+      try {
+        const response: AxiosResponse<EventType[]> = await axios.get(`/user/notification`)
+
+        if (response.success) {
+          this.notifications = response.data
+
+          return response.data
+        } else {
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
+          return []
+        }
+      } catch (error: AxiosError) {
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        return []
+      }
+    },
   },
   getters: {
     getUserEvents(): EventType[] {
@@ -376,6 +416,9 @@ export const useUserStore = defineStore('user', {
     },
     getUserCommunities(): EventType[] {
       return this.communities
+    },
+    getUserNotifcations(): InAppNotification[] {
+      return this.notifications
     },
     getUserError() {
       return this.errors

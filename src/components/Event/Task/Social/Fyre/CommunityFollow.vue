@@ -7,9 +7,9 @@
     <div class="task__header">
       <div class="task__title">
         <span>
-          <img src="@/assets/images/task/quize.png" />
+          <img src="@/assets/images/task/community-follow.png" />
         </span>
-        <span class="text text-white-100">{{ task.title }}</span>
+        <span class="text text-white-100 text-capitalize">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="checkIfUserLogged">
@@ -22,29 +22,30 @@
       </div>
     </div>
     <div class="task__body" v-if="showExpand">
-      <div class="task__input">
-        <v-container fluid v-if="task.options.isMultipleChoice">
-          <v-checkbox @change="check($event)" :label="eachOption" v-for="eachOption in task.options.quizOptions"
-            hide-details :value="eachOption" v-model="checkedBoxes" :disabled="isTaskVerified"></v-checkbox>
-        </v-container>
+      <div class="task__submit">
+        <v-btn @click="redirectToCommunityFollowPage" :disabled="isTaskVerified" v-if="!redirected && !isTaskVerified">
+          <span v-if="!isTaskVerified">Follow @{{ props.task.options.communityHandle }}</span>
+        </v-btn>
 
-        <v-radio-group v-if="!task.options.isMultipleChoice" v-model="radioAnswer" :disabled="isTaskVerified">
-          <v-radio :label="eachOption" :value="eachOption" v-for="eachOption in task.options.quizOptions"></v-radio>
-        </v-radio-group>
-      </div>
+        <v-btn :loading="loading" v-if="redirected && !isTaskVerified" @click="performAction"
+          :disabled="isTaskVerified">
+          <span v-if="!isTaskVerified">Verify</span>
+        </v-btn>
 
-      <div class="task__submit" v-if="!isTaskVerified">
-        <v-btn :loading="loading" @click="performAction" v-if="!isTaskVerified">Verify</v-btn>
+        <v-btn v-if="isTaskVerified" @click="performAction" :disabled="isTaskVerified">
+          <span v-if="isTaskVerified">Followed @{{ props.task.options.communityHandle }}</span>
+        </v-btn>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useNotificationStore } from '@/store/notification.ts'
-import { capitalize } from '@/composables/general.ts'
+import { webAuth } from '@/composables/twitterAuth.ts'
+
 const props = defineProps({
   communityId: { type: String, required: true },
   token: { type: String, required: true },
@@ -63,15 +64,15 @@ const props = defineProps({
     }
   }
 })
-
-const loading = ref(false)
+const redirected = ref(false)
 const showExpand = ref(false)
+const loading = ref(false)
 const isTaskVerified = ref(false)
 const inputText = ref(null)
-const radioAnswer = ref("")
-const checkedBoxes = ref([])
 const store = useEventParticipantStore()
 const { performResult } = storeToRefs(useEventParticipantStore())
+
+const socialAccessToken = ref(null)
 
 const notificationStore = useNotificationStore()
 
@@ -95,15 +96,19 @@ const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {
     isTaskVerified.value = true
     const result = props.eventParticipants?.tasks[props.task?._id]
-
-    if (!props.task.options.isMultipleChoice) {
-      radioAnswer.value = result.proof.quizAnswer[0]
-    } else {
-      checkedBoxes.value = result.proof.quizAnswer
-    }
-
+    inputText.value = result.proof
   }
 }
+
+
+watch(
+  () => socialAccessToken.value,
+  (value: any) => {
+    // console.log(value)
+    // performAction()
+  },
+  { deep: true }
+)
 
 watch(
   () => performResult.value,
@@ -119,52 +124,17 @@ watch(
   { deep: true }
 )
 
-
-const check = (event: any) => {
-  const label = event.target.ariaLabel
-  const index = props.task.options.proofConfig.proof.quizAnswer.indexOf(label);
-  if (event.target.checked == true) {
-    if (index < 0) {
-      props.task.options.proofConfig.proof.quizAnswer.push(label)
-    }
-  } else {
-    if (index > -1) {
-      props.task.options.proofConfig.proof.quizAnswer.splice(index, 1);
-    }
-  }
+const redirectToCommunityFollowPage = () => {
+  //const handle = props.task.options.proofConfig.proof.twitterHandle
+  const handle = props.task.options.communityId
+  const url = window.location.origin + '/community/' + handle
+  window.open(url, '_blank')
+  redirected.value = true
 }
-
 const performAction = async () => {
-  // remove all empty string
-  {
-    props.task.options.proofConfig.proof.quizAnswer = props.task.options.proofConfig.proof.quizAnswer.filter((x: string) => x != '')
-  }
-
-  if (!props.task.options.isMultipleChoice) {
-    if (!radioAnswer.value) {
-      notificationStore.SHOW_NOTIFICATION({
-        show: true,
-        type: 'error',
-        message: 'Please choose one option'
-      })
-      return
-    }
-
-    props.task.options.proofConfig.proof.quizAnswer = []
-    props.task.options.proofConfig.proof.quizAnswer.push(radioAnswer.value)
-  } else {
-    if (props.task.options.proofConfig.proof.quizAnswer.length <= 0) {
-      notificationStore.SHOW_NOTIFICATION({
-        show: true,
-        type: 'error',
-        message: 'Please check one or more option'
-      })
-      return
-    }
-  }
-
   loading.value = true
   await store.PERFORM_EVENT_TASK({
+    socialToken: socialAccessToken.value,
     eventId: props.task.eventId,
     communityId: props.communityId,
     task: {

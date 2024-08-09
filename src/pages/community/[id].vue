@@ -85,14 +85,15 @@
             </div>
           </v-card-text>
 
-          <v-card-text class="py-7">
+          <v-card-text class="py-5">
             <p class="font-30 font-weight-bold mb-5">{{ communityById.communityName }}</p>
             <p class="font-16 font-weight-medium mb-5 text-gray-100">
               {{ communityById.description }}
             </p>
           </v-card-text>
+
           <v-card-text>
-            <p class="font-20 font-weight-medium mb-5">Social Links</p>
+            <p class="font-20 font-weight-medium mb-2">Social Links</p>
             <div class="d-flex align-start justify-start" v-if="communityById.socials">
               <a v-if="communityById.socials.twitterHandle"
                 :href="`https://twitter.com/${communityById.socials.twitterHandle}`" target="_blank">
@@ -115,6 +116,7 @@
               </a>
             </div>
           </v-card-text>
+
           <v-card-text>
             <v-tabs selected-class="tab--active" slider-color="secondary" v-model="activeTab" align-tabs="left"
               color="white" class="event__tabs">
@@ -140,6 +142,11 @@
                   </v-col>
                 </v-row>
               </v-window-item>
+
+              <v-window-item :eager="true" value="leaderboard">
+                <Loader v-if="loading" />
+                <CommunityLeaderboard :communityId="route.params.id" />
+              </v-window-item>
             </v-window>
           </v-card-text>
         </v-card>
@@ -156,20 +163,24 @@ const toggleRefer = ref(false)
 const toggleParticipant = ref(false)
 const following = ref(false)
 const rating = ref('3.2')
-const activeTab = ref('events')
+const activeTab = ref('leaderboard')
 const tabs = ref([
+  {
+    title: 'Leaderboard',
+    slug: 'leaderboard'
+  },
   {
     title: 'All Events',
     slug: 'events'
   },
-  {
-    title: 'Ongoing',
-    slug: 'ongoing'
-  },
-  {
-    title: 'Completed',
-    slug: 'completed'
-  }
+  // {
+  //   title: 'Ongoing',
+  //   slug: 'ongoing'
+  // },
+  // {
+  //   title: 'Completed',
+  //   slug: 'completed'
+  // }
 ])
 
 import { useCommunityStore } from '@/store/community.ts'
