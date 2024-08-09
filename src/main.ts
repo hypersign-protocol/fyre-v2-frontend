@@ -18,8 +18,11 @@ import { blockChainWalletPlugin } from './blockchainWalletPlugin'
 
 // Composable
 import { createApp } from 'vue'
+import { createHead } from '@vueuse/head'
+import VueGtag from "vue-gtag-next";
 
 const app = createApp(App)
+const head = createHead()
 
 app.config.errorHandler = (error, vm, info) => {
   console.error('An error occurred:', error)
@@ -31,7 +34,12 @@ app.config.errorHandler = (error, vm, info) => {
 
 app.use(ElementPlus)
 app.use(blockChainWalletPlugin())
-
+app.use(head)
+app.use(VueGtag, {
+  config: { 
+    id: "G-DFMNJXNKCM1"
+  }
+})
 registerPlugins(app)
 
 app.config.warnHandler = () => {}

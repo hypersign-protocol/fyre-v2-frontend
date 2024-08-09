@@ -15,7 +15,7 @@
         <v-card color="transparent" class="rounded-lg">
           <div class="d-flex align-center justify-space-between pa-3 bg-black-100">
             <div
-              class="d-flex align-center cursor-pointer" 
+              class="d-flex align-center cursor-pointer"
               @click="viewCommunity(eventById.communityId)"
             >
               <div class="d-flex align-center">
@@ -33,7 +33,7 @@
                 />
               </div>
               <div class="d-flex align-center ml-2">
-                <v-avatar size="small" class="cursor-pointer mr-2" >
+                <v-avatar size="small" class="cursor-pointer mr-2">
                   <v-img alt="John" src="@/assets/images/verify-check.svg"></v-img>
                 </v-avatar>
               </div>
@@ -95,7 +95,10 @@
             <div class="event-time">
               <EventStatus :eventData="eventById" />
             </div>
-            <div class="event-status"><span class="text-green-100">Active</span></div>
+            <div class="event-status" v-if="!checkEventEnded()">
+              <span class="text-green-100">Active</span>
+            </div>
+            <div class="event-status" v-else><span class="text-red-100">InActive</span></div>
           </v-card-text>
           <v-card-title class="event-title">{{ eventById.eventName }} </v-card-title>
           <v-card-text class="event-meta">
@@ -143,22 +146,28 @@
                   </p>
                 </div>
                 <v-card class="event-task--card">
-                  <template v-if="tasks.length > 0">
-                    <template v-for="(task, index) in tasks" :key="index">
-                      <Task
-                        :task="task"
-                        :communityId="eventById.communityId"
-                        :eventParticipants="eventParticipants"
-                        :token="token"
-                        :walletInfo="formData"
-                        class="mb-5"
-                        @emitShowWallet="logWallet"
-                        @removeFormData="clearWalletInfo"
-                      />
+                  <template v-if="!checkEventEnded()">
+                    <template v-if="tasks.length > 0">
+                      <template v-for="(task, index) in tasks" :key="index">
+                        <Task
+                          :task="task"
+                          :communityId="eventById.communityId"
+                          :eventParticipants="eventParticipants"
+                          :token="token"
+                          :walletInfo="formData"
+                          class="mb-5"
+                          @emitShowWallet="logWallet"
+                          @removeFormData="clearWalletInfo"
+                          @click="logGtag(task.title,'eventPage','taskClicked')"
+                        />
+                      </template>
+                    </template>
+                    <template v-if="tasks.length === 0">
+                      <p class="text-center font-16 lh-18">No Tasks found!</p>
                     </template>
                   </template>
-                  <template v-if="tasks.length === 0">
-                    <p class="text-center font-16 lh-18">No Tasks found!</p>
+                  <template v-else>
+                    <p class="text-center font-16 lh-18">The Event Is Over!</p>
                   </template>
                 </v-card>
               </v-window-item>
@@ -209,7 +218,7 @@
           <h4 class="homepage__section__title text-left">Explore other Events</h4>
           <v-row class="mt-5">
             <v-col v-for="(event, index) in popular.slice(0, 4)" cols="12" sm="6" md="6" lg="3">
-              <Card :eventData="event" />
+              <Card :eventData="event" @click="logGtag(event.eventName,'ExploreOtherPage')" />
             </v-col>
           </v-row>
           <div
@@ -242,14 +251,18 @@
     />
   </template>
 
-  <BlockChainWallet :options="options" @emitProvider="getProvider" @emitWalletAddress="collectWalletAddress"
-    @emitSignedData="collectSignedData" @emitError="collectError" />
+  <BlockChainWallet
+    :options="options"
+    @emitProvider="getProvider"
+    @emitWalletAddress="collectWalletAddress"
+    @emitSignedData="collectSignedData"
+    @emitError="collectError"
+  />
   <div id="emit-options" @click="emitOptions(options)"></div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useNotificationStore } from '@/store/notification.ts'
-
 
 const notificationStore = useNotificationStore()
 const toggleDescription = ref(false)
@@ -276,13 +289,16 @@ const tabs = ref([
     slug: 'reward'
   }
 ])
+import logGtag from '@/utils/gTag'
 
-import { useEventStore } from '@/store/event.ts'
-import { useAuthStore } from '@/store/auth.ts'
-import { isEventHappening } from '@/composables/event.ts'
-import { useEventParticipantStore } from '@/store/eventParticipant.ts'
-import { getToken, getUser } from '@/composables/jwtService.ts'
+import { useEventStore } from '@/store/event'
+import { useAuthStore } from '@/store/auth'
+import { isEventHappening } from '@/composables/event'
+import { useEventParticipantStore } from '@/store/eventParticipant'
+import { getToken, getUser } from '@/composables/jwtService'
 import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
 
 const authStore = useAuthStore()
 
@@ -299,6 +315,10 @@ const loading = ref(true)
 const isEventHappeningTrue = ref(true)
 const dialog = ref(true)
 const errorMessage = ref('')
+
+const title = ref('Welcome to fyre')
+const bannerImage = ref('https://samplebanner.img')
+const description = ref('sample description')
 
 const tasks = computed(() => eventStore.getEventTasksList)
 
@@ -325,7 +345,7 @@ const options = reactive({
   providers: ['evm', 'interchain'],
   chains: [''],
   isRequiredDID: false,
-  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true, 
+  isPerformAction: authUser.value.didDocument ? true : false, // by changing to true,
   didDocument: authUser.value.didDocument,
   addVerificationMethod: true,
   selectedNetwork: null
@@ -340,6 +360,17 @@ watch(
   },
   { deep: true }
 )
+
+watch(toggleRewards, (newX) => {
+  logGtag(newX,'eventPage','rewardClicked')
+})
+
+watch(toggleParticipant, (newX) => {
+  logGtag(newX,'eventPage','participantClicked')  
+})
+
+//GTAG
+
 const getProvider = async (data: any) => {
   console.log('Inside getProvider handler for event emitProvider')
   if (data && !authUser.value.didDocument) {
@@ -352,6 +383,11 @@ const getProvider = async (data: any) => {
 const collectWalletAddress = async (data) => {
   console.log(data)
   formData.walletAddress = data.walletAddress
+}
+
+const checkEventEnded = () => {
+  const res = isEventHappening(eventById.value.startDate, eventById.value.endDate)
+  return !res.eventInProgress ? true : false
 }
 
 // const collectSignedData = async (data) => {
@@ -368,11 +404,13 @@ const collectError = (data: any) => {
   eventParticipantStore.SET_WALLET_CONNECT_ERROR({
     status: true,
     message: data,
-    taskId: formData.taskId,
+    taskId: formData.taskId
   })
 }
 
 const validateReferral = () => {
+  logGtag(null,'eventPage','referralClicked')
+
   if (!token.value) {
     notificationStore.SHOW_NOTIFICATION({
       show: true,
@@ -381,9 +419,11 @@ const validateReferral = () => {
     })
     toggleRefer.value = false
   } else {
-    const iftask = eventParticipantStore.performResult?.tasks ? true : (
-      eventParticipantStore.eventParticipants?.tasks ? true : false
-    )
+    const iftask = eventParticipantStore.performResult?.tasks
+      ? true
+      : eventParticipantStore.eventParticipants?.tasks
+        ? true
+        : false
     if (!iftask) {
       notificationStore.SHOW_NOTIFICATION({
         show: true,
@@ -400,7 +440,6 @@ const validateReferral = () => {
 const collectSignedData = async (data: any) => {
   console.log('Inside collectSignedData...')
   if (authUser.value.didDocument) {
-
     formData.walletAddress = data.walletAddress
     formData.signedDidDoc = data.signProof
   } else {
@@ -410,7 +449,6 @@ const collectSignedData = async (data: any) => {
       console.log('Please select the provider before you proceed')
     }
   }
-
 }
 
 const clearWalletInfo = async () => {
@@ -418,12 +456,12 @@ const clearWalletInfo = async () => {
   formData.walletAddress = null
   formData.signedDidDoc = null
   formData.taskId = null
-  delete options.didDocument.proof;
+  delete options.didDocument.proof
 }
 
 const logWallet = async (data) => {
   // clearing before gconnecting new walelt.
-  clearWalletInfo();
+  clearWalletInfo()
   options.providers = data.network === 'evm' ? ['evm'] : ['interchain']
   options.selectedNetwork = data.network
   options.showBwModal = true
@@ -438,7 +476,8 @@ const logWallet = async (data) => {
 
 onMounted(async () => {
   loading.value = true
-  loadEventTasks()
+  await loadEventTasks()
+  updateMetaTags()
 })
 
 const checkEventStarted = () => {
@@ -453,7 +492,9 @@ const checkEventStarted = () => {
 
 watch(
   () => activeTab.value,
-  (value: any) => {}
+  (value: any) => {
+    logGtag(activeTab.value,'eventPage','eventTabClicked')
+  }
 )
 
 watch(
@@ -527,5 +568,32 @@ const getOtherEvents = async () => {
 
 const loadEventTasks = async () => {
   await eventStore.GET_EVENT_BY_ID(route.params.id)
+}
+
+const updateMetaTags = () => {
+  title.value = eventById.value.eventName
+  description.value = eventById.value.description
+  bannerImage.value = eventById.value.banner
+  useHead({
+    title: title.value,
+    meta: [
+      {
+        property: 'og:description',
+        content: description.value
+      },
+      {
+        property: 'og:title',
+        content: title.value
+      },
+      {
+        property: 'og:image',
+        content: bannerImage.value
+      },
+      {
+        property: 'og:url',
+        content: window.location.href
+      }
+    ]
+  })
 }
 </script>

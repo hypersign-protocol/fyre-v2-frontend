@@ -18,15 +18,15 @@
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white"@click="makeshowExpandFalse" >mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input"></div>
       <div class="task__submit">
         <v-btn class="mr-2" @click="connect" :loading="isCollecting" :disabled="walletConnected">
-          <span v-if="!walletConnected">Collect Wallet Address</span>
-          <span v-if="walletConnected">Collected</span>
+          <span v-if="!walletConnected">Connect Wallet</span>
+          <span v-if="walletConnected">Connected</span>
         </v-btn>
         <v-btn @click="submit" :loading="loading" :disabled="isTaskVerified">Verify Task</v-btn>
       </div>
@@ -100,6 +100,7 @@ const checkIfUserLogged = () => {
     })
   }
 }
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 const fetchResult = () => {
   if (props.eventParticipants?.tasks?.hasOwnProperty(props.task?._id)) {

@@ -1,11 +1,11 @@
 <template>
-  <Banner />
-  <Slider />
+  <Banner @click="logGtag(null,'HomePage','BannerClicked')"/>
+  <Slider @click="logGtag(null,'HomePage','SliderClicked')"/>
   <v-container fluid class="background-left">
     <h1 class="homepage__section__title">Top Campaigns</h1>
     <div class="homepage-section">
       <div class="section-content">
-        <Tabs />
+        <Tabs @click="logGtag(null,'HomePage','TopCampaignsClicked')"/>
       </div>
     </div>
   </v-container>
@@ -15,20 +15,13 @@
         <h1 class="homepage__section__title">Explore Communities</h1>
         <div class="explore__community_wrapper">
           <div class="row_wrap">
-            <div
-              class="explore-community-card"
-              style="cursor: pointer"
-              v-for="(item, index) in communities?.data"
-              @click="viewCommunity(item._id)"
-            >
+            <div class="explore-community-card" style="cursor: pointer" v-for="(item, index) in communities?.data"
+              @click="viewCommunity(item._id)">
               <img :src="item.avatar" />
               <p>{{ item.communityName }}</p>
             </div>
           </div>
-          <div
-            class="d-flex align-center justify-center my-5"
-            @click="router.push({ path: `/explore` })"
-          >
+          <div class="d-flex align-center justify-center my-5" @click="router.push({ path: `/explore` })">
             <v-btn class="base-btn" variant="outlined" rounded>See more</v-btn>
           </div>
         </div>
@@ -133,25 +126,26 @@
       </div>
     </div>
   </v-container>
-  <SupportedChain />
+  <SupportedChain @click="logGtag(null,'HomePage','SupportedChainClicked')"/>
 
-  <Faq />
+  <Faq @click="logGtag(null,'HomePage','FaqClicked')"/>
 </template>
 <script lang="ts" setup>
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
-import { useCommunityStore } from '@/store/community.ts'
-
+import { useCommunityStore } from '@/store/community'
+import logGtag from '@/utils/gTag'
 const communityStore = useCommunityStore()
 const router = useRouter()
 
 const communities = computed(() => communityStore.getPopularCommunities)
 
 onMounted(async () => {
-  await communityStore.POPULAR_COMMUNITIES(`?page=2&limit=10`)
+  await communityStore.POPULAR_COMMUNITIES(`?page=1&limit=10`)
 })
 
 const viewCommunity = (id) => {
+  logGtag(null,'HomePage','viewCommunityClicked')
   router.replace({ path: `/community/${id}` })
 }
 </script>

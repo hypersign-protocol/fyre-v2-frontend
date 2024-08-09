@@ -24,12 +24,12 @@
             <p class="my-2 text-orange-100">{{ eventData.participantCount }} Participants</p>
             <EventStatus class="font-12" :eventData="eventData" />
           </div>
-          <div class="d-flex">
+          <!-- <div class="d-flex">
             <v-avatar size="20" class="mr-2">
               <v-img src="@/assets/images/gift.svg"></v-img>
             </v-avatar>
             <p class="text-white-100">500 USTD</p>
-          </div>
+          </div> -->
         </v-card-text>
       </v-card>
     </v-img>

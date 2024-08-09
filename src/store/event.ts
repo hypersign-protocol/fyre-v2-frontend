@@ -91,6 +91,27 @@ export const useEventStore = defineStore('event', {
         return null
       }
     },
+    async GET_EVENT_BY_ID_STORE_INDIPENDENT(eventId: string): Promise<EventType | null> {
+      try {
+        const response: AxiosResponse<EventType> = await axios.get(`/event/${eventId}`)
+
+        if (response.success) {
+
+          return response.data
+        } else {
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
+          return null
+        }
+      } catch (error) {
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        this.errors = error
+        return null
+      }
+    },
     async GET_EVENT_TASKS(eventId: string): Promise<EventTaskType[]> {
       try {
         const response: AxiosResponse<EventTaskType[]> = await axios.get(`/task-config/${eventId}`)

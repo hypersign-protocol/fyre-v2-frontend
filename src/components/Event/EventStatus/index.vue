@@ -9,7 +9,7 @@
       <Duration :eventDate="eventData.endDate" />
     </template>
     <template v-if="eventStarted && !eventInProgress">
-      <span class="text-white-100 mr-2">Event Ended</span>
+      <span class="text-red-100 mr-2">Event Over!</span>
     </template>
   </p>
 </template>

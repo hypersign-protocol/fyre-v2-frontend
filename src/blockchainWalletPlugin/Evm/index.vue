@@ -86,8 +86,8 @@ const wagmiConfig = defaultWagmiConfig({
   projectId,
   connectors: [coinbaseWallet],
   metadata: {
-    name: 'Web3Modal Vue Example',
-    description: 'Web3Modal Vue Example',
+    name: 'Fyre Login',
+    description: 'Connect your wallet to login',
     url: '',
     icons: [],
     verifyUrl: ''
@@ -207,7 +207,7 @@ modal.subscribeEvents(async (e) => {
   }
 
 
-  if (e.data.event == 'MODAL_CLOSE' && !e.data.properties.method && !switchNetwork) {
+  if (e.data.event == 'MODAL_CLOSE' && !e.data.properties.method && !switchNetwork && !e.data.properties?.connected) {
     evmStore.SET_ERROR({ status: true, message: 'User rejects the signature request' })
     return
   }
@@ -218,7 +218,7 @@ modal.subscribeEvents(async (e) => {
   ) {
     switchNetwork = false
     const connetor = wagmiConfig.connectors.filter((e) => e.uid == wagmiConfig.state.current)
-    if (connetor.length > 0) {
+    if (connetor.length > 0) {      
       const provider = await Promise.resolve(connetor[0].getProvider())
       await collectProvider(provider);
     } else {
@@ -302,11 +302,11 @@ const openModal = () => {
 
 const closeModal = async () => {
   if (evmResultObject.connector) {
-    const connector = evmResultObject.connector.connector
-    const result = await disconnect(wagmiConfig, {
-      connector
-    })
-    console.log(result)
+    // const connector = evmResultObject.connector.connector
+    // const result = await disconnect(wagmiConfig, {
+    //   connector
+    // })
+    // console.log(result)
   }
   store.walletOptions.showBwModal = false
 }

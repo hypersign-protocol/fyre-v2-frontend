@@ -6,6 +6,9 @@
     </div>
     <div class="task__header">
       <div class="task__title">
+        <span>
+          <img :src="getImage(task.type)" />
+        </span>
         <span class="text text-white-100">{{ task.title }}</span>
         <span class="points text-blue-100"> +{{ task.xp }}XP </span>
       </div>
@@ -14,7 +17,7 @@
         <v-btn variant="outlined" v-if="isTaskVerified">
           <img src="@/assets/images/blue-tick.svg" class="mr-2" />
           Verified</v-btn>
-        <v-icon v-if="showExpand" class="cursor-pointer" color="white">mdi-close</v-icon>
+          <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
     </div>
     <div class="task__body" v-if="showExpand">
@@ -32,6 +35,8 @@
 <script lang="ts" setup>
 import { useEventParticipantStore } from '@/store/eventParticipant.ts'
 import { storeToRefs } from 'pinia'
+import { getImage } from '@/composables/event.ts'
+
 import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 const props = defineProps({
   communityId: { type: String, required: true },
@@ -80,4 +85,7 @@ const performAction = async () => {
     }
   })
 }
+
+const makeshowExpandFalse = () => { showExpand.value = false } 
+
 </script>

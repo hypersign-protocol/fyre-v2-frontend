@@ -16,7 +16,16 @@ export const isEventHappening = (startDate, endDate) => {
     eventInProgress: eventInProgress
   }
 }
-
+export const resolveConnectWalletTaskType = (type) => {
+  if(type){
+    const segments = type.split('_')
+    return {
+      ecosystem: segments[segments.length - 2].toLowerCase(),
+      network: segments[segments.length - 1].toLowerCase()
+    }
+  }else return null
+  
+}
 export const getImage = (type) => {
   const segments = type.split('_')
   // Get the last segment

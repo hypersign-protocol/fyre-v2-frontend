@@ -7,15 +7,16 @@
       <div class="modal__header">
         <p class="modal__title">Participants({{ leaderBoardList.length }})</p>
       </div>
-      <div class="modal__body">
+      <div class="modal__body overflow-y-auto" style="max-height: 400px;">
         <div
           class="d-flex align-center justify-space-between my-4"
           v-for="(item, index) in leaderBoardList"
           :key="index"
         >
           <div class="d-flex align-center">
-            <v-avatar size="large">
-              <v-img src="@/assets/images/avatar01.png"> </v-img>
+            <v-avatar size="large" class="mr-2">
+            <v-img :src="item.avatar" v-if="item.avatar"> </v-img>
+            <v-img src="@/assets/images/avatar01.png" v-else> </v-img>
             </v-avatar>
             <p class="ml-2 font-22 font-weight-bold">{{ item.userName }}</p>
           </div>

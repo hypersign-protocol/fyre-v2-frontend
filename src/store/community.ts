@@ -18,18 +18,29 @@ interface communityType {
   errors: unknown
 }
 
+interface LeaderBoardType {
+  efficiencyScore: number
+  _id: string
+  did?: string
+  userName?: string 
+  avatar?: string 
+  totalXp: number 
+}
+
 export const useCommunityStore = defineStore('community', {
   state: (): {
     popularCommunities: any[]
     communityId: {}
     communityEvents: any[]
     communityFollow: boolean
+    communitLeaderboard: LeaderBoardType[]
   } => {
     return {
       popularCommunities: [],
       communityId: {},
       communityFollow: false,
-      communityEvents: []
+      communityEvents: [],
+      communitLeaderboard: []
     }
   },
   actions: {
@@ -115,19 +126,49 @@ export const useCommunityStore = defineStore('community', {
         notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
         return []
       }
-    }
+    },
+
+    async GET_LEADER_BOARD(
+      communityId: string,
+    ): Promise<LeaderBoardType[]> {
+      try {
+        const response: AxiosResponse<LeaderBoardType[]> = await axios.get(
+          `/community/${communityId}/leaderboard`
+        )
+
+        if (response.success) {
+          this.communitLeaderboard = response.data
+
+          return response.data
+        } else {
+          notificationStore.SHOW_NOTIFICATION({
+            show: true,
+            type: 'error',
+            message: response.message
+          })
+          return []
+        }
+      } catch (error) {
+        notificationStore.SHOW_NOTIFICATION({ show: true, type: 'error', message: error.message })
+        return []
+      }
+    },
+
   },
   getters: {
-    getPopularCommunities(): Community[] {
+    getPopularCommunities(): any[] {
       return this.popularCommunities
     },
-    getCommunityByIdData(): Community {
+    getCommunityByIdData(): any {
       return this.communityId
     },
     getEventsByCommunityId(): EventType[] {
       return this.communityEvents
     },
-    getCommunityFollow() {
+    getCommunitLeaderboard(): LeaderBoardType[]{
+      return this.communitLeaderboard
+    },
+    getCommunityFollow(): any {
       return this.communityFollow
     }
   }

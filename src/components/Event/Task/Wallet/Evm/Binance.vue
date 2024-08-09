@@ -13,35 +13,29 @@
         <span class="font-18 lh-20 font-weight--bold text-blue-100"> +{{ task.xp }}XP </span>
       </div>
       <div class="task__action" @click="showExpand = !showExpand">
-        <v-btn
-          v-if="
-            !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
-          "
-        >
+        <v-btn v-if="
+          !showExpand && !isTaskVerified && !eventParticipants?.tasks?.hasOwnProperty(task._id)
+        ">
           Verify
         </v-btn>
-        <v-btn
-          variant="outlined"
-          v-else-if="
-            !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
-          "
-        >
+        <v-btn variant="outlined" v-else-if="
+          !showExpand && (isTaskVerified || eventParticipants?.tasks?.hasOwnProperty(task._id))
+        ">
           <v-icon>mdi-check</v-icon>
           Verified
         </v-btn>
-        <v-icon v-if="showExpand" color="white">mdi-close</v-icon>
+        <v-icon v-if="showExpand" color="white" @click="makeshowExpandFalse">mdi-close</v-icon>
       </div>
       <div class="task__action" v-if="isTaskVerified">
         <v-btn variant="outlined">
           <v-icon>mdi-check</v-icon>
-          Verified</v-btn
-        >
+          Verified</v-btn>
       </div>
     </div>
     <div class="task__body" v-if="showExpand && !isTaskVerified">
       <div class="task__input"></div>
       <div class="task__submit">
-        <v-btn @click="getWalletAddress">Collect Wallet Address</v-btn>
+        <v-btn @click="getWalletAddress">Connect Wallet</v-btn>
       </div>
     </div>
   </div>
@@ -94,6 +88,7 @@ const getWalletAddress = async () => {
     walletAddress.value = res[0]
   }
 }
+const makeshowExpandFalse = () => { showExpand.value = false } 
 
 watch(
   () => walletAddress.value,

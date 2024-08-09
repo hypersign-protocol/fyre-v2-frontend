@@ -7,18 +7,14 @@
       </div>
       <v-container style="background: url('@/assets/images/bg-center.png') center/cover no-repeat">
         <v-card color="transparent">
-          <v-card-text>
+          <v-card-text class="community-header-desktop">
             <div class="logo--wrapper">
               <div class="d-flex">
                 <div class="logo">
                   <v-avatar size="100" vif="communityById">
                     <v-img :src="communityById.avatar"></v-img>
                   </v-avatar>
-                  <img
-                    v-if="communityById.hasDomainVerified"
-                    class="verify"
-                    src="@/assets/images/verify.svg"
-                  />
+                  <img v-if="communityById.hasDomainVerified" class="verify" src="@/assets/images/verify.svg" />
                 </div>
                 <div class="ml-10 d-flex align-end">
                   <div class="d-flex flex-column pa-2 ml-6">
@@ -37,83 +33,93 @@
                   </div>
                 </div>
               </div>
-              <v-btn
-                color="white"
-                height="53"
-                class="rounded-10 px-15 cursor-pointer"
-                :loading="following"
-                v-if="!isFollowed"
-                @click="followCommunity"
-              >
+              <v-btn color="white" height="53" class="rounded-10 px-15 cursor-pointer" :loading="following"
+                v-if="!isFollowed" @click="followCommunity">
                 <span>Follow</span>
               </v-btn>
-              <v-btn
-                v-if="isFollowed"
-                color="rgb(255,255,255,8%)"
-                height="53"
-                class="rounded-10 px-15 cursor-pointer"
-              >
+              <v-btn v-if="isFollowed" color="rgb(255,255,255,8%)" height="53" class="rounded-10 px-15 cursor-pointer">
                 <v-icon class="mr-2">mdi-check</v-icon> Following
               </v-btn>
             </div>
           </v-card-text>
-          <v-card-text class="py-7">
+
+          <v-card-text class="community-header-mobile">
+            <div class="v-row">
+              <div class="v-col-4">
+                <div class="logo--wrapper">
+                  <div class="logo">
+                    <v-avatar size="80" vif="communityById">
+                      <v-img :src="communityById.avatar"></v-img>
+                    </v-avatar>
+                    <img v-if="communityById.hasDomainVerified" class="verify" src="@/assets/images/verify.svg" />
+                  </div>
+                </div>
+              </div>
+              <div class="v-col-8 align-content-center">
+                <v-btn color="white" height="40" small class="rounded-10 cursor-pointer float-right"
+                  :loading="following" v-if="!isFollowed" @click="followCommunity">
+                  <span>Follow</span>
+                </v-btn>
+                <v-btn v-if="isFollowed" small color="rgb(255,255,255,8%)" height="40"
+                  class="rounded-10 cursor-pointer float-right">
+                  <v-icon class="mr-2">mdi-check</v-icon> Following
+                </v-btn>
+              </div>
+            </div>
+
+            <div class="v-row community-header-mobile">
+              <div class="v-col-4 text-center">
+                <p class="font-18 font-weight-bold mb-4">{{ communityById.followerCount }}</p>
+                <p class="font-14">Followers</p>
+              </div>
+              <div class="v-col-4 text-center">
+                <p class="font-18 font-weight-bold mb-4">
+                  {{ communityById.participantCount }}
+                </p>
+                <p class="font-14">Participants</p>
+              </div>
+              <div class="v-col-4 text-center">
+                <p class="font-18 font-weight-bold mb-4">{{ communityById.eventCount }}</p>
+                <p class="font-14">Events</p>
+              </div>
+            </div>
+          </v-card-text>
+
+          <v-card-text class="py-5">
             <p class="font-30 font-weight-bold mb-5">{{ communityById.communityName }}</p>
             <p class="font-16 font-weight-medium mb-5 text-gray-100">
               {{ communityById.description }}
             </p>
           </v-card-text>
+
           <v-card-text>
-            <p class="font-20 font-weight-medium mb-5">Social Links</p>
+            <p class="font-20 font-weight-medium mb-2">Social Links</p>
             <div class="d-flex align-start justify-start" v-if="communityById.socials">
-              <a
-                :href="`https://twitter.com/${communityById.socials.twitterHandle}`"
-                target="_blank"
-              >
-                <img
-                  class="mr-2 cursor-pointer"
-                  src="@/assets/images/twitter-icon.svg"
-                  height="45"
-                />
+              <a v-if="communityById.socials.twitterHandle"
+                :href="`https://twitter.com/${communityById.socials.twitterHandle}`" target="_blank">
+                <img class="mr-2 cursor-pointer" src="@/assets/images/twitter-icon.svg" height="45" />
               </a>
-              <a
-                :href="`https://discord.com/${communityById.socials.discorHandle}`"
-                target="_blank"
-              >
-                <img
-                  class="mr-2 cursor-pointer"
-                  src="@/assets/images/skill-icons_discord.svg"
-                  height="45"
-                />
+              <a v-if="communityById.socials.discordHandle"
+                :href="`https://discord.com/${communityById.socials.discorHandle}`" target="_blank">
+                <img class="mr-2 cursor-pointer" src="@/assets/images/skill-icons_discord.svg" height="45" />
               </a>
-              <a
-                :href="`https://telegram.org/${communityById.socials.telegramHandle}`"
-                target="_blank"
-              >
-                <img
-                  class="mr-2 cursor-pointer"
-                  src="@/assets/images/logos_telegram.svg"
-                  height="45"
-                />
+              <a v-if="communityById.socials.telegramHandle"
+                :href="`https://t.me/${communityById.socials.telegramHandle}`" target="_blank">
+                <img class="mr-2 cursor-pointer" src="@/assets/images/logos_telegram.svg" height="45" />
               </a>
-              <a :href="`https://github.com/${communityById.socials.githubHandle}`" target="_blank">
-                <img
-                  class="mr-2 cursor-pointer"
-                  src="@/assets/images/fi-rr-globe.svg"
-                  height="53"
-                />
+              <a v-if="communityById.socials.githubHandle"
+                :href="`https://github.com/${communityById.socials.githubHandle}`" target="_blank">
+                <img class="mr-2 cursor-pointer" src="@/assets/images/task/github.svg" height="45" />
+              </a>
+              <a v-if="communityById.domainUrl" :href="`${communityById.domainUrl}`" target="_blank">
+                <img class="mr-2 cursor-pointer" src="@/assets/images/globe.svg" height="53" />
               </a>
             </div>
           </v-card-text>
+
           <v-card-text>
-            <v-tabs
-              selected-class="tab--active"
-              slider-color="secondary"
-              v-model="activeTab"
-              align-tabs="left"
-              color="white"
-              class="event__tabs"
-            >
+            <v-tabs selected-class="tab--active" slider-color="secondary" v-model="activeTab" align-tabs="left"
+              color="white" class="event__tabs">
               <v-tab :value="item.slug" v-for="(item, index) in tabs" :key="index">{{
                 item.title
               }}</v-tab>
@@ -136,6 +142,11 @@
                   </v-col>
                 </v-row>
               </v-window-item>
+
+              <v-window-item :eager="true" value="leaderboard">
+                <Loader v-if="loading" />
+                <CommunityLeaderboard :communityId="route.params.id" />
+              </v-window-item>
             </v-window>
           </v-card-text>
         </v-card>
@@ -152,20 +163,24 @@ const toggleRefer = ref(false)
 const toggleParticipant = ref(false)
 const following = ref(false)
 const rating = ref('3.2')
-const activeTab = ref('events')
+const activeTab = ref('leaderboard')
 const tabs = ref([
+  {
+    title: 'Leaderboard',
+    slug: 'leaderboard'
+  },
   {
     title: 'All Events',
     slug: 'events'
   },
-  {
-    title: 'Ongoing',
-    slug: 'ongoing'
-  },
-  {
-    title: 'Completed',
-    slug: 'completed'
-  }
+  // {
+  //   title: 'Ongoing',
+  //   slug: 'ongoing'
+  // },
+  // {
+  //   title: 'Completed',
+  //   slug: 'completed'
+  // }
 ])
 
 import { useCommunityStore } from '@/store/community.ts'

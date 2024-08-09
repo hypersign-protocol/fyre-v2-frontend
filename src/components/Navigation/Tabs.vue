@@ -73,29 +73,30 @@
             </div>
           </v-col>
         </v-row>
-        <div class="text-center d-flex align-center justify-center my-6" v-if="events.total > 8">
+        <!-- <div class="text-center d-flex align-center justify-center my-6">
           <Pagination
-            :page="options.page"
-            :limit="options.limit"
+            :page=options.page
+            :limit=options.limit
             :total="events.total"
             @pageChange="pageChange"
           />
-        </div>
+        </div> -->
       </v-window-item>
     </v-window>
   </v-card>
 </template>
 <script lang="ts" setup>
-import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount, computed, watch, onUnmounted } from 'vue'
+
 import _ from 'lodash'
 const loading = ref(false)
-const activeTab = ref('coming_soon')
+const activeTab = ref('all')
 const rewardFilter = ref(null)
 const tabs = ref([
   {
     name: 'All',
     slug: 'all'
-  },
+  }
   //// Hiding it for now since these functionality does not work and we dont have enough event yet - vishwas
   // {
   //   name: 'Coming Soon',
@@ -125,9 +126,8 @@ const rewards = ref([
     slug: 'pending_reward'
   }
 ])
-import { useEventStore } from '@/store/event.ts'
+import { useEventStore } from '@/store/event'
 
-import { storeToRefs } from 'pinia'
 const eventStore = useEventStore()
 const router = useRouter()
 
@@ -135,14 +135,16 @@ const options = reactive({
   page: 1,
   limit: 8,
   search: '',
-  filter: 'coming_soon'
+  filter: 'all'
 })
 
 const events = computed(() => eventStore.getTabEvents)
-
 onMounted(async () => {
+  
   loadEvents()
+  
 })
+
 
 const pageChange = (page) => {
   options.page = page
@@ -199,6 +201,7 @@ const viewEvent = (event) => {
 }
 
 const loadEvents = async () => {
+
   loading.value = true
   let params = `?page=${options.page}&limit=${options.limit}`
 
@@ -210,5 +213,7 @@ const loadEvents = async () => {
     params += `&searchString=${options.search}`
   }
   await eventStore.TAB_EVENTS(params)
+
+
 }
 </script>
