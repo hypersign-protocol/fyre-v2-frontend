@@ -33,7 +33,7 @@
         <v-btn class="text-none" v-if="!mobile && isUserLoggedIn" stacked
           @click="navigate({ link: '/inappNotification' })">
           <v-badge color="error" :content="userNotificaionSize">
-            <v-icon>mdi-bell-outline</v-icon>
+            <v-icon transition="fab-transition">mdi-bell-outline</v-icon>
           </v-badge>
         </v-btn>
 
@@ -100,6 +100,10 @@ const usernotifications = computed(() => {
     return []
   }
 })
+
+// setInterval(() => {
+//   userStore.USER_NOTIFICATIONS()
+// }, 10000)
 
 const userNotificaionSize = computed(() => {
   if (isUserLoggedIn) {

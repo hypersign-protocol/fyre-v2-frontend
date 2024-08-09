@@ -1,21 +1,21 @@
 <template>
     <v-container fluid class="background-center">
-
         <div class="homepage-section background-center pt-10">
             <div class="section-content" style="max-width: 700px;">
                 <div class="base-style mb-1" v-if="usernotifications && (usernotifications.length > 0)"
                     v-for="eachNotification in usernotifications"
-                    style="display: block; padding:24px;     word-wrap: break-word; cursor: pointer;"
+                    style="display: block; padding:10px;     word-wrap: break-word; cursor: pointer;"
                     @click="callToaction(eachNotification.actionUrl)">
                     <v-row>
                         <v-col-2 style="padding:15px">
                             <span>
-                                <img :src="getNotificationIcon(eachNotification.type)" width="50" height="50" />
+                                <img :src="getNotificationIcon(eachNotification.type)" width="30" height="30" />
                             </span>
                         </v-col-2>
                         <v-col style="padding:5px;">
                             <p v-html="eachNotification.message"></p>
-                            <p style="color:grey">{{ getFormattedDate(eachNotification.createdAt) }} </p>
+                            <p style="color:grey; font-size: x-small;">{{ getFormattedDate(eachNotification.createdAt)
+                                }} </p>
                         </v-col>
                         <!-- <v-col-1>
                             <span class="right">X</span>
@@ -92,6 +92,10 @@ const getNotificationIcon = (notificationType: InAppNotificationType) => {
         }
         case InAppNotificationType.NEW_COMMUNITY_CREATED: {
             src = "src/assets/images/community-created.png"
+            break;
+        }
+        case InAppNotificationType.EARN_XP: {
+            src = "src/assets/images/trophy.svg"
             break;
         }
         default: {
