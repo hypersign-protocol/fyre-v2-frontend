@@ -149,6 +149,8 @@ const performAction = async () => {
       })
       return
     }
+
+    props.task.options.proofConfig.proof.quizAnswer = []
     props.task.options.proofConfig.proof.quizAnswer.push(radioAnswer.value)
   } else {
     if (props.task.options.proofConfig.proof.quizAnswer.length <= 0) {

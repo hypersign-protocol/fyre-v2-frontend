@@ -31,7 +31,7 @@
 
       <template v-if="isUserLoggedIn">
         <v-btn class="text-none" v-if="!mobile && isUserLoggedIn" stacked
-          @click="router.push({ path: `inappNotification` })">
+          @click="navigate({ link: '/inappNotification' })">
           <v-badge color="error" :content="userNotificaionSize">
             <v-icon>mdi-bell-outline</v-icon>
           </v-badge>
