@@ -101,9 +101,9 @@ const usernotifications = computed(() => {
   }
 })
 
-// setInterval(() => {
-//   userStore.USER_NOTIFICATIONS()
-// }, 10000)
+setInterval(() => {
+  userStore.USER_NOTIFICATIONS()
+}, 10000)
 
 const userNotificaionSize = computed(() => {
   if (isUserLoggedIn) {

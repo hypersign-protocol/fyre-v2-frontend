@@ -20,6 +20,7 @@ export enum InAppNotificationType {
   NEW_EVENT = 'NEW_EVENT',
   CUSTOM = 'CUSTOM',
   NEW_COMMUNITY_CREATED = 'NEW_COMMUNITY_CREATED',
+  EARN_XP = 'EARN_XP'
 }
 
 interface InAppNotification {
