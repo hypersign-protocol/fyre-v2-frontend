@@ -23,6 +23,18 @@ const tasks: Array<ITask> = [
     path: defineAsyncComponent(() => import('@/components/Event/Task/CollectInput/VisitUrl.vue'))
   },
   {
+    types: ['SUBSCRIBE_NOTIFICATION_WEBPUSH'],
+    path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/Webpush.vue'))
+  },
+  // {
+  //   types: ['SUBSCRIBE_NOTIFICATION_EMAIL'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/Email.vue'))
+  // },
+  // {
+  //   types: ['SUBSCRIBE_NOTIFICATION_INAPP'],
+  //   path: defineAsyncComponent(() => import('@/components/Event/Task/SubscribeNotification/InApp.vue'))
+  // },
+  {
     types: ['SOCIAL_TWITTER_FOLLOW'],
     path: defineAsyncComponent(() => import('@/components/Event/Task/Social/Twitter/Follow.vue'))
   },

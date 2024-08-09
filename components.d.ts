@@ -78,6 +78,8 @@ declare module 'vue' {
     Url: typeof import('./src/components/Event/Task/CollectInput/Url.vue')['default']
     VisitUrl: typeof import('./src/components/Event/Task/CollectInput/VisitUrl.vue')['default']
     WalletAddress: typeof import('./src/components/User/WalletAddress.vue')['default']
+    Webpush: typeof import('./src/components/Event/Task/SubscribeNotification/Webpush.vue')['default']
+    WebPushNotification: typeof import('./src/components/Event/Task/Notification/WebPushNotification.vue')['default']
     XpType: typeof import('./src/components/Rewards/XpType.vue')['default']
   }
 }
