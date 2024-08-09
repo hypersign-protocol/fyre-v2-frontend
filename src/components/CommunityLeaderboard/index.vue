@@ -63,10 +63,7 @@ const props = defineProps<{
 const loading = ref(true)
 
 onMounted(async () => {
-  if (token.value) {
-    loading.value = true
-    fetchLeaderboard()
-  }
+  fetchLeaderboard()
 })
 
 watch(
